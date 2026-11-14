@@ -23,6 +23,18 @@ npx @finchtoys/minitools add @finchtoys/finch-ui-lab
 - **顶部分段控件**切换「跟随宿主 / 浅色 / 深色」。保持「跟随宿主」时，你在 Finch 外观设置里切主题、或者在换肤工坊换一套自定义皮肤，页面里的组件会当场跟着变；顶部还会实时显示读到的 `--finch-accent` 等关键值，方便核对。
 - 按**基础 / 表单 / 浮层**分区，每个组件都给了默认、hover、disabled、各 size、各 variant。
 - 浮层区可以真点：菜单能开、模态能弹、Esc 只关最上层、嵌套滚动区里能看浮层跟不跟随。
+- 顶部还有一个 **React / Vue（预览）** 切换：Vue 侧渲染 `@finchtoys/ui-vue` 的 40 个组件（同一个 demo gallery，同一份 class 源与样式表），按需懒加载，默认仍是 React。Vue 侧标注「预览」，主题仍由宿主/顶部控件决定。
+
+## Vue 预览的体积代价
+
+| 产物 | 切换前 | 切换后 |
+|---|---|---|
+| 入口 `panel/index.js` | 1,552,093 B | 1,554,123 B（+2,030 B / +0.13%） |
+| 入口 `panel/index.css` | 79,577 B | 79,577 B（不变） |
+| 懒加载 `panel/vue.js` | — | 172,852 B（gzip 55,446 B） |
+| 懒加载 `panel/vue.css` | — | 1,778 B |
+
+Vue 运行时在**独立的动态 chunk** 里，只有点「Vue（预览）」才下载；入口 chunk 里一个 Vue 模块都没有（`npm run verify` 会断言这条）。
 
 ## 自己从源码构建
 

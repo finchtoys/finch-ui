@@ -14,3 +14,4 @@ spike/vue/report/
 # Vue demo build output + screenshots (npm run demo:build / demo:check)
 packages/vue/demo-dist/
 packages/vue/demo-shots/
+lab/dist-panel-shots/

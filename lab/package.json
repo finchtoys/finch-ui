@@ -34,7 +34,8 @@
     "build:panel": "vite build --config vite.config.ts",
     "build:backend": "tsc -p tsconfig.backend.json",
     "typecheck": "tsc -p tsconfig.panel.json && tsc -p tsconfig.backend.json --noEmit",
-    "build": "npm run build:library && npm run build:panel && npm run build:backend"
+    "build": "npm run build:library && npm run build:panel && npm run build:backend",
+    "check:panel": "node scripts/panel-check.mjs"
   },
   "devDependencies": {
     "@finchtoys/minitool-api": "^0.3.16"

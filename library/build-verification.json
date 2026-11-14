@@ -3,6 +3,22 @@
   "checkedUtilityTokens": 261,
   "uncoveredTokens": [],
   "missing": [],
+  "panelChunks": [
+    {
+      "file": "panel/index.js",
+      "bytes": 1554016,
+      "isEntry": true,
+      "modules": 57,
+      "vueRuntime": 0
+    },
+    {
+      "file": "panel/vue.js",
+      "bytes": 172852,
+      "isEntry": false,
+      "modules": 59,
+      "vueRuntime": 4
+    }
+  ],
   "reactRoots": [
     "/Users/puterjam/Workspace/aeolus/finch-ui/node_modules/react"
   ],
@@ -26,8 +42,8 @@
       "gzip": 13100
     },
     "consumerJs": {
-      "bytes": 1552093,
-      "gzip": 414676
+      "bytes": 1554123,
+      "gzip": 415406
     },
     "consumerCss": {
       "bytes": 79577,

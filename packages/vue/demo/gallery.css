@@ -18,6 +18,12 @@ body {
   padding: 16px 20px 72px;
 }
 
+/* Embedded in a host panel: no sticky bar, no page-level padding. */
+.demo--embedded {
+  padding: 4px 0 32px;
+  max-width: none;
+}
+
 .demo__bar {
   position: sticky;
   top: 0;

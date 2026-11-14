@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -12,11 +13,32 @@ const here = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   base: "./",
   css: { postcss: { plugins: [] } }, // Consumer deliberately has NO Tailwind plugin.
-  plugins: [{ name: "panel-module-evidence", generateBundle(_options, bundle) {
+  plugins: [vue(), { name: "panel-module-evidence", generateBundle(_options, bundle) {
     const modules = Object.values(bundle).flatMap(item => item.type === "chunk" ? Object.keys(item.modules) : []);
     this.emitFile({ type: "asset", fileName: "panel/modules.json", source: JSON.stringify(modules.map(m => m.replace(here, ".")), null, 2) });
+    // Per-chunk evidence: the Vue preview is a dynamic chunk, and the whole
+    // point of loading it lazily is that the ENTRY chunk stays React-only.
+    const chunks = Object.values(bundle)
+      .filter(item => item.type === "chunk")
+      .map(item => ({
+        name: item.name,
+        file: item.fileName,
+        bytes: Buffer.byteLength(item.code),
+        isEntry: item.isEntry,
+        modules: Object.keys(item.modules).map(m => m.replace(here, ".")),
+      }));
+    this.emitFile({ type: "asset", fileName: "panel/chunks.json", source: JSON.stringify(chunks, null, 2) });
   } }],
   esbuild: { jsx: "automatic" },
+  resolve: {
+    alias: [
+      // The Vue preview reuses packages/vue/demo, which resolves the component
+      // source and the shared class module through these aliases.
+      { find: /^@finch-ui-vue$/, replacement: resolve(here, "../packages/vue/entry.ts") },
+      { find: /^@shared\//, replacement: `${resolve(here, "../library/styles")}/` },
+      { find: /^@lib\//, replacement: `${resolve(here, "../library")}/` },
+    ],
+  },
   build: {
     // Panel assets land under dist/panel/ (via the entryFileNames prefix) so
     // they never collide with the extension backend (tsc → dist/index.js).

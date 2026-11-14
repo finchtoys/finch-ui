@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button, SegmentedControl } from '../../library/dist/index.js';
 import '../../library/dist/style.css';
@@ -9,6 +9,7 @@ import { Forms } from './Forms';
 import { Overlays } from './Overlays';
 import { runSelfTest } from './selfTest';
 type Preview = 'host'|'light'|'dark'|'custom';
+type Framework = 'react'|'vue';
 const keys=['bg-main','bg-elevated','bg-hover','accent','text-primary','border'];
 const snapshots:unknown[]=[];
 function measure() {
@@ -28,6 +29,20 @@ function measure() {
 }
 function App() {
   const [preview,setPreview]=useState<Preview>('host'),[report,setReport]=useState<ReturnType<typeof measure>|null>(null),[suite,setSuite]=useState<Awaited<ReturnType<typeof runSelfTest>>|null>(null),[running,setRunning]=useState(false);
+  // React and Vue galleries are the same component set, rendered from the same
+  // class source. React stays the default; Vue is a lazily loaded preview.
+  const [framework,setFramework]=useState<Framework>('react');
+  const vueHost=useRef<HTMLDivElement>(null);
+  useEffect(()=>{
+    if(framework!=='vue')return;
+    let cancelled=false;
+    let unmount:(()=>void)|null=null;
+    void import('./vue').then(({mount})=>{
+      if(cancelled||!vueHost.current)return;
+      unmount=mount(vueHost.current);
+    }).catch(error=>console.error('vue gallery failed to load',error));
+    return()=>{cancelled=true;unmount?.();};
+  },[framework]);
   const run=async()=>{setSuite(null);setRunning(true);try{const result=await runSelfTest();setSuite(result);send({type:'ui-lab:suite',result});}finally{setRunning(false);}};
   useEffect(()=>{
     const root=document.documentElement;let signature='';
@@ -49,6 +64,7 @@ function App() {
   return <>
     <header className="lab-header"><h1>Finch UI Lab</h1><p>本地副本 · 独立预编译 CSS · A/B 档全目录</p>
       <SegmentedControl value={preview} onChange={setPreview} options={[{value:'host',label:'跟随宿主'},{value:'light',label:'本页浅色'},{value:'dark',label:'本页深色'},{value:'custom',label:'本页紫色皮肤'}]}/>
+      <SegmentedControl value={framework} onChange={setFramework} options={[{value:'react',label:'React'},{value:'vue',label:'Vue（预览）'}]}/>
       <p className="lab-note">“本页”只改预览，不修改 Finch。真正验证宿主皮肤请选“跟随宿主”，再去换肤工坊切换。</p>
       <details open><summary>当前读取值 / 缺口</summary><div className="lab-tokens">{report&&Object.entries(report.base).map(([k,v])=><code key={k}>--finch-{k}: {v||'未注入'}</code>)}<code>mode: {report?.mode}; preview: {report?.preview}</code><code>Button primary: {report?.primary}</code><code>derived inset: {report?.effective['bg-inset']}</code></div>
       <p className="lab-warning">缺失白名单 token 使用本地推导/回退，不等于完整宿主契约。Tooltip/HoverCard 的倒置固定色、Toast 的液态玻璃、Emoji 的 Vite 资产构建均有边界；详见验证文档。</p></details>
@@ -56,8 +72,13 @@ function App() {
       {suite&&<details open><summary>自测 {suite.checks.filter(c=>c.pass).length}/{suite.checks.length}；合成事件，非真人输入验收</summary>{suite.checks.map(c=><p key={c.name} className={c.pass?'lab-pass':'lab-fail'}>{c.pass?'通过':'不通过'} · {c.name}</p>)}</details>}
       <nav>{['原语','表单','浮层'].map((n,i)=><a key={n} href={`#group-${i}`}>{n}</a>)}</nav>
     </header>
-    <main><section id="group-0" className="lab-grid"><Primitives/></section><section id="group-1" className="lab-grid"><Forms/></section><section id="group-2" className="lab-grid"><Overlays/></section></main>
-    <footer>每张卡片均来自本地复制的真实组件。无 disabled 等 API 的组件不伪造状态；hover 用真实鼠标悬停查看。</footer>
+    <main style={framework==='react'?undefined:{display:'none'}}><section id="group-0" className="lab-grid"><Primitives/></section><section id="group-1" className="lab-grid"><Forms/></section><section id="group-2" className="lab-grid"><Overlays/></section></main>
+    <main id="lab-vue" ref={vueHost} style={framework==='vue'?undefined:{display:'none'}}/>
+    <footer>
+      {framework==='react'
+        ? '每张卡片均来自本地复制的真实组件。无 disabled 等 API 的组件不伪造状态；hover 用真实鼠标悬停查看。'
+        : 'Vue 预览：同一套组件、同一份 class 源与样式表。上方“自测”按钮仍只测 React 侧。'}
+    </footer>
   </>;
 }
 createRoot(document.getElementById('root')!).render(<StrictMode><App/></StrictMode>);

@@ -23,7 +23,11 @@ const themeHint = computed(() =>
   theme.value === "custom" ? "自定义皮肤：只覆盖 --finch-* 变量" : theme.value === "dark" ? "内置深色 token" : "内置浅色 token",
 );
 
-onMounted(() => applyTheme(theme.value));
+onMounted(() => {
+  // Embedded (UI Lab) keeps the host's theme authority: the Lab already drives
+  // data-theme / data-preview, and two controllers would fight over :root.
+  if (!props.embedded) applyTheme(theme.value);
+});
 
 function setTheme(value: string) {
   theme.value = value as DemoTheme;
@@ -32,8 +36,8 @@ function setTheme(value: string) {
 </script>
 
 <template>
-  <div class="demo" :style="props.embedded ? { paddingTop: 0 } : undefined">
-    <div class="demo__bar">
+  <div class="demo" :class="{ 'demo--embedded': props.embedded }" :style="props.embedded ? { paddingTop: 0 } : undefined">
+    <div v-if="!props.embedded" class="demo__bar">
       <p class="demo__title">@finchtoys/ui-vue · 40 个组件</p>
       <SegmentedControl :options="themeOptions" :value="theme" @change="setTheme" />
       <span class="demo__hint">{{ themeHint }}</span>

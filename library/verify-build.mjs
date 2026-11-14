@@ -152,6 +152,22 @@ assert.equal(
   }`,
 );
 
+// Per-chunk evidence from the UI Lab panel: React stays in the entry chunk, the
+// Vue preview is a lazily loaded chunk that carries exactly one Vue runtime.
+const panelChunks=JSON.parse(read('../lab/dist/panel/chunks.json'));
+const chunkHas=(chunk,pattern)=>chunk.modules.some(module=>pattern.test(module));
+const entryChunks=panelChunks.filter(chunk=>chunk.isEntry);
+assert.equal(entryChunks.length,1,'Panel must have exactly one entry chunk');
+const entryChunk=entryChunks[0];
+assert(
+  !chunkHas(entryChunk, /\/node_modules\/(vue|@vue)\//),
+  'The Vue preview must stay out of the entry chunk (it is lazily imported)',
+);
+const vueChunks=panelChunks.filter(chunk=>chunkHas(chunk, /\/node_modules\/(vue|@vue)\//));
+assert.equal(vueChunks.length,1,'Exactly one chunk may carry the Vue runtime');
+const vueRuntimeModules=vueChunks[0].modules.filter(module=>/\/node_modules\/(vue|@vue)\//.test(module));
+assert(vueRuntimeModules.length>0,'Vue chunk must contain the Vue runtime');
+
 const libraryModules=JSON.parse(read('dist/modules.json'));
 const panelModules=JSON.parse(read('../lab/dist/panel/modules.json'));
 const reactModules=libraryModules.filter(m=>/\/node_modules\/(react|react-dom)\//.test(m));
@@ -161,8 +177,8 @@ const roots=pkg=>[...new Set(panelModules.map(m=>m.replace(/^\u0000/, '').split(
 assert.equal(roots('react').length,1,'Consumer must resolve exactly one React package root');
 assert.equal(roots('react-dom').length,1,'Consumer must resolve exactly one ReactDOM package root');
 const size=p=>{const b=readFileSync(p);return {bytes:b.length,gzip:gzipSync(b).length};};
-const result={arbitraryUtilityCount:coverage.length,checkedUtilityTokens:tokenMap.size,uncoveredTokens,missing,reactRoots:roots('react'),reactDomRoots:roots('react-dom'),libraryBundledReactModules:reactModules,libraryImports:[...read('dist/index.js').matchAll(/from\s*["']([^"']+)["']/g)].map(m=>m[1]),sizes:{libraryJs:size('dist/index.js'),libraryCss:size('dist/style.css'),consumerJs:size('../lab/dist/panel/index.js'),consumerCss:size('../lab/dist/panel/index.css')},coverage};
+const result={arbitraryUtilityCount:coverage.length,checkedUtilityTokens:tokenMap.size,uncoveredTokens,missing,panelChunks:panelChunks.map(c=>({file:c.file,bytes:c.bytes,isEntry:c.isEntry,modules:c.modules.length,vueRuntime:c.modules.filter(m=>/\/node_modules\/(vue|@vue)\//.test(m)).length})),reactRoots:roots('react'),reactDomRoots:roots('react-dom'),libraryBundledReactModules:reactModules,libraryImports:[...read('dist/index.js').matchAll(/from\s*["']([^"']+)["']/g)].map(m=>m[1]),sizes:{libraryJs:size('dist/index.js'),libraryCss:size('dist/style.css'),consumerJs:size('../lab/dist/panel/index.js'),consumerCss:size('../lab/dist/panel/index.css')},coverage};
 writeFileSync('build-verification.json',JSON.stringify(result,null,2));
 console.log(JSON.stringify({...result,coverage:`${coverage.length} arbitrary-value checks + ${tokenMap.size} full token checks saved to build-verification.json`},null,2));
 assert.equal(missing.length,0,'Missing arbitrary utilities; see build-verification.json');
-console.log('PASS: exact CSS selectors/declarations, library externals, one consumer React/ReactDOM root.');
+console.log('PASS: exact CSS selectors/declarations, library externals, one consumer React/ReactDOM root, Vue preview isolated in its own lazy chunk.');

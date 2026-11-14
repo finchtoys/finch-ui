@@ -1,0 +1,118 @@
+/* Demo-only chrome. Deliberately plain CSS: the package never ships layout CSS,
+   and the demo must not need Tailwind either. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ui-font-body, -apple-system, "Segoe UI", system-ui, sans-serif);
+  font-size: 13px;
+  background: var(--ui-bg-main);
+  color: var(--ui-text-primary);
+}
+
+.demo {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 20px 72px;
+}
+
+.demo__bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  margin-bottom: 8px;
+  background: color-mix(in srgb, var(--ui-bg-main) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--ui-border-subtle);
+}
+
+.demo__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 auto 0 0;
+}
+
+.demo__hint {
+  color: var(--ui-text-tertiary);
+  font-size: 12px;
+}
+
+.demo__section {
+  margin-top: 28px;
+}
+
+.demo__section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ui-text-secondary);
+  margin: 0 0 10px;
+}
+
+.demo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.demo__card {
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-md, 10px);
+  background: var(--ui-bg-elevated);
+  padding: 10px 12px 12px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo__card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ui-text-tertiary);
+}
+
+.demo__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.demo__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.demo__out {
+  font-size: 12px;
+  color: var(--ui-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.demo__scroll {
+  height: 120px;
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-sm, 6px);
+  padding: 8px;
+}
+
+.demo__scroll p {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--ui-text-secondary);
+}

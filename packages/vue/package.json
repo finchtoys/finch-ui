@@ -26,7 +26,10 @@
     "icons": "node scripts/gen-icons.mjs",
     "build": "node scripts/gen-icons.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/finish-types.mjs",
     "smoke": "node scripts/smoke.mjs",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "demo": "vite --config vite.demo.config.ts",
+    "demo:build": "vite build --config vite.demo.config.ts",
+    "demo:check": "node scripts/demo-check.mjs"
   },
   "peerDependencies": {
     "@finchtoys/ui": ">=0.1.2",

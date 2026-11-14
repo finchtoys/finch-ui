@@ -22,7 +22,15 @@ const props = withDefaults(
     className?: string;
     rich?: boolean;
   }>(),
-  { placement: "bottom", delay: 250, disabled: false, gap: 8, rich: true },
+  {
+    placement: "bottom",
+    delay: 250,
+    disabled: false,
+    gap: 8,
+    rich: true,
+    // See Tooltip: absent boolean must stay `undefined`, not `false`.
+    open: undefined,
+  },
 );
 
 const wrapEl = ref<HTMLElement | null>(null);
@@ -79,6 +87,16 @@ function detachMeasurement() {
   window.removeEventListener("scroll", update, true);
 }
 
+function onPointerOver(event: MouseEvent) {
+  if (event.relatedTarget && wrapEl.value?.contains(event.relatedTarget as Node)) return;
+  open();
+}
+
+function onPointerOut(event: MouseEvent) {
+  if (event.relatedTarget && wrapEl.value?.contains(event.relatedTarget as Node)) return;
+  close();
+}
+
 function open() {
   if (props.disabled) return;
   if (openTimer) clearTimeout(openTimer);
@@ -133,8 +151,8 @@ onBeforeUnmount(() => {
   <span
     ref="wrapEl"
     style="display: contents"
-    @mouseenter="open"
-    @mouseleave="close"
+    @mouseover="onPointerOver"
+    @mouseout="onPointerOut"
     @focusin="open"
     @focusout="close"
   >

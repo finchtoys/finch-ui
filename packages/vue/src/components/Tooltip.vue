@@ -40,6 +40,9 @@ const props = withDefaults(
     dismissOnTriggerClick: true,
     gap: 6,
     rich: false,
+    // Vue casts an ABSENT boolean prop to `false`, which would make every
+    // uncontrolled tooltip look "controlled and closed". Keep the tri-state.
+    open: undefined,
   },
 );
 
@@ -100,6 +103,17 @@ function close() {
     hoverVisible.value = false;
     position.value = null;
   }, TOOLTIP_OUT_DURATION);
+}
+
+/** display:contents wrappers may not receive mouseenter; use bubbling events. */
+function onPointerOver(event: MouseEvent) {
+  if (event.relatedTarget && anchorWrap.value?.contains(event.relatedTarget as Node)) return;
+  open();
+}
+
+function onPointerOut(event: MouseEvent) {
+  if (event.relatedTarget && anchorWrap.value?.contains(event.relatedTarget as Node)) return;
+  close();
 }
 
 function onPointerDown(event: PointerEvent) {
@@ -186,8 +200,8 @@ onBeforeUnmount(() => {
   <span
     ref="anchorWrap"
     style="display: contents"
-    @mouseenter="open"
-    @mouseleave="close"
+    @mouseover="onPointerOver"
+    @mouseout="onPointerOut"
     @focusin="open"
     @focusout="close"
   >

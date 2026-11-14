@@ -1,7 +1,7 @@
 {
-  "name": "finch-ui-lab",
+  "name": "@finchtoys/finch-ui-lab",
   "version": "0.1.0",
-  "description": "Gallery mini tool that renders every @finchtoys/ui component inside a real Finch webview panel, with live theme/skin switching.",
+  "description": "Gallery mini tool that renders every @finchtoys/ui component inside a real Finch webview panel, with live theme and custom-skin switching.",
   "author": {
     "name": "Finch Team",
     "url": "https://finchwork.app"
@@ -9,6 +9,26 @@
   "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finchtoys/finch-ui.git",
+    "directory": "lab"
+  },
+  "keywords": [
+    "finch",
+    "mini-tool",
+    "ui",
+    "gallery",
+    "preview"
+  ],
   "scripts": {
     "build:library": "cd ../library && npm run build",
     "build:panel": "vite build --config vite.config.ts",
@@ -16,10 +36,14 @@
     "typecheck": "tsc -p tsconfig.panel.json && tsc -p tsconfig.backend.json --noEmit",
     "build": "npm run build:library && npm run build:panel && npm run build:backend"
   },
+  "devDependencies": {
+    "@finchtoys/minitool-api": "^0.3.16"
+  },
   "finch": {
     "manifestVersion": 1,
+    "id": "finch-ui-lab",
     "name": "Finch UI Lab",
-    "description": "@finchtoys/ui \u62bd\u5305 spike\uff1a\u5728 Webview Panel \u91cc\u9a8c\u8bc1 Button/Input/ToggleSwitch/Badge \u7684\u6e32\u67d3\u4e0e\u4e3b\u9898\u8ddf\u968f\uff08\u6d45/\u6df1 + \u81ea\u5b9a\u4e49\u76ae\u80a4\uff09\u3002",
+    "description": "Browse every @finchtoys/ui component with all states and variants inside a real Finch webview, and switch theme or custom skin live.",
     "main": "dist/index.js",
     "activationEvents": [
       "onStartup"
@@ -46,8 +70,5 @@
     },
     "autoEnable": false,
     "miniToolType": "local"
-  },
-  "devDependencies": {
-    "@finchtoys/minitool-api": "^0.3.16"
   }
 }

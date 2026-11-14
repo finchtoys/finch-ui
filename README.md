@@ -23,6 +23,18 @@ export function Panel() {
 
 **必须一起引 `style.css`**，组件样式全在里面，已经预编译好，**你的项目不需要装 Tailwind**。
 
+## 先看看组件长什么样
+
+装 **Finch UI Lab** 预览小程序，它把全部组件的全部状态摆在真实 webview 里，顶部能当场切主题核对跟随效果：
+
+```bash
+npx @finchtoys/minitools add @finchtoys/finch-ui-lab
+```
+
+装完**默认禁用**，要去**工具箱（Toolcase）**里打开启用开关，然后在会话右侧的小程序启动器（Panel 的 `+` 菜单）里点 **Finch UI Lab**。这个小程序不需要任何权限。
+
+离线分发也可以：把 `finch-ui-lab-<version>.fapp` **拖进 Finch 主窗口**（或双击），会弹安装确认，装完同样需要手动启用。
+
 ## 仓库结构
 
 | 目录 | 说明 |
@@ -46,6 +58,8 @@ npm run typecheck
 - 浅色 / 深色切换 → 自动跟随
 - 用户在换肤工坊换自定义皮肤 → 自动跟随（约 1 秒内过渡）
 - 脱离 Finch 单独打开页面 → 包自带默认主题，不会裸奔
+
+**脱离 Finch 独立用时有一条要自己动**：库的深色档判定挂在 `[data-theme="dark"]` 上。Finch 宿主会设这个属性，独立页面得自己在祖先元素上设，否则永远是浅色。
 
 **已知边界**：宿主只注入白名单内的 token。`--bg-inset`、`--danger-dim`、`--text-inverse`、`--ease-*`、`--duration-*` 不在白名单里，库内用 `color-mix` 从白名单值推导 —— 也就是说这些位置能跟着主题大方向走，但做不到和宿主逐值一致。
 

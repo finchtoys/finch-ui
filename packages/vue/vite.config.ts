@@ -19,6 +19,9 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: /^@shared\//, replacement: `${resolve(here, "../../library/styles")}/` },
+      // menuState / modalStack are plain TS coordination singletons shared with
+      // the React build (not React code), so importing them keeps one counter.
+      { find: /^@lib\//, replacement: `${resolve(here, "../../library")}/` },
     ],
   },
   build: {

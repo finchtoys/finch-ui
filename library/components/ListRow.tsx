@@ -1,5 +1,16 @@
 import type { CSSProperties, ReactNode } from "react";
 import { EmojiText } from "./Emoji";
+import {
+  LIST_ROW_ICON_CLASS,
+  LIST_ROW_TITLE_WRAP_CLASS,
+  LIST_ROW_RIGHT_CLASS,
+  LIST_ROW_SUBTITLE_CLASS,
+  listRowClassName,
+  listRowFloatClassName,
+  listRowFloatOverlayClassName,
+  listRowMetaClassName,
+  listRowTitleClassName,
+} from "../styles/classes";
 
 /**
  * Unified list-row layout used across both sidebars.
@@ -88,11 +99,8 @@ export function ListRow({
     <div
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={`listRow group relative flex w-full min-w-0 items-center gap-2 px-[8px] py-[8px] rounded-sm text-left transition-colors duration-120
-        ${isActive ? "listRow--active text-txt" : "text-txt-secondary hover:bg-sf-hover hover:text-txt"}
-        ${icon == null ? "listRow--noIcon" : ""}
-        ${hasInteraction ? "cursor-pointer" : "cursor-default"}
-        ${className ?? ""}`}
+      className={listRowClassName({ isActive, hasIcon: icon != null, hasInteraction, className })}
+
       title={tooltip}
       data-row-key={rowKey}
       draggable={draggable}
@@ -103,21 +111,21 @@ export function ListRow({
       onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick({ shiftKey: e.shiftKey }); } } : undefined}
     >
       {icon != null && (
-        <span className="listRow__icon flex-none flex items-center text-txt-tertiary group-hover:text-txt-secondary transition-colors duration-120" style={contentIndentStyle}>
+        <span className={LIST_ROW_ICON_CLASS} style={contentIndentStyle}>
           {icon}
         </span>
       )}
 
       {/* Title with right-edge gradient fade */}
-      <div className="min-w-0 flex-1">
+      <div className={LIST_ROW_TITLE_WRAP_CLASS}>
         <div
-          className={`listRow__title overflow-hidden whitespace-nowrap text-[14px] font-medium select-none leading-5 listRow__title--fade ${shouldHoverFade ? "listRow__title--hoverFade" : ""} ${titleMono ? "font-mono" : ""}`}
+          className={listRowTitleClassName({ hoverFade: shouldHoverFade, mono: titleMono })}
           style={icon == null ? contentIndentStyle : undefined}
         >
           {titleNode ?? (title != null ? <EmojiText text={title} /> : undefined)}
         </div>
         {subtitle != null ? (
-          <div className="listRow__subtitle mt-0.5 truncate text-[12px] leading-4 select-none">
+          <div className={LIST_ROW_SUBTITLE_CLASS}>
             {subtitle}
           </div>
         ) : null}
@@ -125,21 +133,21 @@ export function ListRow({
 
       {/* Right zone: meta (fades out on hover) + float (appears on hover) */}
       {hasRightZone && (
-        <span className="listRow__right relative flex-none flex h-5 items-center justify-end" style={{ minWidth: "20px" }}>
+        <span className={LIST_ROW_RIGHT_CLASS} style={{ minWidth: "20px" }}>
           {meta != null && (
-            <span className={`listRow__meta flex items-center transition-opacity duration-120 ${floatContent != null ? (floatVisible ? "opacity-0" : "group-hover:opacity-0") : ""}`}>
+            <span className={listRowMetaClassName({ hasFloat: floatContent != null, floatVisible: !!floatVisible })}>
               {meta}
             </span>
           )}
           {floatContent != null && (
-            <span className={`listRow__float absolute right-0 flex items-center whitespace-nowrap transition-opacity duration-120 ${floatVisible ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+            <span className={listRowFloatClassName({ floatVisible: !!floatVisible })}>
               {floatContent}
             </span>
           )}
         </span>
       )}
       {hasHoverOnlyFloat && (
-        <span className={`listRow__float listRow__float--overlay absolute right-2 flex items-center transition-opacity duration-120 ${floatVisible ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+        <span className={listRowFloatOverlayClassName({ floatVisible: !!floatVisible })}>
           {floatContent}
         </span>
       )}

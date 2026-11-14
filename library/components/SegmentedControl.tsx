@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SEGMENTED_CONTROL_CLASS, segmentedIconClassName, segmentedItemClassName } from "../styles/classes";
 
 interface SegmentOption<T extends string> {
   value: T;
@@ -16,7 +17,7 @@ export function SegmentedControl<T extends string>({ options, value, onChange }:
   return (
     <div
       role="group"
-      className="inline-flex gap-0.5 rounded-full bg-[var(--ui-bg-inset)] p-[3px]"
+      className={SEGMENTED_CONTROL_CLASS}
     >
       {options.map((option) => {
         const isActive = value === option.value;
@@ -27,23 +28,10 @@ export function SegmentedControl<T extends string>({ options, value, onChange }:
             role="radio"
             aria-checked={isActive}
             onClick={() => onChange(option.value)}
-            className={[
-              // layout
-              "flex items-center gap-[5px] whitespace-nowrap",
-              // shape
-              "rounded-full px-3 py-1",
-              // typography
-              "cursor-pointer text-[13px]",
-              // transition
-              "transition-[background,color,box-shadow] duration-[160ms]",
-              // state
-              isActive
-                ? "bg-accent font-medium text-white shadow-[0_1px_3px_rgba(0,0,0,0.18),0_0_0_0.5px_rgba(0,0,0,0.08)]"
-                : "font-[450] text-[var(--ui-text-tertiary)] hover:text-[var(--ui-text-secondary)]",
-            ].join(" ")}
+            className={segmentedItemClassName(isActive)}
           >
             {option.icon && (
-              <span className={`flex items-center ${isActive ? "opacity-90" : "opacity-70"}`}>
+              <span className={segmentedIconClassName(isActive)}>
                 {option.icon}
               </span>
             )}

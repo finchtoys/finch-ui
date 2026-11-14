@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { typingDotsClassName } from "../styles/classes";
 
 export interface TypingDotsProps {
   /**
@@ -17,7 +18,7 @@ export interface TypingDotsProps {
 export const TypingDots = memo(function TypingDots({ size = "default", className }: TypingDotsProps) {
   return (
     <span
-      className={`runningDots${size === "small" ? " runningDots--small" : ""}${size === "tiny" ? " runningDots--tiny" : ""}${className ? ` ${className}` : ""}`}
+      className={typingDotsClassName({ size, className })}
       aria-hidden="true"
     >
       <span />

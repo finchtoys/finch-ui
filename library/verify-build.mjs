@@ -44,6 +44,17 @@ const SHARED_CLASS_COMPONENTS=[
   'components/Badge.tsx',
   'components/Chip.tsx',
   'components/Kbd.tsx',
+  'components/Empty.tsx',
+  'components/InlineActionLink.tsx',
+  'components/OptionCard.tsx',
+  'components/TypingDots.tsx',
+  'components/WorkingText.tsx',
+  'components/SkeletonBlock.tsx',
+  'components/Alert.tsx',
+  'components/SegmentedControl.tsx',
+  'components/CheckBox.tsx',
+  'components/TextArea.tsx',
+  'components/ListRow.tsx',
 ];
 const UTILITY_TOKEN=/^(?:[a-z-]+:)*(?:flex|grid|block|inline-flex|inline-block|hidden|relative|absolute|fixed|sticky|items-[\w-]+|justify-[\w-]+|gap-[\w.-]+|p[xytblr]?-[\w.[\]%-]+|m[xytblr]?-[\w.[\]%-]+|w-[\w.[\]%/%-]+|h-[\w.[\]%/%-]+|min-[\w-]+|max-[\w-]+|text-[\w.[\]%/%-]+|bg-[\w.[\]%/%-]+|border(?:-[\w.[\]%/%-]+)?|rounded(?:-[\w.[\]%/%-]+)?|font-[\w-]+|shadow(?:-[\w.[\]%()-]+)?|transition(?:-[\w.[\]%,()-]+)?|animate-[\w-]+|overflow-[\w-]+|z-[\w-]+|cursor-[\w-]+|select-[\w-]+|whitespace-[\w-]+|truncate|leading-[\w-]+|tracking-[\w-]+|opacity-[\w.-]+|ring(?:-[\w.[\]%/%-]+)?|scale-[\w.-]+|underline|no-underline|space-[xy]-[\w.-]+)$/;
 function classishLiterals(src){

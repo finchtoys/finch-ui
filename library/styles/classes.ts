@@ -546,3 +546,376 @@ export function kbdClassName(className = ""): string {
 
 /** Wrapper for a bare modifier glyph inside a Kbd (`⌘` + `B`). */
 export const KBD_SYMBOL_CLASS = "finchKbd__symbol";
+
+// ─── Empty ───────────────────────────────────────────────────────────────────
+
+export function emptyClassName({
+  compact = false,
+  className = "",
+}: { compact?: boolean; className?: string } = {}): string {
+  return [
+    "flex min-w-0 w-full flex-col items-center justify-center text-center",
+    compact
+      ? "gap-2 rounded-sm border border-dotted border-border-subtle px-3 py-4"
+      : "gap-3 px-4 py-6",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const EMPTY_PLAIN_ICON_CLASS = "text-txt-tertiary";
+export const EMPTY_ICON_BOX_CLASS = "flex items-center justify-center rounded-md bg-sf-hover p-3 text-txt-tertiary";
+export const EMPTY_TITLE_CLASS = "m-0 text-[16px] font-medium text-txt-secondary py-0.5";
+export const EMPTY_DESCRIPTION_CLASS = "m-0 text-[14px] text-txt-tertiary";
+
+// ─── InlineActionLink ────────────────────────────────────────────────────────
+
+export const INLINE_ACTION_LINK_CLASS =
+  "group inline-flex align-baseline min-w-0 cursor-pointer items-center gap-[7px] rounded-[var(--ui-radius-sm)] border-0 bg-transparent px-[3px] py-[2px] text-left text-accent-text transition-colors duration-[var(--ui-duration-fast)] ease-[var(--ui-ease-out)] hover:bg-[color-mix(in_srgb,var(--ui-accent)_8%,transparent)] hover:text-[var(--ui-accent-hover)]";
+
+export function inlineActionLinkClassName(className = ""): string {
+  return [INLINE_ACTION_LINK_CLASS, className].filter(Boolean).join(" ");
+}
+
+export const INLINE_ACTION_LINK_ICON_CLASS =
+  "inline-flex flex-none text-current opacity-[0.82] transition-opacity duration-[var(--ui-duration-fast)] ease-[var(--ui-ease-out)] group-hover:opacity-100";
+
+export const INLINE_ACTION_LINK_LABEL_CLASS =
+  "block self-baseline min-w-0 overflow-hidden text-ellipsis whitespace-nowrap underline decoration-[color-mix(in_srgb,currentColor_36%,transparent)] decoration-1 underline-offset-4";
+
+// ─── OptionCard ──────────────────────────────────────────────────────────────
+
+export function optionCardClassName({
+  active = false,
+  selected = false,
+  disabled = false,
+  className = "",
+}: { active?: boolean; selected?: boolean; disabled?: boolean; className?: string } = {}): string {
+  const state = selected
+    ? "bg-sf-active text-txt"
+    : active
+      ? "bg-sf-hover text-txt"
+      : "text-txt-secondary hover:bg-sf-hover/40 hover:text-txt";
+
+  return [
+    "flex min-h-[36px] items-center gap-2 px-[12px] rounded-[var(--ui-radius-sm)] select-none transition-colors duration-120",
+    disabled ? "cursor-default opacity-60" : "cursor-pointer",
+    state,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const OPTION_CARD_TEXT_CLASS = "composerQuestion__optionText min-w-0 flex-1";
+
+// ─── TypingDots ──────────────────────────────────────────────────────────────
+
+export const TYPING_DOTS_CLASS = "runningDots";
+export const TYPING_DOTS_SMALL_CLASS = "runningDots--small";
+export const TYPING_DOTS_TINY_CLASS = "runningDots--tiny";
+
+export function typingDotsClassName({
+  size = "default",
+  className = "",
+}: { size?: "default" | "small" | "tiny"; className?: string } = {}): string {
+  const sizeClass = size === "small" ? ` ${TYPING_DOTS_SMALL_CLASS}` : size === "tiny" ? ` ${TYPING_DOTS_TINY_CLASS}` : "";
+  return `${TYPING_DOTS_CLASS}${sizeClass}${className ? ` ${className}` : ""}`;
+}
+
+// ─── WorkingText ─────────────────────────────────────────────────────────────
+
+const WORKING_TEXT_BASE: Record<"primary" | "secondary" | "tertiary" | "accent", string> = {
+  primary: "var(--ui-text-primary)",
+  secondary: "var(--ui-text-secondary)",
+  tertiary: "var(--ui-text-tertiary)",
+  accent: "var(--ui-accent)",
+};
+
+const WORKING_TEXT_HIGHLIGHT: Record<"primary" | "secondary" | "tertiary" | "accent", string> = {
+  primary: "color-mix(in srgb, white 58%, var(--ui-text-primary))",
+  secondary: "color-mix(in srgb, white 58%, var(--ui-text-secondary))",
+  tertiary: "color-mix(in srgb, white 60%, var(--ui-text-tertiary))",
+  accent: "color-mix(in srgb, var(--ui-accent) 64%, var(--ui-accent))",
+};
+
+export function workingTextClassName({
+  active = false,
+  className = "",
+}: { active?: boolean; className?: string } = {}): string {
+  return ["workingText", active ? "workingText--active" : "", className].filter(Boolean).join(" ");
+}
+
+/** CSS custom properties the `.workingText` keyframes read. */
+export function workingTextStyle({
+  tone = "secondary",
+}: { tone?: "primary" | "secondary" | "tertiary" | "accent" } = {}): Record<string, string> {
+  return {
+    "--working-text-base": WORKING_TEXT_BASE[tone],
+    "--working-text-highlight": WORKING_TEXT_HIGHLIGHT[tone],
+  };
+}
+
+// ─── SkeletonBlock ───────────────────────────────────────────────────────────
+
+export const USAGE_SKELETON_CLASS = "usageSkeleton";
+
+export function skeletonBlockClassName(className = ""): string {
+  return [USAGE_SKELETON_CLASS, className].filter(Boolean).join(" ");
+}
+
+export const SKELETON_CARD_CLASS =
+  "flex w-full min-w-0 max-w-full flex-col overflow-hidden rounded-[var(--ui-radius-lg)] bg-sf-elevated px-4.5 py-5 gap-2 select-none";
+export const SKELETON_CARD_HEADER_CLASS = "flex min-w-0 items-center gap-2 h-[28px]";
+export const SKELETON_CARD_TITLE_WRAP_CLASS = "min-w-0 flex-1 overflow-hidden";
+export const SKELETON_CARD_ACTION_WRAP_CLASS = "flex flex-none items-center";
+export const SKELETON_CARD_DESC_CLASS = "flex flex-col gap-[7px] pt-0.5";
+export const SKELETON_CARD_GRID_CLASS = "grid w-full min-w-0 grid-cols-3 gap-3";
+export const SKELETON_CARD_TITLE_BAR_CLASS = "h-[14px] rounded";
+export const SKELETON_CARD_ACTION_CLASS = "h-[26px] w-[52px] rounded-[var(--ui-radius-md)]";
+export const SKELETON_CARD_LINE_CLASS = "h-[11px] rounded";
+export const SKELETON_CARD_LINE_FULL_CLASS = "h-[11px] w-full rounded";
+
+export function skeletonCatalogCardClassName(className = ""): string {
+  return [SKELETON_CARD_CLASS, className].filter(Boolean).join(" ");
+}
+
+// ─── Alert ───────────────────────────────────────────────────────────────────
+
+export type AlertVariant = "info" | "warning" | "error" | "success";
+
+export function alertClassName(className = ""): string {
+  return [
+    "flex shrink-0 items-start gap-2 rounded-[var(--ui-radius-md)] border px-3 py-2 text-[13px] leading-relaxed",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function alertVariantStyle(variant: AlertVariant = "info"): Record<string, string> {
+  switch (variant) {
+    case "warning":
+      return {
+        borderColor: "color-mix(in srgb, var(--ui-warning) 34%, transparent)",
+        background: "var(--ui-warning-dim)",
+        color: "var(--ui-warning-text)",
+      };
+    case "error":
+      return {
+        borderColor: "color-mix(in srgb, var(--ui-danger) 34%, transparent)",
+        background: "var(--ui-danger-dim)",
+        color: "var(--ui-danger-text)",
+      };
+    case "success":
+      return {
+        borderColor: "color-mix(in srgb, var(--ui-positive) 34%, transparent)",
+        background: "var(--ui-positive-dim)",
+        color: "var(--ui-positive-text)",
+      };
+    default:
+      return {
+        borderColor: "color-mix(in srgb, var(--ui-info) 34%, transparent)",
+        background: "var(--ui-info-soft)",
+        color: "var(--ui-text-secondary)",
+      };
+  }
+}
+
+export const ALERT_CUSTOM_ICON_CLASS = "mt-1.5 flex flex-none items-center";
+export const ALERT_BODY_CLASS = "min-w-0 flex-1";
+export const ALERT_TITLE_CLASS = "mb-1 font-semibold text-current";
+export const ALERT_CONTENT_CLASS = "select-text break-words text-current";
+export const ALERT_ICON_CLASS = "mt-0.5 flex-none";
+
+// ─── SegmentedControl ────────────────────────────────────────────────────────
+
+export const SEGMENTED_CONTROL_CLASS = "inline-flex gap-0.5 rounded-full bg-[var(--ui-bg-inset)] p-[3px]";
+
+export function segmentedItemClassName(active: boolean): string {
+  return [
+    "flex items-center gap-[5px] whitespace-nowrap",
+    "rounded-full px-3 py-1",
+    "cursor-pointer text-[13px]",
+    "transition-[background,color,box-shadow] duration-[160ms]",
+    active
+      ? "bg-accent font-medium text-white shadow-[0_1px_3px_rgba(0,0,0,0.18),0_0_0_0.5px_rgba(0,0,0,0.08)]"
+      : "font-[450] text-[var(--ui-text-tertiary)] hover:text-[var(--ui-text-secondary)]",
+  ].join(" ");
+}
+
+export function segmentedIconClassName(active: boolean): string {
+  return `flex items-center ${active ? "opacity-90" : "opacity-70"}`;
+}
+
+// ─── CheckBox ────────────────────────────────────────────────────────────────
+
+export type CheckBoxSize = "sm" | "md" | "lg";
+export type CheckBoxRound = "full" | "md";
+
+const CHECKBOX_SIZE: Record<CheckBoxSize, string> = {
+  sm: "h-4 w-4",
+  md: "h-5 w-5",
+  lg: "h-6 w-6",
+};
+
+const CHECKBOX_ROUND: Record<CheckBoxRound, string> = {
+  full: "rounded-full",
+  md: "rounded-[var(--ui-radius-sm)]",
+};
+
+const CHECKBOX_DOT_SIZE: Record<CheckBoxSize, string> = {
+  sm: "h-2 w-2",
+  md: "h-2.5 w-2.5",
+  lg: "h-3 w-3",
+};
+
+export const CHECKBOX_CHECK_SIZE: Record<CheckBoxSize, number> = {
+  sm: 10,
+  md: 12,
+  lg: 14,
+};
+
+export function checkBoxClassName({
+  disabled = false,
+  className = "",
+}: { disabled?: boolean; className?: string } = {}): string {
+  return [
+    "inline-flex min-w-0 items-center gap-2",
+    disabled ? "cursor-default opacity-55" : "cursor-pointer",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function checkBoxIndicatorClassName({
+  size = "md",
+  round = "full",
+  active,
+}: {
+  size?: CheckBoxSize;
+  round?: CheckBoxRound;
+  active: boolean;
+}): string {
+  return [
+    "inline-flex shrink-0 items-center justify-center overflow-hidden border transition-colors duration-150",
+    CHECKBOX_SIZE[size],
+    CHECKBOX_ROUND[round],
+    active ? "border-accent bg-accent text-sf-primary" : "border-border bg-transparent text-transparent",
+  ].join(" ");
+}
+
+export function checkBoxDotClassName(size: CheckBoxSize = "md"): string {
+  return `rounded-full bg-current ${CHECKBOX_DOT_SIZE[size]}`;
+}
+
+export const CHECKBOX_LABEL_GROUP_CLASS = "grid min-w-0 gap-0.5";
+
+export function checkBoxLabelClassName({
+  size = "md",
+  active,
+}: {
+  size?: CheckBoxSize;
+  active: boolean;
+}): string {
+  return [
+    "truncate",
+    size === "sm" ? "text-[12px]" : "text-[13px]",
+    "font-medium",
+    active ? "text-txt" : "text-txt-secondary",
+  ].join(" ");
+}
+
+export const CHECKBOX_DESC_CLASS = "whitespace-normal text-[11px] font-normal leading-4 text-txt-tertiary";
+
+// ─── TextArea ────────────────────────────────────────────────────────────────
+
+export function textAreaClassName({
+  unstyled = false,
+  variant = "default",
+  round = "md",
+  error = false,
+  className = "",
+}: {
+  unstyled?: boolean;
+  variant?: InputVariant;
+  round?: InputRound;
+  error?: boolean;
+  className?: string;
+} = {}): string {
+  const base = [
+    // 默认不给右下角拖拽手柄：多行输入框在弹窗/面板里被拖到变形的概率远高于
+    // 真需要它；要放开由调用方自己传 style={{ resize: "vertical" }}。
+    "appScrollbar block w-full resize-none",
+    INPUT_BASE_CLASS,
+    INPUT_ROUND_CLASS[round],
+    inputStateClass({ error, variant }),
+  ].join(" ");
+
+  return ["p-1.5", unstyled ? "" : base, className].filter(Boolean).join(" ");
+}
+
+// ─── ListRow ─────────────────────────────────────────────────────────────────
+
+export function listRowClassName({
+  isActive = false,
+  hasIcon = true,
+  hasInteraction = false,
+  className = "",
+}: {
+  isActive?: boolean;
+  hasIcon?: boolean;
+  hasInteraction?: boolean;
+  className?: string;
+} = {}): string {
+  return [
+    "listRow group relative flex w-full min-w-0 items-center gap-2 px-[8px] py-[8px] rounded-sm text-left transition-colors duration-120",
+    isActive ? "listRow--active text-txt" : "text-txt-secondary hover:bg-sf-hover hover:text-txt",
+    hasIcon ? "" : "listRow--noIcon",
+    hasInteraction ? "cursor-pointer" : "cursor-default",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const LIST_ROW_ICON_CLASS =
+  "listRow__icon flex-none flex items-center text-txt-tertiary group-hover:text-txt-secondary transition-colors duration-120";
+
+export function listRowTitleClassName({
+  hoverFade = false,
+  mono = false,
+}: { hoverFade?: boolean; mono?: boolean } = {}): string {
+  return [
+    "listRow__title overflow-hidden whitespace-nowrap text-[14px] font-medium select-none leading-5 listRow__title--fade",
+    hoverFade ? "listRow__title--hoverFade" : "",
+    mono ? "font-mono" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const LIST_ROW_TITLE_WRAP_CLASS = "min-w-0 flex-1";
+export const LIST_ROW_SUBTITLE_CLASS = "listRow__subtitle mt-0.5 truncate text-[12px] leading-4 select-none";
+export const LIST_ROW_RIGHT_CLASS = "listRow__right relative flex-none flex h-5 items-center justify-end";
+
+export function listRowMetaClassName({ hasFloat = false, floatVisible = false }: { hasFloat?: boolean; floatVisible?: boolean } = {}): string {
+  const fade = hasFloat ? (floatVisible ? "opacity-0" : "group-hover:opacity-0") : "";
+  return ["listRow__meta flex items-center transition-opacity duration-120", fade].filter(Boolean).join(" ");
+}
+
+export function listRowFloatClassName({ floatVisible = false }: { floatVisible?: boolean } = {}): string {
+  return [
+    "listRow__float absolute right-0 flex items-center whitespace-nowrap transition-opacity duration-120",
+    floatVisible ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+  ].join(" ");
+}
+
+export function listRowFloatOverlayClassName({ floatVisible = false }: { floatVisible?: boolean } = {}): string {
+  return [
+    "listRow__float listRow__float--overlay absolute right-2 flex items-center transition-opacity duration-120",
+    floatVisible ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+  ].join(" ");
+}

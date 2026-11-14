@@ -1,4 +1,9 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  INLINE_ACTION_LINK_ICON_CLASS,
+  INLINE_ACTION_LINK_LABEL_CLASS,
+  inlineActionLinkClassName,
+} from "../styles/classes";
 
 interface InlineActionLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leadingIcon?: ReactNode;
@@ -13,10 +18,7 @@ export function InlineActionLink({
   type = "button",
   ...props
 }: InlineActionLinkProps) {
-  const classes = [
-    "group inline-flex align-baseline min-w-0 cursor-pointer items-center gap-[7px] rounded-[var(--ui-radius-sm)] border-0 bg-transparent px-[3px] py-[2px] text-left text-accent-text transition-colors duration-[var(--ui-duration-fast)] ease-[var(--ui-ease-out)] hover:bg-[color-mix(in_srgb,var(--ui-accent)_8%,transparent)] hover:text-[var(--ui-accent-hover)]",
-    className,
-  ].filter(Boolean).join(" ");
+  const classes = inlineActionLinkClassName(className);
 
   return (
     <button
@@ -24,10 +26,10 @@ export function InlineActionLink({
       className={classes}
       {...props}
     >
-      {leadingIcon ? <span className="inline-flex flex-none text-current opacity-[0.82] transition-opacity duration-[var(--ui-duration-fast)] ease-[var(--ui-ease-out)] group-hover:opacity-100">{leadingIcon}</span> : null}
+      {leadingIcon ? <span className={INLINE_ACTION_LINK_ICON_CLASS}>{leadingIcon}</span> : null}
       {/* Export the label baseline, not the leading icon's bottom edge, to surrounding prose. */}
-      <span className="block self-baseline min-w-0 overflow-hidden text-ellipsis whitespace-nowrap underline decoration-[color-mix(in_srgb,currentColor_36%,transparent)] decoration-1 underline-offset-4">{children}</span>
-      {trailingIcon ? <span className="inline-flex flex-none text-current opacity-[0.82] transition-opacity duration-[var(--ui-duration-fast)] ease-[var(--ui-ease-out)] group-hover:opacity-100">{trailingIcon}</span> : null}
+      <span className={INLINE_ACTION_LINK_LABEL_CLASS}>{children}</span>
+      {trailingIcon ? <span className={INLINE_ACTION_LINK_ICON_CLASS}>{trailingIcon}</span> : null}
     </button>
   );
 }

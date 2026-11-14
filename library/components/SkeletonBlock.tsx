@@ -1,9 +1,22 @@
 import type { HTMLAttributes } from "react";
+import {
+  SKELETON_CARD_ACTION_CLASS,
+  SKELETON_CARD_ACTION_WRAP_CLASS,
+  SKELETON_CARD_LINE_CLASS,
+  SKELETON_CARD_LINE_FULL_CLASS,
+  SKELETON_CARD_TITLE_BAR_CLASS,
+  SKELETON_CARD_DESC_CLASS,
+  SKELETON_CARD_GRID_CLASS,
+  SKELETON_CARD_HEADER_CLASS,
+  SKELETON_CARD_TITLE_WRAP_CLASS,
+  SKELETON_CARD_CLASS,
+  skeletonBlockClassName,
+} from "../styles/classes";
 
 interface SkeletonBlockProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function SkeletonBlock({ className = "", ...props }: SkeletonBlockProps) {
-  return <div className={`usageSkeleton ${className}`.trim()} {...props} />;
+  return <div className={skeletonBlockClassName(className)} {...props} />;
 }
 
 // ── Catalog card skeleton ─────────────────────────────────────────────────────────
@@ -25,22 +38,22 @@ export function SkeletonCatalogCard({ index = 0 }: { index?: number }) {
   const titleW = CARD_TITLE_WIDTHS[index % CARD_TITLE_WIDTHS.length];
   const [d2, d3] = CARD_DESC_WIDTHS[index % CARD_DESC_WIDTHS.length];
   return (
-    <div className="flex w-full min-w-0 max-w-full flex-col overflow-hidden rounded-[var(--ui-radius-lg)] bg-sf-elevated px-4.5 py-5 gap-2 select-none">
+    <div className={SKELETON_CARD_CLASS}>
       {/* header — mirrors ToolcaseCatalogCard header row */}
-      <div className="flex min-w-0 items-center gap-2 h-[28px]">
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <SkeletonBlock className="h-[14px] rounded" style={{ width: titleW }} />
+      <div className={SKELETON_CARD_HEADER_CLASS}>
+        <div className={SKELETON_CARD_TITLE_WRAP_CLASS}>
+          <SkeletonBlock className={SKELETON_CARD_TITLE_BAR_CLASS} style={{ width: titleW }} />
         </div>
-        <div className="flex flex-none items-center">
+        <div className={SKELETON_CARD_ACTION_WRAP_CLASS}>
           {/* action placeholder: install-button shape */}
-          <SkeletonBlock className="h-[26px] w-[52px] rounded-[var(--ui-radius-md)]" />
+          <SkeletonBlock className={SKELETON_CARD_ACTION_CLASS} />
         </div>
       </div>
       {/* description: 3 lines, first always full-width */}
-      <div className="flex flex-col gap-[7px] pt-0.5">
-        <SkeletonBlock className="h-[11px] w-full rounded" />
-        <SkeletonBlock className="h-[11px] rounded" style={{ width: d2 }} />
-        <SkeletonBlock className="h-[11px] rounded" style={{ width: d3 }} />
+      <div className={SKELETON_CARD_DESC_CLASS}>
+        <SkeletonBlock className={SKELETON_CARD_LINE_FULL_CLASS} />
+        <SkeletonBlock className={SKELETON_CARD_LINE_CLASS} style={{ width: d2 }} />
+        <SkeletonBlock className={SKELETON_CARD_LINE_CLASS} style={{ width: d3 }} />
       </div>
     </div>
   );
@@ -52,7 +65,7 @@ export function SkeletonCatalogCard({ index = 0 }: { index?: number }) {
  */
 export function SkeletonCatalogGrid({ count = 6 }: { count?: number }) {
   return (
-    <div className="grid w-full min-w-0 grid-cols-3 gap-3">
+    <div className={SKELETON_CARD_GRID_CLASS}>
       {Array.from({ length: count }, (_, i) => (
         <SkeletonCatalogCard key={i} index={i} />
       ))}

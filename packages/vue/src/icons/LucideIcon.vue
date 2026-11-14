@@ -7,13 +7,14 @@
 import { computed } from "vue";
 import { ICON_NODES } from "./nodes";
 
-const props = withDefaults(defineProps<{ name: keyof typeof ICON_NODES | string; size?: number; className?: string }>(), {
-  size: 24,
-  className: "",
-});
+const props = withDefaults(
+  defineProps<{ name: keyof typeof ICON_NODES | string; size?: number; strokeWidth?: number; className?: string }>(),
+  { size: 24, strokeWidth: 2, className: "" },
+);
 
-const children = computed(() => ICON_NODES[props.name] ?? []);
-const svgClass = computed(() => `lucide lucide-${props.name} ${props.className}`.trim());
+const definition = computed(() => ICON_NODES[props.name]);
+const children = computed(() => definition.value?.children ?? []);
+const svgClass = computed(() => `lucide lucide-${definition.value?.canonical ?? props.name} ${props.className}`.trim());
 </script>
 
 <template>
@@ -24,7 +25,7 @@ const svgClass = computed(() => `lucide lucide-${props.name} ${props.className}`
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    stroke-width="2"
+    :stroke-width="props.strokeWidth"
     stroke-linecap="round"
     stroke-linejoin="round"
     :class="svgClass"

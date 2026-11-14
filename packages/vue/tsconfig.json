@@ -10,7 +10,8 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../../library/styles/*"]
+      "@shared/*": ["../../library/styles/*"],
+      "@lib/*": ["../../library/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.vue", "entry.ts", "vite.config.ts"]

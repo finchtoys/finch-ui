@@ -1,4 +1,11 @@
 import type { HTMLAttributes, ReactNode } from "react";
+import {
+  EMPTY_DESCRIPTION_CLASS,
+  EMPTY_ICON_BOX_CLASS,
+  EMPTY_PLAIN_ICON_CLASS,
+  EMPTY_TITLE_CLASS,
+  emptyClassName,
+} from "../styles/classes";
 
 interface EmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   icon?: ReactNode;
@@ -21,22 +28,22 @@ export function Empty({
 }: EmptyProps) {
   return (
     <div
-      className={`flex min-w-0 w-full flex-col items-center justify-center text-center ${compact ? "gap-2 rounded-sm border border-dotted border-border-subtle px-3 py-4" : "gap-3 px-4 py-6"} ${className}`.trim()}
+      className={emptyClassName({ compact, className })}
       {...props}
     >
       {icon ? (
         plainIcon ? (
-          <div className="text-txt-tertiary">
+          <div className={EMPTY_PLAIN_ICON_CLASS}>
           {icon}
           </div>
         ) : (
-          <div className="flex items-center justify-center rounded-md bg-sf-hover p-3 text-txt-tertiary">
+          <div className={EMPTY_ICON_BOX_CLASS}>
             {icon}
           </div>
         )
       ) : null}
-      {title ? <p className="m-0 text-[16px] font-medium text-txt-secondary py-0.5">{title}</p> : null}
-      {description ? <p className="m-0 text-[14px] text-txt-tertiary">{description}</p> : null}
+      {title ? <p className={EMPTY_TITLE_CLASS}>{title}</p> : null}
+      {description ? <p className={EMPTY_DESCRIPTION_CLASS}>{description}</p> : null}
       {children}
     </div>
   );

@@ -11,6 +11,7 @@
   "main": "dist/index.js",
   "files": [
     "dist",
+    "icon.png",
     "README.md",
     "package.json"
   ],

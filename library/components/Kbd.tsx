@@ -1,4 +1,5 @@
 import { Children, type ReactNode } from "react";
+import { KBD_CLASS, KBD_SYMBOL_CLASS, kbdClassName } from "../styles/classes";
 
 const KEY_SYMBOL = /^[⌘⌥⇧⌃↵↑↓←→]$/;
 
@@ -10,7 +11,7 @@ function renderKeys(children: ReactNode): ReactNode {
   const parts = text.split(/([⌘⌥⇧⌃↵↑↓←→])/).filter(Boolean);
   if (!parts.some((part) => KEY_SYMBOL.test(part))) return children;
   return parts.map((part, index) => (
-    <span key={index} className={KEY_SYMBOL.test(part) ? "finchKbd__symbol" : undefined}>
+    <span key={index} className={KEY_SYMBOL.test(part) ? KBD_SYMBOL_CLASS : undefined}>
       {part}
     </span>
   ));
@@ -18,10 +19,10 @@ function renderKeys(children: ReactNode): ReactNode {
 
 export function Kbd({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <kbd
-      className={`finchKbd inline-flex min-w-[24px] items-center justify-center rounded-[var(--ui-radius-sm)] px-1.5 font-mono text-[11px] text-txt-secondary ${className}`.trim()}
-    >
+    <kbd className={kbdClassName(className)}>
       {renderKeys(children)}
     </kbd>
   );
 }
+
+export { KBD_CLASS };

@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { X } from "lucide-react";
+import { CHIP_REMOVE_BUTTON_CLASS, actionChipClassName, chipClassName } from "../styles/classes";
 
 interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   leadingIcon?: ReactNode;
@@ -14,8 +15,6 @@ interface ActionChipProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   trailing?: ReactNode;
 }
 
-const CHIP_CLASS = "inline-flex items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-2.5 py-1.5 text-[12px] font-normal text-txt-secondary";
-
 // forwardRef so `Chip` can sit inside `Tooltip`, which needs the trigger's DOM
 // node to position itself.
 export const Chip = forwardRef<HTMLSpanElement, ChipProps>(function Chip({
@@ -28,13 +27,13 @@ export const Chip = forwardRef<HTMLSpanElement, ChipProps>(function Chip({
   ...props
 }, ref) {
   return (
-    <span ref={ref} className={`${CHIP_CLASS} ${className}`.trim()} {...props}>
+    <span ref={ref} className={chipClassName(className)} {...props}>
       {leadingIcon}
       {children}
       {trailing}
       {onRemove ? (
         <button
-          className="inline-flex h-4 w-4 items-center justify-center rounded-full text-txt-tertiary transition-colors duration-120 hover:bg-err-dim hover:text-err"
+          className={CHIP_REMOVE_BUTTON_CLASS}
           title={removeLabel}
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
           type="button"
@@ -57,7 +56,7 @@ export function ActionChip({
   return (
     <button
       type={type}
-      className={`${CHIP_CLASS} bg-sf hover:bg-sf-hover hover:text-txt transition-colors duration-120 disabled:opacity-50 ${className}`.trim()}
+      className={actionChipClassName(className)}
       {...props}
     >
       {leadingIcon}

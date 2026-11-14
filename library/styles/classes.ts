@@ -474,3 +474,75 @@ export function menuPosition(
     top: clampPosition(top, gutter, window.innerHeight - menuRect.height - gutter),
   };
 }
+
+// ─── Badge ───────────────────────────────────────────────────────────────────
+
+export type BadgeVariant = "neutral" | "accent" | "warning" | "danger" | "success";
+export type BadgeSize = "sm" | "md";
+
+const BADGE_BASE = "inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] font-medium";
+
+const BADGE_VARIANT: Record<BadgeVariant, string> = {
+  neutral: "bg-sf-hover text-txt-tertiary",
+  accent: "bg-accent-dim text-accent",
+  warning: "bg-warn-dim text-warn-text",
+  danger: "bg-err-dim text-err-text",
+  success: "bg-ok-dim text-ok-text",
+};
+
+const BADGE_SIZE: Record<BadgeSize, string> = {
+  sm: "px-1.5 py-0.5 text-[11px]",
+  md: "px-2 py-1 text-[12px]",
+};
+
+export function badgeClassName({
+  variant = "neutral",
+  size = "sm",
+  className = "",
+}: {
+  variant?: BadgeVariant;
+  size?: BadgeSize;
+  className?: string;
+} = {}): string {
+  return [BADGE_BASE, BADGE_VARIANT[variant], BADGE_SIZE[size], className].filter(Boolean).join(" ");
+}
+
+export function freeModelBadgeClassName(className = ""): string {
+  return ["ml-1 mb-0.5 text-[10px]! h-[16px]! flex-none bg-accent! text-white!", className]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── Chip ────────────────────────────────────────────────────────────────────
+
+export const CHIP_CLASS =
+  "inline-flex items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-2.5 py-1.5 text-[12px] font-normal text-txt-secondary";
+
+export function chipClassName(className = ""): string {
+  return [CHIP_CLASS, className].filter(Boolean).join(" ");
+}
+
+export const CHIP_REMOVE_BUTTON_CLASS =
+  "inline-flex h-4 w-4 items-center justify-center rounded-full text-txt-tertiary transition-colors duration-120 hover:bg-err-dim hover:text-err";
+
+export function actionChipClassName(className = ""): string {
+  return [
+    CHIP_CLASS,
+    "bg-sf hover:bg-sf-hover hover:text-txt transition-colors duration-120 disabled:opacity-50",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── Kbd ─────────────────────────────────────────────────────────────────────
+
+export const KBD_CLASS =
+  "finchKbd inline-flex min-w-[24px] items-center justify-center rounded-[var(--ui-radius-sm)] px-1.5 font-mono text-[11px] text-txt-secondary";
+
+export function kbdClassName(className = ""): string {
+  return [KBD_CLASS, className].filter(Boolean).join(" ");
+}
+
+/** Wrapper for a bare modifier glyph inside a Kbd (`⌘` + `B`). */
+export const KBD_SYMBOL_CLASS = "finchKbd__symbol";

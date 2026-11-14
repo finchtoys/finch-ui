@@ -41,6 +41,9 @@ const SHARED_CLASS_COMPONENTS=[
   'components/ToggleSwitch.tsx',
   'components/ModalShell.tsx',
   'components/Menu.tsx',
+  'components/Badge.tsx',
+  'components/Chip.tsx',
+  'components/Kbd.tsx',
 ];
 const UTILITY_TOKEN=/^(?:[a-z-]+:)*(?:flex|grid|block|inline-flex|inline-block|hidden|relative|absolute|fixed|sticky|items-[\w-]+|justify-[\w-]+|gap-[\w.-]+|p[xytblr]?-[\w.[\]%-]+|m[xytblr]?-[\w.[\]%-]+|w-[\w.[\]%/%-]+|h-[\w.[\]%/%-]+|min-[\w-]+|max-[\w-]+|text-[\w.[\]%/%-]+|bg-[\w.[\]%/%-]+|border(?:-[\w.[\]%/%-]+)?|rounded(?:-[\w.[\]%/%-]+)?|font-[\w-]+|shadow(?:-[\w.[\]%()-]+)?|transition(?:-[\w.[\]%,()-]+)?|animate-[\w-]+|overflow-[\w-]+|z-[\w-]+|cursor-[\w-]+|select-[\w-]+|whitespace-[\w-]+|truncate|leading-[\w-]+|tracking-[\w-]+|opacity-[\w.-]+|ring(?:-[\w.[\]%/%-]+)?|scale-[\w.-]+|underline|no-underline|space-[xy]-[\w.-]+)$/;
 function classishLiterals(src){

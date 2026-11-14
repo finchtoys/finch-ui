@@ -1,0 +1,58 @@
+{
+  "name": "@finchtoys/ui-vue",
+  "version": "0.1.0",
+  "description": "Finch's built-in components for Vue 3 — same classes, same stylesheet as @finchtoys/ui, so panels look and behave like Finch itself.",
+  "author": {
+    "name": "Finch Team",
+    "url": "https://finchwork.app"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/types",
+    "README.md"
+  ],
+  "scripts": {
+    "icons": "node scripts/gen-icons.mjs",
+    "build": "node scripts/gen-icons.mjs && vite build && vue-tsc -p tsconfig.build.json && node scripts/finish-types.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "@finchtoys/ui": ">=0.1.2",
+    "vue": ">=3.3"
+  },
+  "peerDependenciesMeta": {
+    "@finchtoys/ui": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/finchtoys/finch-ui.git",
+    "directory": "packages/vue"
+  },
+  "keywords": [
+    "finch",
+    "vue",
+    "components",
+    "ui",
+    "mini-tool"
+  ],
+  "devDependencies": {
+    "vue": "^3.5.0"
+  }
+}

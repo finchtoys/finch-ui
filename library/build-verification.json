@@ -1,6 +1,6 @@
 {
   "arbitraryUtilityCount": 156,
-  "checkedUtilityTokens": 98,
+  "checkedUtilityTokens": 121,
   "uncoveredTokens": [],
   "missing": [],
   "reactRoots": [
@@ -18,8 +18,8 @@
   ],
   "sizes": {
     "libraryJs": {
-      "bytes": 1328050,
-      "gzip": 339642
+      "bytes": 1328457,
+      "gzip": 339680
     },
     "libraryCss": {
       "bytes": 77589,

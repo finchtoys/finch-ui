@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist/types",
+    // The shared class module lives in library/styles and is compiled into the
+    // bundle. Keeping it inside rootDir lets the emitted d.ts import it with a
+    // relative path that still resolves inside dist/types.
+    "rootDir": "../.."
+  },
+  "include": ["src/**/*.ts", "src/**/*.vue", "entry.ts"]
+}

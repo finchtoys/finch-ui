@@ -195,6 +195,62 @@ input-default  class  onlyVue:["font-medium"]
 
 **还没迁移**：其余 33 个组件文件。新闸门目前只覆盖名单里的 5 个（`SHARED_CLASS_COMPONENTS`），迁移一个就往名单里加一行，闸门自动接手。`Chip` / `Badge` / `Kbd` 这类纯展示件是机械活；`Tooltip` / `HoverCard` / `DropdownSelect` 建议连同它们的定位代数一起搬，否则会重演「两份定位代码」。`Emoji` / `LiquidGlassFilter` / `Toast` 属于 C 类，先解耦再谈迁移。
 
+### 5.5 前一轮的补强：让「只改一处」当场变红，并证明 React 侧零变化
+
+§5.4 落地后有两件事只是「我说了」，没有「测出来」：一是新闸门真能拦住半拉子重构，二是 React 侧重构前后渲染确实没变。这一轮补上。
+
+#### A · 闸门加固：从「任意值」扩到「全量 token」
+
+原来 `verify-build.mjs` 只校验**任意值** utility（`bg-[…]` 这类）。漏掉 `@source "./classes.ts"` 时普通 utility（`h-[21px]`、`gap-2.5`、`no-underline`…）也会一起消失，而任意值检查可能恰好只看到少数几条，甚至全绿。现在加了第二层断言：把已迁移来源里出现的**每一个** utility token 拿去找规则，缺一条就失败。
+
+当前覆盖：**156 条任意值 + 98 条全量 token**，全部命中 `dist/style.css` 里的真实规则（要有非空声明，不认空选择器）。
+
+实测「只改一处」：
+
+| 状态 | `dist/style.css` 指纹 | `npm run verify` |
+|---|---|---|
+| 正常 | `236073b1…`（77,589 B） | PASS |
+| **删掉 `@source "./classes.ts"`（只改一处）** | `2decb250…`（变小） | **FAIL**：`Utility 在编译产物里没有规则（检查 styles/finch-ui.css 的 @source 是否覆盖了来源文件）: transition-[background-color,border-color,color,opacity] ← styles/classes.ts \| active:scale-95 ← styles/classes.ts \| no-underline ← styles/classes.ts …` |
+| 恢复 | `236073b1…`（复原） | PASS |
+
+报错会点名 token 与「来源文件」，照着自己就能定位到是 `@source` 还是扫描路径漏了——不用靠人记得。同样的道理，只改 `verify-build.mjs` 的扫描路径而不改 `@source`，这条断言也会红。
+
+#### B · React 重构前后：把重构前的组件挂成第三个被测侧
+
+harness 原来只有 `react` / `vue` 两侧。现在多一个 `baseline` 侧：用 `git worktree` 把重构前的提交（`568d782`）检出到 `.baseline/568d782/`，`@baseline` alias 指过去，场景定义完全复用同一份（`createReactTrees(components)` 注入），于是「同一个场景、同一份 props、同一套断言」分别喂给新旧两版 React。
+
+复现：
+
+```bash
+cd spike/vue && npm run report   # 会自动建 worktree（npm run baseline）
+```
+
+**结果（41 场景 × 浅/深两套主题）：**
+
+| 检查 | 重构前 vs 重构后（React） | React vs Vue |
+|---|---|---|
+| 逐属性比较（57 条 CSS 属性 + 几何 + 属性 + class 串） | **语义 0 差异** | 0 差异 |
+| 截图逐字节（38 场景 × 3 侧 × 2 主题 = 228 张） | **38/38 完全相同** | 38/38 相同 |
+| 唯一差异 | **2 条 `class-whitespace`**（见下） | — |
+
+那 2 条唯一差异，是同一个元素（`menu-bottom-start` 里 `danger` 的菜单项）：
+
+```
+重构前： "menuActionRow  menuActionRow--ui-danger"   ← 两个空格
+重构后： "menuActionRow menuActionRow--ui-danger"    ← 一个空格
+```
+
+根因是旧代码的模板插值：`` `menuActionRow ${active ? "…" : ""} ${danger ? "…" : ""} ${className}`.trim() ``，当 `active=false` 时中间那段留下一个空串，于是两个空格。新的组合函数用 `.filter(Boolean).join(" ")`，天然归一。
+
+这个差异**可证明是惰性的**：token 集合与顺序完全相同（harness 因此把它分到 `class-whitespace` 而不是 `class`）、computed style 全同、截图逐字节相同（像素级无差别），且没有任何 CSS 选择器依赖空格。所以结论是「语义零变化」，但我不把它写成「逐字节零变化」——`className` 属性串确实差一个空格。
+
+如果要求连这个空格都保持原样，把 `menuItemClassName()` 改回旧模板写法即可（一行），但那等于把一个无意义的双空格固定进两个框架共用的模块里。我倾向保持归一，指出来由你定。
+
+#### C · 结论与遗留
+
+- **完成**：class 单源重构（5 个组件）、两处构建指纹、全量 token 闸门 + 红/绿实证、React 前后语义等价 + 像素等价、Vue 侧改吃库内同一份模块且复测 0 差异。
+- **有遗留**：其余 33 个组件文件仍是本地字面量。机制已就位（迁移一个 → 往 `SHARED_CLASS_COMPONENTS` 加一行、往 `classes.ts` 搬字符串、跑 `verify` 看两条断言），但每个组件仍需要一次人工判断：纯 static 直搬；带 `${}` 条件插值的要写成组合函数；带内联样式的要连样式值一起搬（否则那个组件在 Vue 侧会重演 px 陷阱）。这一轮**没有**为了凑数量去动它们——没有逐组件渲染覆盖的迁移，保证不了「零变化」，反而稀释了上面这些证据的分量。
+
 ---
 
 ## 6. 全量 Vue 版的成本估算

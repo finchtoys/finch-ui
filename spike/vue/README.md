@@ -5,6 +5,8 @@
 
 两个框架现在吃**同一份** `library/styles/classes.ts`（命题 4 方案 A 已落地），所以这里的对比同时也是那条共享路径的回归测试。
 
+第三个被测侧是 `baseline`：重构**前**的组件（git worktree，`.baseline/<sha>/library`），用同一套场景再跑一遍，用来证明「抽 class 单源」没有改变 React 的渲染结果。
+
 结论与数据：[`docs/vue-spike-findings.md`](../../docs/vue-spike-findings.md)。
 
 ## 边界
@@ -43,7 +45,11 @@ npm run typecheck  # vue-tsc
 产物：
 
 - `report/comparison-light.json`、`report/comparison-dark.json` —— 全量采样、差异、行为事实
-- `report/shots/{light,dark}/<scenario>--{react,vue}.png` —— 每对截图（逐字节比对，相同也留档，方便出事时看）
+- `report/shots/{light,dark}/<scenario>--{react,vue,baseline}.png` —— 每侧截图（逐字节比对，相同也留档，方便出事时看）
+
+`npm run build` / `report` 会先跑 `npm run baseline`，它用 `git worktree` 把重构前的提交
+（默认 `568d782`）检出到 `.baseline/`（已 gitignore）。想换基线：
+`SPIKE_BASELINE_SHA=<sha> npm run baseline`。清理：`git worktree remove .baseline/568d782`。
 
 ## 看结果
 
@@ -52,8 +58,13 @@ node -e "const r=require('./report/comparison-light.json'); console.log(r.summar
 ```
 
 `summary.scenariosWithDiffs === 0`、`controlDetected === true`、`probeDiffs === 0`、
-`pixelDiffScenarios` 为空 —— 四项同时成立才算通过。`controlDetected` 是必须项：它证明探针能发现漂移
-（负向对照里 500→400 的字重差必须被抓到）。
+`pixelDiffScenarios` 为空、`refactorPixelDiffScenarios` 为空 —— 同时成立才算通过。
+`controlDetected` 是必须项：它证明探针能发现漂移（负向对照里 500→400 的字重差必须被抓到）。
+
+`refactorIdentical` / `refactorSemanticallyIdentical` 是「重构前 vs 重构后」的两档判定：
+前者要求 `class` 属性串逐字节相同，后者允许 **whitespace-only** 差异（token 相同、顺序相同、
+computed style 与截图相同）。当前结果：前者 false，后者 true，且差异只有 2 条
+`class-whitespace`（旧模板插值留下的双空格）——见 findings §5.5。
 
 ## 没覆盖
 

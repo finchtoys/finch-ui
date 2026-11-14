@@ -6,9 +6,10 @@
   "description": "Spike: rewrite 5 Finch UI components in Vue 3 and measure drift against the React originals.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "compare": "node scripts/compare.mjs",
-    "report": "node scripts/compare.mjs && node scripts/compare.mjs --dark",
+    "baseline": "node scripts/prepare-baseline.mjs",
+    "build": "npm run baseline && vite build",
+    "compare": "npm run baseline && node scripts/compare.mjs",
+    "report": "npm run baseline && node scripts/compare.mjs && node scripts/compare.mjs --dark",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

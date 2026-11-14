@@ -2,7 +2,8 @@ import { createRoot } from "react-dom/client";
 import { createApp } from "vue";
 import type { App } from "vue";
 import type { ReactNode } from "react";
-import { reactTrees } from "./react-trees";
+import { reactTrees } from "./current-trees";
+import { baselineReactTrees } from "./baseline-trees";
 import { vueTrees } from "./vue-trees";
 import { scenarios } from "./registry";
 import type { ScenarioDef } from "./registry";
@@ -17,7 +18,13 @@ import ButtonDriftControl from "../vue/ButtonDriftControl.vue";
  * Finch webview later.
  */
 
-export type Side = "react" | "vue";
+/**
+ * "baseline" is the pre-refactor copy of the same React components (see
+ * baseline-trees.tsx). It exists to answer one question: did extracting the
+ * class strings change what React renders? Its diff against "react" is the
+ * before/after evidence, and it shares every other part of the rig.
+ */
+export type Side = "react" | "vue" | "baseline";
 
 export interface SideResult {
   samplesBefore: Record<string, Sample[]>;
@@ -29,7 +36,7 @@ export interface SideResult {
 
 interface DiffEntry {
   scenario: string;
-  kind: "class" | "class-order" | "style" | "geometry" | "behavior" | "missing" | "structure";
+  kind: "class" | "class-order" | "class-whitespace" | "style" | "geometry" | "behavior" | "missing" | "structure";
   key: string;
   react: unknown;
   vue: unknown;
@@ -60,9 +67,10 @@ function purgeOrphans() {
 
 async function mount(side: Side, id: string): Promise<() => Promise<void>> {
   clearStage();
-  if (side === "react") {
-    const tree = reactTrees[id] as (() => ReactNode) | undefined;
-    if (!tree) throw new Error(`no react tree for ${id}`);
+  if (side === "react" || side === "baseline") {
+    const source = side === "react" ? reactTrees : baselineReactTrees;
+    const tree = source[id] as (() => ReactNode) | undefined;
+    if (!tree) throw new Error(`no ${side} tree for ${id}`);
     const root = createRoot(stage());
     reactRoot = root;
     root.render(tree());
@@ -156,6 +164,11 @@ function compareSample(scenario: string, key: string, react: Sample | undefined,
     const onlyVue = [...b].filter((token) => !a.has(token));
     if (onlyReact.length || onlyVue.length) {
       diffs.push({ scenario, kind: "class", key, react: { onlyReact }, vue: { onlyVue } });
+    } else if (react.classTokens.join(" ") === vue.classTokens.join(" ")) {
+      // Same tokens, same order — only the whitespace between them differs.
+      // Inert (classList is identical, no selector matches whitespace), but it
+      // is still a byte difference and gets reported as such.
+      diffs.push({ scenario, kind: "class-whitespace", key, react: react.className, vue: vue.className });
     } else {
       diffs.push({ scenario, kind: "class-order", key, react: react.className, vue: vue.className });
     }
@@ -205,26 +218,38 @@ export interface ScenarioReport {
   title: string;
   react: SideResult;
   vue: SideResult;
+  /** Pre-refactor React (before the class-string extraction). */
+  baseline: SideResult;
+  /** React (HEAD) vs Vue — the framework-parity diff. */
   diffs: DiffEntry[];
+  /** React (HEAD) vs React (pre-refactor) — the extraction-safety diff. */
+  refactorDiffs: DiffEntry[];
+}
+
+function diffSide(a: SideResult, b: SideResult, scenario: ScenarioDef): DiffEntry[] {
+  const out: DiffEntry[] = [];
+  compareMaps(scenario.id, "before", a.samplesBefore, b.samplesBefore, out);
+  compareMaps(scenario.id, "after", a.samplesAfter, b.samplesAfter, out);
+  compareBehavior(scenario.id, a.behavior, b.behavior, out);
+  if (a.leakedNodesAfterUnmount !== b.leakedNodesAfterUnmount) {
+    out.push({
+      scenario: scenario.id,
+      kind: "behavior",
+      key: "leakedNodesAfterUnmount",
+      react: a.leakedNodesAfterUnmount,
+      vue: b.leakedNodesAfterUnmount,
+    });
+  }
+  return out;
 }
 
 export async function runScenario(scenario: ScenarioDef): Promise<ScenarioReport> {
   const react = await measure("react", scenario);
   const vue = await measure("vue", scenario);
-  const diffs: DiffEntry[] = [];
-  compareMaps(scenario.id, "before", react.samplesBefore, vue.samplesBefore, diffs);
-  compareMaps(scenario.id, "after", react.samplesAfter, vue.samplesAfter, diffs);
-  compareBehavior(scenario.id, react.behavior, vue.behavior, diffs);
-  if (react.leakedNodesAfterUnmount !== vue.leakedNodesAfterUnmount) {
-    diffs.push({
-      scenario: scenario.id,
-      kind: "behavior",
-      key: "leakedNodesAfterUnmount",
-      react: react.leakedNodesAfterUnmount,
-      vue: vue.leakedNodesAfterUnmount,
-    });
-  }
-  return { id: scenario.id, group: scenario.group, title: scenario.title, react, vue, diffs };
+  const baseline = await measure("baseline", scenario);
+  const diffs = diffSide(react, vue, scenario);
+  const refactorDiffs = diffSide(baseline, react, scenario);
+  return { id: scenario.id, group: scenario.group, title: scenario.title, react, vue, baseline, diffs, refactorDiffs };
 }
 
 /** Negative control: React original vs a Vue copy with one utility removed. */
@@ -260,6 +285,10 @@ export interface SpikeReport {
   vueVersion: string;
   scenarios: ScenarioReport[];
   control: { diffs: DiffEntry[]; expectedStyleDiff: boolean };
+  /** True when every scenario renders identically before and after the extraction. */
+  refactorIdentical: boolean;
+  /** Same, ignoring whitespace-only class differences (semantic equivalence). */
+  refactorSemanticallyIdentical: boolean;
 }
 
 export async function runAll(options: { theme?: "light" | "dark" } = {}): Promise<SpikeReport> {
@@ -291,6 +320,10 @@ export async function runAll(options: { theme?: "light" | "dark" } = {}): Promis
     vueVersion: "vue",
     scenarios: reports,
     control,
+    refactorIdentical: reports.every((item) => item.refactorDiffs.length === 0),
+    refactorSemanticallyIdentical: reports.every(
+      (item) => item.refactorDiffs.every((diff) => diff.kind === "class-whitespace"),
+    ),
   };
 }
 

@@ -1,5 +1,7 @@
 {
   "arbitraryUtilityCount": 156,
+  "checkedUtilityTokens": 98,
+  "uncoveredTokens": [],
   "missing": [],
   "reactRoots": [
     "/Users/puterjam/Workspace/aeolus/finch-ui/node_modules/react"

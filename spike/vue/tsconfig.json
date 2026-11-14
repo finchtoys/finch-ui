@@ -11,6 +11,7 @@
     "baseUrl": ".",
     "paths": {
       "@lib/*": ["../../library/*"],
+      "@baseline/*": ["../../.baseline/568d782/library/*"],
       "@shared/*": ["./src/shared/*"]
     }
   },

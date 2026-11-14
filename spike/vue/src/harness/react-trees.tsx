@@ -1,18 +1,29 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useRef, useState } from "react";
 import { Star } from "lucide-react";
-import { Button } from "@lib/components/Button";
-import { Input } from "@lib/components/Input";
-import { ToggleSwitch } from "@lib/components/ToggleSwitch";
-import { ModalShell } from "@lib/components/ModalShell";
-import { MenuItem, MenuPopover, MenuSeparator } from "@lib/components/Menu";
 
 /**
- * React trees for every scenario — built from the UNMODIFIED library components.
- * Nothing here may import from the mirrored/vue side.
+ * React trees for every scenario. The components are INJECTED so the very same
+ * scenario definitions can render either the current library or the pre-refactor
+ * copy (git worktree at .baseline/<sha>) — that is how "React rendered the same
+ * before and after the class-string extraction" gets proven instead of asserted.
+ *
+ * Nothing here may import from the vue side.
  */
+export interface ReactComponents {
+  Button: ComponentType<any>;
+  Input: ComponentType<any>;
+  ToggleSwitch: ComponentType<any>;
+  ModalShell: ComponentType<any>;
+  MenuItem: ComponentType<any>;
+  MenuPopover: ComponentType<any>;
+  MenuSeparator: ComponentType<any>;
+}
 
 const PANEL_BODY = <p className="m-0 px-5 pt-4 pb-5 text-[14px] text-txt">Modal body copy.</p>;
+
+export function createReactTrees(c: ReactComponents): Record<string, () => ReactNode> {
+  const { Button, Input, ToggleSwitch, ModalShell, MenuItem, MenuPopover, MenuSeparator } = c;
 
 function MenuContents() {
   return (
@@ -139,7 +150,7 @@ function NestedModalScenario() {
   );
 }
 
-export const reactTrees: Record<string, () => ReactNode> = {
+const trees: Record<string, () => ReactNode> = {
   "btn-primary": () => <Button variant="primary">主要</Button>,
   "btn-brand": () => <Button variant="brand">品牌</Button>,
   "btn-secondary": () => <Button variant="secondary">次要</Button>,
@@ -197,3 +208,6 @@ export const reactTrees: Record<string, () => ReactNode> = {
   "menu-right-start": () => <MenuScenario placement="right-start" />,
   "menu-anchor-point": () => <MenuScenario nested point={{ x: 260, y: 260 }} />,
 };
+
+  return trees;
+}

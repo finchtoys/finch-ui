@@ -7,3 +7,6 @@ release/
 
 # Vue spike: regenerable measurement artifacts (npm run report)
 spike/vue/report/
+
+# Pre-refactor git worktree used by the spike harness (npm run baseline)
+.baseline/

@@ -5,6 +5,12 @@ import { dirname, resolve } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+// Pre-refactor copy of library/components, materialised by `npm run baseline`
+// (git worktree at .baseline/<sha>). The harness renders it next to HEAD to
+// prove the class-string extraction changed nothing.
+const baselineLibrary =
+  process.env.SPIKE_BASELINE_DIR ?? resolve(here, "../../.baseline/568d782/library");
+
 // The harness ships React AND Vue in one page on purpose: the two trees must be
 // measured by the same engine, in the same stylesheet, at the same window size.
 // This is a comparison rig, not a product bundle.
@@ -28,6 +34,7 @@ export default defineConfig({
       // Read the React originals straight from the library source. Nothing in
       // library/ or lab/ is modified.
       { find: /^@lib\//, replacement: `${resolve(here, "../../library")}/` },
+      { find: /^@baseline\//, replacement: `${baselineLibrary}/` },
       // The PREBUILT stylesheet both frameworks share.
       { find: /^@css$/, replacement: resolve(here, "../../library/dist/style.css") },
       // Framework-neutral class strings used by BOTH sides (proposal under test).

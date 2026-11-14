@@ -212,7 +212,7 @@ async function screenshotPairs(page, scenarios, theme) {
     if (scenario.treeId) continue;
     const buffers = {};
     const nodes = {};
-    for (const side of ["react", "vue"]) {
+    for (const side of ["react", "vue", "baseline"]) {
       await page.evaluate(([s, id]) => window.__finchVueSpike.mountForProbe(s, id), [side, scenario.id]);
       await page.waitForTimeout(scenario.settle ?? 320);
       nodes[side] = await page.evaluate(() => document.querySelectorAll("#stage *").length);
@@ -220,16 +220,20 @@ async function screenshotPairs(page, scenarios, theme) {
       await page.evaluate(() => window.__finchVueSpike.unmountProbe());
     }
     const same = buffers.react.equals(buffers.vue);
+    const refactorSame = buffers.react.equals(buffers.baseline);
     await writeFile(join(themeShots, `${scenario.id}--react.png`), buffers.react);
     await writeFile(join(themeShots, `${scenario.id}--vue.png`), buffers.vue);
+    await writeFile(join(themeShots, `${scenario.id}--baseline.png`), buffers.baseline);
     diffs.push({
       id: scenario.id,
       pixelIdentical: same,
+      refactorPixelIdentical: refactorSame,
       nodes,
       bytes: { react: buffers.react.length, vue: buffers.vue.length },
       sha256: {
         react: createHash("sha256").update(buffers.react).digest("hex").slice(0, 16),
         vue: createHash("sha256").update(buffers.vue).digest("hex").slice(0, 16),
+        baseline: createHash("sha256").update(buffers.baseline).digest("hex").slice(0, 16),
       },
     });
   }
@@ -266,6 +270,14 @@ async function main() {
     scenarios: report.scenarios.length,
     scenariosWithDiffs: report.scenarios.filter((item) => item.diffs.length > 0).length,
     totalDiffs: report.scenarios.reduce((sum, item) => sum + item.diffs.length, 0),
+    refactorIdentical: report.refactorIdentical,
+    refactorSemanticallyIdentical: report.refactorSemanticallyIdentical,
+    refactorDiffs: report.scenarios.reduce((sum, item) => sum + item.refactorDiffs.length, 0),
+    refactorDiffsByKind: report.scenarios
+      .flatMap((item) => item.refactorDiffs)
+      .reduce((acc, diff) => ({ ...acc, [diff.kind]: (acc[diff.kind] ?? 0) + 1 }), {}),
+    refactorDiffScenarios: report.scenarios.filter((item) => item.refactorDiffs.length > 0).map((item) => item.id),
+    refactorPixelDiffScenarios: pixel.filter((item) => !item.refactorPixelIdentical).map((item) => item.id),
     controlDetected: report.control.expectedStyleDiff,
     probeDiffs: probeDiffs.length,
     pixelDiffScenarios: pixel.filter((item) => !item.pixelIdentical).map((item) => item.id),

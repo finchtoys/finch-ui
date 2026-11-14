@@ -27,6 +27,7 @@ export { default as Kbd } from "./src/components/Kbd.vue";
 export { default as ListRow } from "./src/components/ListRow.vue";
 export { default as MenuItem } from "./src/components/MenuItem.vue";
 export { default as MenuPopover } from "./src/components/MenuPopover.vue";
+export { default as MenuSubmenu } from "./src/components/MenuSubmenu.vue";
 export { default as ModalShell } from "./src/components/ModalShell.vue";
 export { default as OptionCard } from "./src/components/OptionCard.vue";
 export { default as SegmentedControl } from "./src/components/SegmentedControl.vue";

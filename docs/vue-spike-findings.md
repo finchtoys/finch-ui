@@ -303,9 +303,41 @@ cd spike/vue && npm run report   # 会自动建 worktree（npm run baseline）
 
 **已做（2026-11-14，命题 4 方案 A 落地，见 §5.4）**：`library/styles/classes.ts` 建立、5 个组件迁移、`@source` 与 `verify-build.mjs` 两处指纹同步、新增「已迁移组件不得出现 class 字面量」硬闸门、Vue 侧改吃库内模块并复测 0 差异。
 
+**已做（2026-11-15，全量 Vue 版落地）**：`packages/vue/` → `@finchtoys/ui-vue@0.1.0`。见 §9。
+
 **接下来按顺序**：
 
 1. 先定 §6.3 的「谁消费 Vue 版」——没有真实消费方之前，不要再扩组件。
 2. 把剩下 33 个组件分批迁进 `styles/classes.ts`（每批迁移后跑 `npm run verify` 并确认 `dist/style.css` 指纹不变）。迁移顺序建议：纯展示件（Chip/Badge/Kbd/Empty/Alert/SkeletonBlock…）→ 表单件（CheckBox/SecretInput/SegmentedControl/OptionCard…）→ 浮层件（Tooltip/HoverCard/DropdownSelect/InlineSelect/MultiSelect/TimePicker，连同定位代数一起搬）。
 3. 把 `spike/vue/scripts/compare.mjs` 提成 CI 任务，扩到所有已移植组件；再补一层 Node 端一致性断言（SSR 渲染后比 `class` 属性，秒级，不必开浏览器），让「没开浏览器」的 PR 也能拦住漂移。
 4. C 类（Emoji / LiquidGlassFilter / Toast）单独出解耦方案，别混在移植里做。
+
+
+---
+
+## 9. 全量 Vue 版：@finchtoys/ui-vue
+
+舜子的口径是「能用就行」：要正确、不要镀金。spike 那套逐属性/逐像素 harness 保留在
+`spike/vue/`，作为路线证据；交付物只要求「渲染不抛错 + class 与 React 一致」的最小 smoke。
+
+**产出**：`packages/vue/`，npm 名 `@finchtoys/ui-vue`，版本 0.1.0，`publishConfig.access: public`，
+`vue >= 3.3` 为 peer（`@finchtoys/ui` 作为可选 peer，只为那份 `style.css`）。已用 `npm pack` +
+干净目录安装验证：独立可 `npm i`，45 个导出，`renderToString` 正常。
+
+**范围**：A 类 20 + B 类 15 全部迁完（41 个组件 / 4 个图标替身 / 5 个菜单与弹层原语），
+`MenuSubmenu` 也补了 —— 它的定位代数已在共享模块里，补一个组件只多几十行。C 类按约定不做，
+README 表格逐条写明「不提供 / 降级 / 限制」及原因（Emoji 资产管线、LiquidGlassFilter 宿主单例、
+Toast 全局单例 + 玻璃滤镜；ScrollArea 与两个选择器用原生滚动容器降级；ButtonGroup 不拆 Tooltip）。
+
+**纪律**：每个组件都先把它在 React 侧的字面量迁进 `library/styles/classes.ts`、登记进
+`SHARED_CLASS_COMPONENTS`，再写 Vue 版。闸门在整轮里拦下 7 处遗留（SkeletonCatalogCard 4 处、
+DropdownSelect/MultiSelect 的 label 与菜单宽度、DialogMessage 行内 code），全部修掉才转绿。
+最终：**156 条任意值 + 258 条全量 token 全命中**，`library/dist/style.css` 全程保持
+`236073b1…`（77,589 字节，逐字节不变），smoke 36 例全过。
+
+**和 spike 的差别**：spike 证明的是「Vue 能做到像素级一致」；这一版只保证「class 与 React 同源 +
+组件各自能跑」。因此**没有**再跑逐属性/逐像素对比，也**没有**验证 hover 全矩阵、无障碍树、
+`v-model` 语义穷尽——这些仍是未验证项，不要在后续沟通里当成已通过。
+
+**未做**：C 类三件（Emoji / LiquidGlassFilter / Toast）；`lab/` 与 finch 主仓 `src/renderer/ui/`
+一行未动；没有发包。

@@ -1,0 +1,31 @@
+import { useEffect, useRef, useState } from 'react';
+import { Button, Tooltip, HoverCard, MenuPopover, MenuPanel, MenuItem, MenuSeparator, MenuSubmenu, ModalShell, ConfirmDialog, DialogMessage, ScrollArea, DropdownSelect, ToastViewport, useToastApi, registerToastApi, toast, type ToastPosition } from '../../library/dist/index.js';
+import { Card, Row } from './cards';
+import { options } from './Forms';
+export function Overlays() {
+  const [menu,setMenu]=useState(false),[sub,setSub]=useState(false),[modal,setModal]=useState(false),[nested,setNested]=useState(false),[confirm,setConfirm]=useState(false),[pending,setPending]=useState(false),[danger,setDanger]=useState(false);
+  const [value,setValue]=useState('alpha'),[last,setLast]=useState('尚未操作'),[pos,setPos]=useState<ToastPosition>('bottom-right');
+  const anchor=useRef<HTMLButtonElement>(null), subAnchor=useRef<HTMLButtonElement>(null);
+  const api=useToastApi(3);
+  useEffect(()=>{registerToastApi(api);return()=>registerToastApi(null);},[api]);
+  return <>
+    <Card name="Tooltip / HoverCard" note="四方向，含禁用/长文；下面独立滚动区用于真实 portal 定位测试。滚动时 Tooltip 按原组件设计关闭，HoverCard 跟随。">
+      <Row>{(['top','bottom','left','right'] as const).map(placement=><Tooltip key={placement} placement={placement} content={`Tooltip ${placement}`} delay={100}><Button variant="outline">{placement}</Button></Tooltip>)}<Tooltip disabled content="不应出现"><Button disabled>disabled Tooltip</Button></Tooltip></Row>
+      <Row>{(['top','bottom','left','right'] as const).map(placement=><HoverCard key={placement} placement={placement} delay={100} content={<span>HoverCard {placement}：长内容用于核对边缘翻转与换行。</span>}><Button variant="outline">{placement}</Button></HoverCard>)}</Row>
+      <div id="portal-scroll" className="lab-portal-scroll"><div className="lab-portal-inner">
+        <Row><Button id="test-menu" ref={anchor} variant="secondary" onClick={()=>setMenu(!menu)}>测试菜单</Button><DropdownSelect portal className="test-dropdown" value={value} options={options} onChange={setValue}/><Tooltip className="test-tooltip" content="Portal tooltip" delay={0}><Button id="test-tooltip">测试 Tooltip</Button></Tooltip><HoverCard className="test-hover" content="Portal hover card" placement="bottom" delay={0}><Button id="test-hover">测试 HoverCard</Button></HoverCard></Row>
+        <p>在这里滚动：菜单应跟随锚点；Tooltip 可关闭；HoverCard 应重定位。portal 的父节点是 guest 的 body，不能越出 webview 物理边界。</p>
+      </div></div>
+      <MenuPopover className="test-menu" open={menu} anchorRef={anchor} onClose={()=>setMenu(false)} placement="bottom-start"><MenuItem active onClick={()=>{setLast('选择 active');setMenu(false);}}>active</MenuItem><MenuItem disabled>disabled</MenuItem><MenuSeparator/><MenuItem danger onClick={()=>{setLast('选择 danger（仅演示）');setMenu(false);}}>danger</MenuItem><MenuItem ref={subAnchor} onMouseEnter={()=>setSub(true)} onClick={()=>setSub(!sub)}>子菜单 →</MenuItem><MenuSubmenu triggerRef={subAnchor} open={menu&&sub} side="right"><MenuItem onClick={()=>{setLast('子菜单已选');setSub(false);setMenu(false);}}>选择子项</MenuItem></MenuSubmenu></MenuPopover>
+    </Card>
+    <Card name="Menu" note="静态 MenuPanel / MenuItem / MenuSeparator，浮动及子菜单在上方测试区。"><MenuPanel className="lab-static-menu"><MenuItem onClick={()=>setLast('默认菜单项')}>default / hover</MenuItem><MenuItem active>active</MenuItem><MenuItem disabled>disabled</MenuItem><MenuSeparator/><MenuItem danger onClick={()=>setLast('danger demo')}>danger</MenuItem></MenuPanel><output>{last}</output></Card>
+    <Card name="ModalShell" note="ModalShell 自身没有内边距：表头由它画，正文 padding 归调用方。这里只给正文 px-5 pt-4 pb-5，和表头 px-5 同一条左线。"><Row><Button id="test-modal" variant="secondary" onClick={()=>setModal(true)}>打开 Modal</Button></Row><ModalShell open={modal} onClose={()=>setModal(false)} title="Lab Modal" closeLabel="关闭" shellClassName="lab-modal"><div className="appScrollbar px-5 pt-4 pb-5"><DialogMessage message={'模态框只覆盖当前 webview。\n> 测试 Esc、嵌套层级和 guest 内部滚动。'}/><div className="mt-4"><Row><Button id="test-nested" onClick={()=>setNested(true)}>嵌套 Modal</Button><Button onClick={()=>setModal(false)}>关闭</Button></Row></div></div></ModalShell><ModalShell open={nested} onClose={()=>setNested(false)} title="Nested Modal" closeLabel="关闭内层" zIndex={400} shellClassName="lab-modal"><div className="px-5 py-4">按 Esc 应只关闭最上层。</div></ModalShell></Card>
+    <Card name="ConfirmDialog"><Row><Button id="test-confirm" variant="secondary" onClick={()=>{setDanger(false);setConfirm(true);}}>确认框</Button><Button variant="danger" onClick={()=>{setDanger(true);setConfirm(true);}}>danger</Button><Button onClick={()=>{setPending(true);setConfirm(true);}}>pending</Button></Row><ConfirmDialog open={confirm} title="Lab Confirm" description="仅预览，不执行外部操作" closeLabel="关闭" confirmLabel="确认" cancelLabel="取消" variant={danger?'danger':'primary'} pending={pending} showCloseButton onCancel={()=>{setConfirm(false);setPending(false);setLast('取消');}} onConfirm={()=>{setConfirm(false);setLast('确认');}}/></Card>
+    <Card name="DialogMessage"><DialogMessage message={'普通文本与 `code`\n{成功}\\g {失败}\\r {重点}\\b\n> 次要说明\n! 警告行'}/></Card>
+    <Card name="Toast" note="真实 Toast singleton + portal。仅复制传递依赖 LiquidGlassFilter；未声称宿主液态玻璃设置可在 guest 中跟随。">
+      <DropdownSelect value={pos} options={(['top-left','top-center','top-right','bottom-left','bottom-center','bottom-right'] as const).map(value=>({value,label:value}))} onChange={setPos}/>
+      <Row>{(['default','success','info','warning','error','promise'] as const).map(variant=><Button key={variant} variant="secondary" onClick={()=>toast.push({variant,title:variant,description:'来自本地 Toast 单例',position:pos})}>{variant}</Button>)}<Button id="test-toast" onClick={()=>toast.push({title:'Lab toast',position:'bottom-right',duration:10000})}>测试 Toast</Button><Button onClick={()=>toast.push({title:'带操作',position:pos,action:{label:'撤销',onClick:()=>{api.clear();setLast('Toast 撤销');}}})}>带操作</Button><Button onClick={api.clear}>清空</Button></Row><ToastViewport toasts={api.toasts} onDismiss={api.dismiss}/>
+    </Card>
+    <Card name="ScrollArea"><div className="lab-scroll-size"><ScrollArea className="lab-scroll-size">{Array.from({length:18},(_,i)=><p key={i}>纵向 {i+1}</p>)}</ScrollArea></div><ScrollArea orientation="horizontal" className="lab-horizontal"><div className="lab-wide">横向滚动与边缘渐隐 · {Array.from({length:15},(_,i)=>i+1).join(' — ')}</div></ScrollArea></Card>
+  </>;
+}

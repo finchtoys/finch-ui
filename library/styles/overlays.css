@@ -1,0 +1,205 @@
+.menuPanel {
+  user-select: none;
+  backdrop-filter: blur(10px) saturate(1.05);
+}
+
+.menuPanel input,
+.menuPanel textarea,
+.menuPanel [contenteditable="true"] {
+  user-select: text;
+}
+
+.menuActionRow {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  gap: 6px;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  margin-bottom:1px;
+  border-radius: var(--ui-radius-sm);
+  color: var(--ui-text-secondary);
+  font-size: 14px;
+  text-align: left;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition:
+    background-color var(--ui-duration-fast) var(--ui-ease-out),
+    color var(--ui-duration-fast) var(--ui-ease-out);
+}
+
+.menuActionRow > svg {
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.menuActionRow--active {
+  background: color-mix(in srgb, var(--ui-bg-active) 60%, transparent);
+  color: var(--ui-text-primary);
+}
+
+.menuActionRow:hover {
+  background: color-mix(in srgb, var(--ui-bg-hover) 100%, transparent);
+  color: var(--ui-text-primary);
+}
+
+.menuActionRow:active {
+  background: color-mix(in srgb, var(--ui-bg-active) 60%, transparent);
+  color: var(--ui-accent-text);
+}
+
+.menuActionRow:disabled {
+  opacity: 0.45;
+  color: var(--ui-text-tertiary);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+.menuActionRow--ui-danger {
+  color: var(--ui-danger);
+}
+
+.menuActionRow--ui-danger:hover {
+  background: var(--ui-danger-dim);
+  color: var(--ui-danger);
+}
+
+.usageSkeleton {
+  background: color-mix(in srgb, var(--ui-text-primary) 10%, transparent);
+  animation: var(--animate-pulse-soft);
+}
+
+.hoverCard {
+  max-width: 280px;
+  user-select: none;
+}
+
+.hoverCard__content {
+  padding: 8px 10px;
+  border-radius: var(--ui-radius-sm);
+  box-shadow: var(--ui-shadow-sm);
+}
+.hoverCard--tips .hoverCard__content {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+[data-theme="light"] .hoverCard__content,
+:root:not([data-theme="dark"]) .hoverCard__content {
+  background: #1f2937;
+  color: #f4f6f8;
+}
+
+[data-theme="dark"] .hoverCard__content {
+  background: #e6eaf0;
+  color: #0f1115;
+}
+.hoverCard--wide.hoverCard {
+  width: min(380px, 72vw);
+  max-width: min(380px, 72vw);
+}
+
+.hoverCard--wide.hoverCard .hoverCard__content {
+  padding: 10px 12px;
+}
+
+.hoverCard--in {
+  animation: var(--animate-tooltipIn);
+}
+
+.hoverCard--out {
+  animation: var(--animate-tooltipOut);
+}
+
+.tooltip {
+  pointer-events: none;
+  user-select: none;
+}
+
+.tooltip--in {
+  animation: var(--animate-tooltipIn);
+}
+
+.tooltip--out {
+  animation: var(--animate-tooltipOut);
+}
+
+.tooltip__content {
+  max-width: 240px;
+  padding: 5px 10px;
+  border-radius: var(--ui-radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-shadow: var(--ui-shadow-sm);
+}
+[data-theme="light"] .tooltip__content,
+:root:not([data-theme="dark"]) .tooltip__content {
+  background: #1f2937;
+  color: #f4f6f8;
+}
+[data-theme="dark"] .tooltip__content {
+  background: #e6eaf0;
+  color: #0f1115;
+}
+.tooltip--arrow .tooltip__content {
+  position: relative;
+}
+
+.tooltip--arrow.tooltip--left .tooltip__content::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 0 4px 5px;
+  border-color: transparent transparent transparent #1f2937;
+}
+
+.tooltip--arrow.tooltip--right .tooltip__content::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 5px 4px 0;
+  border-color: transparent #1f2937 transparent transparent;
+}
+
+[data-theme="dark"] .tooltip--arrow.tooltip--left .tooltip__content::after {
+  border-color: transparent transparent transparent #e6eaf0;
+}
+
+[data-theme="dark"] .tooltip--arrow.tooltip--right .tooltip__content::after {
+  border-color: transparent #e6eaf0 transparent transparent;
+}
+.tooltip__content kbd {
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  padding: 0;
+  margin-top:2px;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}

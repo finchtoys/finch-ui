@@ -1,0 +1,33 @@
+/* Gallery layout only. Consumer does NOT use Tailwind. */
+html { scroll-behavior:auto; font-size:14px; color-scheme:light dark; }
+body { margin:0; background:var(--ui-bg-main); color:var(--ui-text-primary); font-family:var(--ui-font-body,system-ui); }
+* { box-sizing:border-box; }
+.lab-header { padding:20px; border-bottom:1px solid var(--ui-border); background:var(--ui-bg-root); }
+h1 { font-size:22px; font-weight:650; margin:0 0 6px; }
+.lab-header>p { margin:8px 0; }
+.lab-header nav { display:flex; gap:18px; margin-top:14px; }
+a { color:var(--ui-accent); }
+main { padding:18px; }
+.lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr)); gap:16px; margin-bottom:20px; }
+.lab-card { min-width:0; padding:16px; border:1px solid var(--ui-border); border-radius:var(--ui-radius-md); background:var(--ui-bg-elevated); }
+.lab-card>h2 { font-size:15px; font-weight:650; margin:0 0 12px; }
+.lab-card>div+div { margin-top:10px; }
+.lab-row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:8px 0; }
+.lab-form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:10px; }
+.lab-note { font-size:12px; line-height:1.6; color:var(--ui-text-tertiary); margin:6px 0 12px; }
+.lab-warning { font-size:12px; color:var(--ui-warning-text); line-height:1.6; }
+.lab-tokens { display:grid; gap:4px; margin:10px 0; font-size:11px; overflow-wrap:anywhere; }
+.lab-pass { color:var(--ui-positive-text); font-size:12px; }
+.lab-fail { color:var(--ui-danger-text); font-size:12px; }
+.lab-skeleton { height:16px; width:90%; border-radius:8px; margin:12px 0; }
+.lab-skeleton.short { width:55%; }
+.lab-portal-scroll { height:140px; overflow:auto; border:1px dashed var(--ui-accent); padding:12px; }
+.lab-portal-inner { height:360px; }
+.lab-portal-inner>p { font-size:12px; margin-top:100px; }
+.lab-static-menu { position:static!important; width:100%; }
+.lab-modal { width:min(430px,calc(100vw - 32px)); max-height:calc(100vh - 32px); overflow:auto; }
+.lab-scroll-size { height:160px; }
+.lab-horizontal { height:60px; }
+.lab-wide { width:1100px; padding:14px; }
+footer { padding:20px; color:var(--ui-text-tertiary); font-size:12px; }
+.lab-card output { font-size:12px; color:var(--ui-text-secondary); }

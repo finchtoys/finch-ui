@@ -1,0 +1,230 @@
+{
+  "adaptation": "Canonical host CSS variables mechanically renamed to private --ui-*; logic unchanged. LiquidGlassFilter is a transitive Toast dependency, not a public export.",
+  "files": [
+    {
+      "source": "src/renderer/ui/Alert.tsx",
+      "target": "components/Alert.tsx",
+      "sha256": "1e623c21310a55e670ddb6ef873a20126f37f5e311f29dfc763d3ab44035af65"
+    },
+    {
+      "source": "src/renderer/ui/Badge.tsx",
+      "target": "components/Badge.tsx",
+      "sha256": "c7938242aaa0bea6ee00df072d52437cb1b03e979ae96c043f0b9d53a17553b0"
+    },
+    {
+      "source": "src/renderer/ui/Breadcrumb.tsx",
+      "target": "components/Breadcrumb.tsx",
+      "sha256": "664130e308bb97a9117bba35d935d6680315255f8fac0201595f53e250bce0e2"
+    },
+    {
+      "source": "src/renderer/ui/Button.tsx",
+      "target": "components/Button.tsx",
+      "sha256": "c8ccc04c8998e77e369e075452e35e967c432735dcb00280385a9223f898cc2e"
+    },
+    {
+      "source": "src/renderer/ui/ButtonGroup.tsx",
+      "target": "components/ButtonGroup.tsx",
+      "sha256": "aac7e28f8c6c471204e42833d77cf81463e1436df6b221b412b4e8edba90c745"
+    },
+    {
+      "source": "src/renderer/ui/CheckBox.tsx",
+      "target": "components/CheckBox.tsx",
+      "sha256": "e0d406048ea1a14e217e0c644241c396cf9beeb984dba15949d7aa35fa77f1e4"
+    },
+    {
+      "source": "src/renderer/ui/Chip.tsx",
+      "target": "components/Chip.tsx",
+      "sha256": "ec3e2ccd3ac2fb85095b5587506039bb9b0b6ffc38feb9f72f05403a1d650876"
+    },
+    {
+      "source": "src/renderer/ui/ConfirmDialog.tsx",
+      "target": "components/ConfirmDialog.tsx",
+      "sha256": "bc9f3f8fd4f54745175a95fc0da20acef35617c14d0c46ed4929cd420e19d5a1"
+    },
+    {
+      "source": "src/renderer/ui/DialogMessage.tsx",
+      "target": "components/DialogMessage.tsx",
+      "sha256": "58799db1413da9489e9e04c4cf58d527fa9d01604b7facc979ad7d7759c15396"
+    },
+    {
+      "source": "src/renderer/ui/DropdownSelect.tsx",
+      "target": "components/DropdownSelect.tsx",
+      "sha256": "9f952f44383a27a78b5c1f7a6c8628513c424ad4f2b908680647831f690f897f"
+    },
+    {
+      "source": "src/renderer/ui/Emoji.tsx",
+      "target": "components/Emoji.tsx",
+      "sha256": "f951e93d9c96f925e5742ef8d4d9ab4b9fa1f0931a378cf4ab6b8ae6bf720aa1"
+    },
+    {
+      "source": "src/renderer/ui/Empty.tsx",
+      "target": "components/Empty.tsx",
+      "sha256": "263de0d95055e5b6e389981aef8e3850cafaa3334d1b4cdf74b3118291cea15b"
+    },
+    {
+      "source": "src/renderer/ui/HoverCard.tsx",
+      "target": "components/HoverCard.tsx",
+      "sha256": "021c7d99708bc87e9fbc96b73107fa1b759127fea7edba377b65cafb41753dd6"
+    },
+    {
+      "source": "src/renderer/ui/IconTabBar.tsx",
+      "target": "components/IconTabBar.tsx",
+      "sha256": "988f2c4a6dd734b60dd6d969fc3c6d2038f837f9e56ae025e4d1fcb7502a01d7"
+    },
+    {
+      "source": "src/renderer/ui/InlineActionLink.tsx",
+      "target": "components/InlineActionLink.tsx",
+      "sha256": "b6c030d75d26b41ba2182967fe7b06b52bab13ff08b16c91cf1b0c575bbf2570"
+    },
+    {
+      "source": "src/renderer/ui/InlineSelect.tsx",
+      "target": "components/InlineSelect.tsx",
+      "sha256": "4f6e4587541709bbce612918df600f9bc2cdc3d5f8e8c5b1dc941b8690c70c93"
+    },
+    {
+      "source": "src/renderer/ui/Input.tsx",
+      "target": "components/Input.tsx",
+      "sha256": "c9ac255079c58b3dc18a4f3baeb34d10e7a2a9c315ec1a276d9073a8ce5948b0"
+    },
+    {
+      "source": "src/renderer/ui/InputSelect.tsx",
+      "target": "components/InputSelect.tsx",
+      "sha256": "c0edb2a1d2981ab3236d6e0b551eb2eb648b3c07f0b0d7d866b76182a4bd20ad"
+    },
+    {
+      "source": "src/renderer/ui/Kbd.tsx",
+      "target": "components/Kbd.tsx",
+      "sha256": "1d779d7e12ccf99da89f5397708af0b91a8146ff8cc863854e32d1264278f80c"
+    },
+    {
+      "source": "src/renderer/ui/LiquidGlassFilter.tsx",
+      "target": "components/LiquidGlassFilter.tsx",
+      "sha256": "ee97ddac4d1105f671ccb21b24e0229ccbbb13d04ae542c584ad4b059233c8b8"
+    },
+    {
+      "source": "src/renderer/ui/ListRow.tsx",
+      "target": "components/ListRow.tsx",
+      "sha256": "2705edf85ab94c8e324e83429b03aa893a51601582605211189b0f30f7916962"
+    },
+    {
+      "source": "src/renderer/ui/Menu.tsx",
+      "target": "components/Menu.tsx",
+      "sha256": "8ad35727d0eb7f9661676465f770ef8d5ede9acdb039618645429b45661ff6b4"
+    },
+    {
+      "source": "src/renderer/ui/ModalShell.tsx",
+      "target": "components/ModalShell.tsx",
+      "sha256": "77d6f2931c22b7c7ac904139a0869f26f187f77ffdf2b6a4fb07d819c1f6fd2a"
+    },
+    {
+      "source": "src/renderer/ui/MultiSelect.tsx",
+      "target": "components/MultiSelect.tsx",
+      "sha256": "7a8f57d5853cb7ec793dbc8e5202e60a18902b2ed35a650f1ad8de8b10e3af1a"
+    },
+    {
+      "source": "src/renderer/ui/OptionCard.tsx",
+      "target": "components/OptionCard.tsx",
+      "sha256": "0d42615b760bb1bac4db6fada3a6a934615cbdea4bc846848607a03aa218ea1d"
+    },
+    {
+      "source": "src/renderer/ui/ScrollArea.tsx",
+      "target": "components/ScrollArea.tsx",
+      "sha256": "6da4ad22cd21e0535266d616708155a41ef8bb9347298c4ded5c21066064669d"
+    },
+    {
+      "source": "src/renderer/ui/SearchField.tsx",
+      "target": "components/SearchField.tsx",
+      "sha256": "2d7865564cdbd49ff9ebc667590a8ae4971e1e5d758871dc06caf6e6493987cd"
+    },
+    {
+      "source": "src/renderer/ui/SecretInput.tsx",
+      "target": "components/SecretInput.tsx",
+      "sha256": "6cfd2b016df8cd8fbba23f760815e52227018ae1b46078f41b76e1a3e921be46"
+    },
+    {
+      "source": "src/renderer/ui/SegmentedControl.tsx",
+      "target": "components/SegmentedControl.tsx",
+      "sha256": "fbf34fdd88cd24fdc17f27a6b10029ddc07348dd7d0d11c125aeab1994469d1b"
+    },
+    {
+      "source": "src/renderer/ui/SkeletonBlock.tsx",
+      "target": "components/SkeletonBlock.tsx",
+      "sha256": "56e581f5ecf28e57f56b546c534eb2925973c7d2aa1b8b28d989ae5d286e7759"
+    },
+    {
+      "source": "src/renderer/ui/StepSlider.tsx",
+      "target": "components/StepSlider.tsx",
+      "sha256": "bcae18cb2c0e3e21c522be48204d8358144c2f74ba3211851eeba90a475dc841"
+    },
+    {
+      "source": "src/renderer/ui/TextArea.tsx",
+      "target": "components/TextArea.tsx",
+      "sha256": "ddeec8cc7b6c0b5d23af3f863870815ce800e69bb6fd5b3ae28ae09332d074aa"
+    },
+    {
+      "source": "src/renderer/ui/TimePicker.tsx",
+      "target": "components/TimePicker.tsx",
+      "sha256": "5411949c81df10acb83e82a3c53978caf31815e56c368c97c2e182bfd8986c72"
+    },
+    {
+      "source": "src/renderer/ui/Toast.tsx",
+      "target": "components/Toast.tsx",
+      "sha256": "b34360743724c6e2fcf927a27819646908408167f6efc37df3ef958ed01f61c8"
+    },
+    {
+      "source": "src/renderer/ui/ToggleSwitch.tsx",
+      "target": "components/ToggleSwitch.tsx",
+      "sha256": "a62f0c1e0025806ee4216674c8feb015f8f651fd66744da7fc1e814bea6cacab"
+    },
+    {
+      "source": "src/renderer/ui/Tooltip.tsx",
+      "target": "components/Tooltip.tsx",
+      "sha256": "6ee1fbcf1ff0e767db7b5f3525e89c754782a2b3e30a7e2972b762d3b3cca93e"
+    },
+    {
+      "source": "src/renderer/ui/TypingDots.tsx",
+      "target": "components/TypingDots.tsx",
+      "sha256": "07315268820a8de54b3397688bbe8d92e49ad94baa88d7d467c9571f78988c4a"
+    },
+    {
+      "source": "src/renderer/ui/WorkingText.tsx",
+      "target": "components/WorkingText.tsx",
+      "sha256": "831ca83f3855b657b98c75cd8cb3ffac6c82f4440726af3c4b4f17fe69a4de32"
+    },
+    {
+      "source": "src/renderer/ui/menuState.ts",
+      "target": "components/menuState.ts",
+      "sha256": "e78d5178f551fbe472323f92b32af8e6943d597a0393f7d71a26a53a4e0957c8"
+    },
+    {
+      "source": "src/renderer/ui/modalStack.ts",
+      "target": "components/modalStack.ts",
+      "sha256": "70cea8ec6962dc22d2d6c49c4cabd9253ad912f0dc7fd4a39cde414de56a63c3"
+    },
+    {
+      "source": "src/renderer/ui/selectTrigger.ts",
+      "target": "components/selectTrigger.ts",
+      "sha256": "3a5a9996484803b936a85120d7bf94dcf826a4a26b2a0927bcfa8233e98dc453"
+    },
+    {
+      "source": "src/renderer/ui/hooks/useCollapseAnimation.ts",
+      "target": "components/hooks/useCollapseAnimation.ts",
+      "sha256": "39cd381e6b32c579fbba6c4fa82aaa8687b012f1d58fd047a3cbe372a6d69fcc"
+    },
+    {
+      "source": "src/renderer/ui/hooks/useGlobalKeyHandler.ts",
+      "target": "components/hooks/useGlobalKeyHandler.ts",
+      "sha256": "dae453f5b05cff669134f0a69c5dbab5f20e6a6c6da7aca03e4d0252bcd0d130"
+    },
+    {
+      "source": "src/renderer/ui/hooks/useVisibleNow.ts",
+      "target": "components/hooks/useVisibleNow.ts",
+      "sha256": "423ba650bad95202adb3b69f2a995e86c5eb45b0260e2eef74c16c259afb5ace"
+    },
+    {
+      "source": "src/renderer/ui/emoji/twemoji.ts",
+      "target": "components/emoji/twemoji.ts",
+      "sha256": "8e5a9df61b7b1214026e1b84bfd42223fa1ebc2e64a003f9d4232a3f09ce0b27"
+    }
+  ]
+}

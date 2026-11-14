@@ -1,0 +1,1192 @@
+{
+  "arbitraryUtilityCount": 156,
+  "missing": [],
+  "reactRoots": [
+    "/Users/puterjam/Workspace/aeolus/finch-ui/node_modules/react"
+  ],
+  "reactDomRoots": [
+    "/Users/puterjam/Workspace/aeolus/finch-ui/node_modules/react-dom"
+  ],
+  "libraryBundledReactModules": [],
+  "libraryImports": [
+    "react/jsx-runtime",
+    "lucide-react",
+    "react",
+    "react-dom"
+  ],
+  "sizes": {
+    "libraryJs": {
+      "bytes": 1326794,
+      "gzip": 339250
+    },
+    "libraryCss": {
+      "bytes": 77589,
+      "gzip": 13100
+    },
+    "consumerJs": {
+      "bytes": 1547137,
+      "gzip": 414123
+    },
+    "consumerCss": {
+      "bytes": 79577,
+      "gzip": 13680
+    }
+  },
+  "coverage": [
+    {
+      "name": "!border-[color-mix(in_srgb,var(--ui-accent)_60%,transparent)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-accent)",
+        "border-color:color-mix(in srgb,var(--ui-accent) 60%,transparent)"
+      ]
+    },
+    {
+      "name": "!h-[21px]",
+      "found": true,
+      "declarations": [
+        "height:21px"
+      ]
+    },
+    {
+      "name": "!h-[28px]",
+      "found": true,
+      "declarations": [
+        "height:28px"
+      ]
+    },
+    {
+      "name": "!h-[36px]",
+      "found": true,
+      "declarations": [
+        "height:36px"
+      ]
+    },
+    {
+      "name": "!py-[7px]",
+      "found": true,
+      "declarations": [
+        "padding-block:7px"
+      ]
+    },
+    {
+      "name": "!text-[13.5px]",
+      "found": true,
+      "declarations": [
+        "font-size:13.5px"
+      ]
+    },
+    {
+      "name": "!text-[13px]",
+      "found": true,
+      "declarations": [
+        "font-size:13px"
+      ]
+    },
+    {
+      "name": "!text-[14px]",
+      "found": true,
+      "declarations": [
+        "font-size:14px"
+      ]
+    },
+    {
+      "name": "!text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "!w-[21px]",
+      "found": true,
+      "declarations": [
+        "width:21px"
+      ]
+    },
+    {
+      "name": "!w-[28px]",
+      "found": true,
+      "declarations": [
+        "width:28px"
+      ]
+    },
+    {
+      "name": "!w-[36px]",
+      "found": true,
+      "declarations": [
+        "width:36px"
+      ]
+    },
+    {
+      "name": "active:!bg-[color-mix(in_srgb,var(--ui-danger)_22%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger)",
+        "background-color:color-mix(in srgb,var(--ui-danger) 22%,transparent)"
+      ]
+    },
+    {
+      "name": "active:!bg-[var(--ui-bg-active)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-active)"
+      ]
+    },
+    {
+      "name": "active:!text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "active:bg-[color-mix(in_srgb,var(--ui-bg-active)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-active)",
+        "background-color:color-mix(in srgb,var(--ui-bg-active) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "active:bg-[color-mix(in_srgb,var(--ui-danger)_22%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger)",
+        "background-color:color-mix(in srgb,var(--ui-danger) 22%,transparent)"
+      ]
+    },
+    {
+      "name": "active:bg-[color-mix(in_srgb,var(--ui-danger-dim)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger-dim)",
+        "background-color:color-mix(in srgb,var(--ui-danger-dim) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "active:bg-[var(--ui-bg-active)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-active)"
+      ]
+    },
+    {
+      "name": "active:text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "after:bg-[color-mix(in_srgb,var(--ui-accent)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "content:var(--tw-content)",
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "after:transition-[background,transform]",
+      "found": true,
+      "declarations": [
+        "content:var(--tw-content)",
+        "transition-property:background,transform",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "auto-cols-[minmax(0,max-content)]",
+      "found": true,
+      "declarations": [
+        "grid-auto-columns:minmax(0,max-content)"
+      ]
+    },
+    {
+      "name": "bg-[color-mix(in_srgb,var(--ui-bg-hover)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-hover)",
+        "background-color:color-mix(in srgb,var(--ui-bg-hover) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "bg-[color-mix(in_srgb,var(--ui-bg-inset)_30%,var(--ui-bg-hover)_70%)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-inset)",
+        "background-color:color-mix(in srgb,var(--ui-bg-inset) 30%,var(--ui-bg-hover) 70%)"
+      ]
+    },
+    {
+      "name": "bg-[color-mix(in_srgb,var(--ui-bg-main)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-main)",
+        "background-color:color-mix(in srgb,var(--ui-bg-main) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "bg-[color-mix(in_srgb,var(--ui-danger-dim)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger-dim)",
+        "background-color:color-mix(in srgb,var(--ui-danger-dim) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "bg-[var(--ui-accent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)"
+      ]
+    },
+    {
+      "name": "bg-[var(--ui-bg-inset)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-inset)"
+      ]
+    },
+    {
+      "name": "bg-[var(--ui-border-subtle)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-border-subtle)"
+      ]
+    },
+    {
+      "name": "bg-[var(--ui-danger-dim)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger-dim)"
+      ]
+    },
+    {
+      "name": "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-accent)",
+        "border-color:color-mix(in srgb,var(--ui-accent) 36%,var(--ui-border-subtle))"
+      ]
+    },
+    {
+      "name": "border-[color-mix(in_srgb,var(--ui-danger)_24%,transparent)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-danger)",
+        "border-color:color-mix(in srgb,var(--ui-danger) 24%,transparent)"
+      ]
+    },
+    {
+      "name": "border-[var(--ui-bg-elevated)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-bg-elevated)"
+      ]
+    },
+    {
+      "name": "border-[var(--ui-border-subtle)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-border-subtle)"
+      ]
+    },
+    {
+      "name": "bottom-[calc(100%+8px)]",
+      "found": true,
+      "declarations": [
+        "bottom:calc(100% + 8px)"
+      ]
+    },
+    {
+      "name": "decoration-[color-mix(in_srgb,currentColor_36%,transparent)]",
+      "found": true,
+      "declarations": [
+        "text-decoration-color:currentColor",
+        "-webkit-text-decoration-color:color-mix(in srgb,currentColor 36%,transparent)",
+        "text-decoration-color:color-mix(in srgb,currentColor 36%,transparent)"
+      ]
+    },
+    {
+      "name": "duration-[160ms]",
+      "found": true,
+      "declarations": [
+        "--tw-duration:.16s",
+        "transition-duration:.16s"
+      ]
+    },
+    {
+      "name": "duration-[var(--ui-duration-fast)]",
+      "found": true,
+      "declarations": [
+        "--tw-duration:var(--ui-duration-fast)",
+        "transition-duration:var(--ui-duration-fast)"
+      ]
+    },
+    {
+      "name": "ease-[var(--ui-ease-out)]",
+      "found": true,
+      "declarations": [
+        "--tw-ease:var(--ui-ease-out)",
+        "transition-timing-function:var(--ui-ease-out)"
+      ]
+    },
+    {
+      "name": "focus-within:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-accent)",
+        "border-color:color-mix(in srgb,var(--ui-accent) 36%,var(--ui-border-subtle))"
+      ]
+    },
+    {
+      "name": "focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,var(--ui-accent))",
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,color-mix(in srgb,var(--ui-accent) 5%,transparent))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "focus:border-[color-mix(in_srgb,var(--ui-accent)_30%,transparent)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-accent)",
+        "border-color:color-mix(in srgb,var(--ui-accent) 30%,transparent)"
+      ]
+    },
+    {
+      "name": "focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-accent)",
+        "border-color:color-mix(in srgb,var(--ui-accent) 36%,var(--ui-border-subtle))"
+      ]
+    },
+    {
+      "name": "focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,var(--ui-accent))",
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,color-mix(in srgb,var(--ui-accent) 5%,transparent))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "focus:shadow-[0_0_0_3px_var(--ui-danger-dim)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,var(--ui-danger-dim))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "font-[450]",
+      "found": true,
+      "declarations": [
+        "--tw-font-weight:450",
+        "font-weight:450"
+      ]
+    },
+    {
+      "name": "gap-[5px]",
+      "found": true,
+      "declarations": [
+        "gap:5px"
+      ]
+    },
+    {
+      "name": "gap-[7px]",
+      "found": true,
+      "declarations": [
+        "gap:7px"
+      ]
+    },
+    {
+      "name": "h-[11px]",
+      "found": true,
+      "declarations": [
+        "height:11px"
+      ]
+    },
+    {
+      "name": "h-[14px]",
+      "found": true,
+      "declarations": [
+        "height:14px"
+      ]
+    },
+    {
+      "name": "h-[168px]",
+      "found": true,
+      "declarations": [
+        "height:168px"
+      ]
+    },
+    {
+      "name": "h-[16px]!",
+      "found": true,
+      "declarations": [
+        "height:16px"
+      ]
+    },
+    {
+      "name": "h-[18px]",
+      "found": true,
+      "declarations": [
+        "height:18px"
+      ]
+    },
+    {
+      "name": "h-[21px]",
+      "found": true,
+      "declarations": [
+        "height:21px"
+      ]
+    },
+    {
+      "name": "h-[24px]",
+      "found": true,
+      "declarations": [
+        "height:24px"
+      ]
+    },
+    {
+      "name": "h-[26px]",
+      "found": true,
+      "declarations": [
+        "height:26px"
+      ]
+    },
+    {
+      "name": "h-[28px]",
+      "found": true,
+      "declarations": [
+        "height:28px"
+      ]
+    },
+    {
+      "name": "h-[36px]",
+      "found": true,
+      "declarations": [
+        "height:36px"
+      ]
+    },
+    {
+      "name": "hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,#666)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 90%,#666)"
+      ]
+    },
+    {
+      "name": "hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 90%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:!bg-[color-mix(in_srgb,var(--ui-danger)_16%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger)",
+        "background-color:color-mix(in srgb,var(--ui-danger) 16%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:!bg-[var(--ui-bg-hover)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-hover)"
+      ]
+    },
+    {
+      "name": "hover:!border-[var(--ui-border-subtle)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-border-subtle)"
+      ]
+    },
+    {
+      "name": "hover:!text-[var(--ui-primary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-primary)"
+      ]
+    },
+    {
+      "name": "hover:!text-[var(--ui-text-primary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-primary)"
+      ]
+    },
+    {
+      "name": "hover:!text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "hover:after:bg-[var(--ui-accent)]",
+      "found": true,
+      "declarations": [
+        "content:var(--tw-content)",
+        "background-color:var(--ui-accent)"
+      ]
+    },
+    {
+      "name": "hover:after:scale-[1.3]",
+      "found": true,
+      "declarations": [
+        "content:var(--tw-content)",
+        "scale:1.3"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-accent)_8%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 8%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-accent)_90%,#666)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 90%,#666)"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-accent)_90%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent)",
+        "background-color:color-mix(in srgb,var(--ui-accent) 90%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-bg-hover)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-hover)",
+        "background-color:color-mix(in srgb,var(--ui-bg-hover) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-danger)_16%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger)",
+        "background-color:color-mix(in srgb,var(--ui-danger) 16%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:bg-[color-mix(in_srgb,var(--ui-danger-dim)_80%,transparent)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-danger-dim)",
+        "background-color:color-mix(in srgb,var(--ui-danger-dim) 80%,transparent)"
+      ]
+    },
+    {
+      "name": "hover:bg-[var(--ui-accent-dim)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-accent-dim)"
+      ]
+    },
+    {
+      "name": "hover:bg-[var(--ui-bg-hover)]",
+      "found": true,
+      "declarations": [
+        "background-color:var(--ui-bg-hover)"
+      ]
+    },
+    {
+      "name": "hover:border-[var(--ui-border-subtle)]",
+      "found": true,
+      "declarations": [
+        "border-color:var(--ui-border-subtle)"
+      ]
+    },
+    {
+      "name": "hover:text-[var(--ui-accent-hover)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-accent-hover)"
+      ]
+    },
+    {
+      "name": "hover:text-[var(--ui-danger)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-danger)"
+      ]
+    },
+    {
+      "name": "hover:text-[var(--ui-text-primary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-primary)"
+      ]
+    },
+    {
+      "name": "hover:text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "leading-[13px]",
+      "found": true,
+      "declarations": [
+        "--tw-leading:13px",
+        "line-height:13px"
+      ]
+    },
+    {
+      "name": "leading-[20px]",
+      "found": true,
+      "declarations": [
+        "--tw-leading:20px",
+        "line-height:20px"
+      ]
+    },
+    {
+      "name": "max-h-[16px]",
+      "found": true,
+      "declarations": [
+        "max-height:16px"
+      ]
+    },
+    {
+      "name": "max-h-[50vh]",
+      "found": true,
+      "declarations": [
+        "max-height:50vh"
+      ]
+    },
+    {
+      "name": "max-h-[min(60vh,420px)]",
+      "found": true,
+      "declarations": [
+        "max-height:min(60vh,420px)"
+      ]
+    },
+    {
+      "name": "max-w-[min(420px,calc(100vw-24px))]",
+      "found": true,
+      "declarations": [
+        "max-width:min(420px,100vw - 24px)"
+      ]
+    },
+    {
+      "name": "min-h-[28px]",
+      "found": true,
+      "declarations": [
+        "min-height:28px"
+      ]
+    },
+    {
+      "name": "min-h-[36px]",
+      "found": true,
+      "declarations": [
+        "min-height:36px"
+      ]
+    },
+    {
+      "name": "min-h-[42px]",
+      "found": true,
+      "declarations": [
+        "min-height:42px"
+      ]
+    },
+    {
+      "name": "min-h-[46px]",
+      "found": true,
+      "declarations": [
+        "min-height:46px"
+      ]
+    },
+    {
+      "name": "min-w-[11px]",
+      "found": true,
+      "declarations": [
+        "min-width:11px"
+      ]
+    },
+    {
+      "name": "min-w-[160px]",
+      "found": true,
+      "declarations": [
+        "min-width:160px"
+      ]
+    },
+    {
+      "name": "min-w-[24px]",
+      "found": true,
+      "declarations": [
+        "min-width:24px"
+      ]
+    },
+    {
+      "name": "min-w-[76px]",
+      "found": true,
+      "declarations": [
+        "min-width:76px"
+      ]
+    },
+    {
+      "name": "mt-[1px]",
+      "found": true,
+      "declarations": [
+        "margin-top:1px"
+      ]
+    },
+    {
+      "name": "opacity-[0.82]",
+      "found": true,
+      "declarations": [
+        "opacity:.82"
+      ]
+    },
+    {
+      "name": "p-[3px]",
+      "found": true,
+      "declarations": [
+        "padding:3px"
+      ]
+    },
+    {
+      "name": "p-[4px]",
+      "found": true,
+      "declarations": [
+        "padding:4px"
+      ]
+    },
+    {
+      "name": "pb-[18px]",
+      "found": true,
+      "declarations": [
+        "padding-bottom:18px"
+      ]
+    },
+    {
+      "name": "px-[12px]",
+      "found": true,
+      "declarations": [
+        "padding-inline:12px"
+      ]
+    },
+    {
+      "name": "px-[3px]",
+      "found": true,
+      "declarations": [
+        "padding-inline:3px"
+      ]
+    },
+    {
+      "name": "px-[8px]",
+      "found": true,
+      "declarations": [
+        "padding-inline:8px"
+      ]
+    },
+    {
+      "name": "py-[2px]",
+      "found": true,
+      "declarations": [
+        "padding-block:2px"
+      ]
+    },
+    {
+      "name": "py-[8px]",
+      "found": true,
+      "declarations": [
+        "padding-block:8px"
+      ]
+    },
+    {
+      "name": "right-[-4px]",
+      "found": true,
+      "declarations": [
+        "right:-4px"
+      ]
+    },
+    {
+      "name": "ring-[color-mix(in_srgb,var(--ui-accent)_15%,transparent)]",
+      "found": true,
+      "declarations": [
+        "--tw-ring-color:var(--ui-accent)",
+        "--tw-ring-color:color-mix(in srgb,var(--ui-accent) 15%,transparent)"
+      ]
+    },
+    {
+      "name": "rounded-[1px]",
+      "found": true,
+      "declarations": [
+        "border-radius:1px"
+      ]
+    },
+    {
+      "name": "rounded-[var(--ui-radius-lg)]",
+      "found": true,
+      "declarations": [
+        "border-radius:var(--ui-radius-lg)"
+      ]
+    },
+    {
+      "name": "rounded-[var(--ui-radius-md)]",
+      "found": true,
+      "declarations": [
+        "border-radius:var(--ui-radius-md)"
+      ]
+    },
+    {
+      "name": "rounded-[var(--ui-radius-sm)]",
+      "found": true,
+      "declarations": [
+        "border-radius:var(--ui-radius-sm)"
+      ]
+    },
+    {
+      "name": "shadow-[0_0_0_2px_var(--ui-danger-dim)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 2px var(--tw-shadow-color,var(--ui-danger-dim))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_20%,transparent)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,var(--ui-accent))",
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,color-mix(in srgb,var(--ui-accent) 20%,transparent))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,var(--ui-accent))",
+        "--tw-shadow:0 0 0 3px var(--tw-shadow-color,color-mix(in srgb,var(--ui-accent) 5%,transparent))",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "shadow-[0_1px_12px_rgba(0,0,0,0.08)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 1px 12px var(--tw-shadow-color,#00000014)",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "shadow-[0_1px_3px_rgba(0,0,0,0.18),0_0_0_0.5px_rgba(0,0,0,0.08)]",
+      "found": true,
+      "declarations": [
+        "--tw-shadow:0 1px 3px var(--tw-shadow-color,#0000002e), 0 0 0 .5px var(--tw-shadow-color,#00000014)",
+        "box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)"
+      ]
+    },
+    {
+      "name": "text-[0.95em]",
+      "found": true,
+      "declarations": [
+        "font-size:.95em"
+      ]
+    },
+    {
+      "name": "text-[10px]!",
+      "found": true,
+      "declarations": [
+        "font-size:10px"
+      ]
+    },
+    {
+      "name": "text-[11px]",
+      "found": true,
+      "declarations": [
+        "font-size:11px"
+      ]
+    },
+    {
+      "name": "text-[12px]",
+      "found": true,
+      "declarations": [
+        "font-size:12px"
+      ]
+    },
+    {
+      "name": "text-[13px]",
+      "found": true,
+      "declarations": [
+        "font-size:13px"
+      ]
+    },
+    {
+      "name": "text-[14px]",
+      "found": true,
+      "declarations": [
+        "font-size:14px"
+      ]
+    },
+    {
+      "name": "text-[15px]",
+      "found": true,
+      "declarations": [
+        "font-size:15px"
+      ]
+    },
+    {
+      "name": "text-[16px]",
+      "found": true,
+      "declarations": [
+        "font-size:16px"
+      ]
+    },
+    {
+      "name": "text-[8px]",
+      "found": true,
+      "declarations": [
+        "font-size:8px"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-accent)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-accent)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-danger)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-danger)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-danger-text)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-danger-text)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-info)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-info)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-positive)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-positive)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-text-inverse)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-inverse)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-text-secondary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-secondary)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-text-tertiary)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-text-tertiary)"
+      ]
+    },
+    {
+      "name": "text-[var(--ui-warning)]",
+      "found": true,
+      "declarations": [
+        "color:var(--ui-warning)"
+      ]
+    },
+    {
+      "name": "top-[-4px]",
+      "found": true,
+      "declarations": [
+        "top:-4px"
+      ]
+    },
+    {
+      "name": "top-[44px]",
+      "found": true,
+      "declarations": [
+        "top:44px"
+      ]
+    },
+    {
+      "name": "top-[calc(100%+2px)]",
+      "found": true,
+      "declarations": [
+        "top:calc(100% + 2px)"
+      ]
+    },
+    {
+      "name": "top-[calc(100%+6px)]",
+      "found": true,
+      "declarations": [
+        "top:calc(100% + 6px)"
+      ]
+    },
+    {
+      "name": "transition-[background,color,box-shadow]",
+      "found": true,
+      "declarations": [
+        "transition-property:background,color,box-shadow",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "transition-[background-color,border-color,color,opacity]",
+      "found": true,
+      "declarations": [
+        "transition-property:background-color,border-color,color,opacity",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "transition-[height]",
+      "found": true,
+      "declarations": [
+        "transition-property:height",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "transition-[left]",
+      "found": true,
+      "declarations": [
+        "transition-property:left",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "transition-[opacity,transform,filter]",
+      "found": true,
+      "declarations": [
+        "transition-property:opacity,transform,filter",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "transition-[width]",
+      "found": true,
+      "declarations": [
+        "transition-property:width",
+        "transition-timing-function:var(--tw-ease,var(--default-transition-timing-function))",
+        "transition-duration:var(--tw-duration,var(--default-transition-duration))"
+      ]
+    },
+    {
+      "name": "w-[160px]",
+      "found": true,
+      "declarations": [
+        "width:160px"
+      ]
+    },
+    {
+      "name": "w-[18px]",
+      "found": true,
+      "declarations": [
+        "width:18px"
+      ]
+    },
+    {
+      "name": "w-[21px]",
+      "found": true,
+      "declarations": [
+        "width:21px"
+      ]
+    },
+    {
+      "name": "w-[24px]",
+      "found": true,
+      "declarations": [
+        "width:24px"
+      ]
+    },
+    {
+      "name": "w-[26px]",
+      "found": true,
+      "declarations": [
+        "width:26px"
+      ]
+    },
+    {
+      "name": "w-[28px]",
+      "found": true,
+      "declarations": [
+        "width:28px"
+      ]
+    },
+    {
+      "name": "w-[36px]",
+      "found": true,
+      "declarations": [
+        "width:36px"
+      ]
+    },
+    {
+      "name": "w-[52px]",
+      "found": true,
+      "declarations": [
+        "width:52px"
+      ]
+    },
+    {
+      "name": "w-[min(360px,calc(100vw-32px))]",
+      "found": true,
+      "declarations": [
+        "width:min(360px,100vw - 32px)"
+      ]
+    },
+    {
+      "name": "w-[min(420px,calc(100vw-40px))]",
+      "found": true,
+      "declarations": [
+        "width:min(420px,100vw - 40px)"
+      ]
+    },
+    {
+      "name": "z-[9999]",
+      "found": true,
+      "declarations": [
+        "z-index:9999"
+      ]
+    }
+  ]
+}

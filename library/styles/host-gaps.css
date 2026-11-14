@@ -1,0 +1,9 @@
+/* Required host-owned style, copied explicitly; extraction is not self-contained without this. */
+.settingsModalShell {
+  border-radius: var(--ui-radius-lg);
+  border: 1px solid var(--ui-border-subtle);
+  box-shadow: 0 22px 58px rgba(25, 35, 32, 0.16);
+  background: var(--ui-bg-elevated);
+  backdrop-filter: blur(12px);
+}
+.twemoji { display:inline-block; width:1em; height:1em; vertical-align:-0.15em; object-fit:contain; }

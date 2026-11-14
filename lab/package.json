@@ -1,0 +1,53 @@
+{
+  "name": "finch-ui-lab",
+  "version": "0.1.0",
+  "description": "Gallery mini tool that renders every @finchtoys/ui component inside a real Finch webview panel, with live theme/skin switching.",
+  "author": {
+    "name": "Finch Team",
+    "url": "https://finchwork.app"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build:library": "cd ../library && npm run build",
+    "build:panel": "vite build --config vite.config.ts",
+    "build:backend": "tsc -p tsconfig.backend.json",
+    "typecheck": "tsc -p tsconfig.panel.json && tsc -p tsconfig.backend.json --noEmit",
+    "build": "npm run build:library && npm run build:panel && npm run build:backend"
+  },
+  "finch": {
+    "manifestVersion": 1,
+    "name": "Finch UI Lab",
+    "description": "@finchtoys/ui \u62bd\u5305 spike\uff1a\u5728 Webview Panel \u91cc\u9a8c\u8bc1 Button/Input/ToggleSwitch/Badge \u7684\u6e32\u67d3\u4e0e\u4e3b\u9898\u8ddf\u968f\uff08\u6d45/\u6df1 + \u81ea\u5b9a\u4e49\u76ae\u80a4\uff09\u3002",
+    "main": "dist/index.js",
+    "activationEvents": [
+      "onStartup"
+    ],
+    "permissions": {
+      "filesystem": "none",
+      "network": false,
+      "shell": false,
+      "sessions": false
+    },
+    "contributes": {
+      "tools": true,
+      "skills": false,
+      "appPanel": {
+        "icon": "palette",
+        "viewType": "finch-ui-lab.spike",
+        "instanceMode": "single",
+        "showInLauncher": true,
+        "source": {
+          "type": "local",
+          "path": "dist/panel/index.html"
+        }
+      }
+    },
+    "autoEnable": false,
+    "miniToolType": "local"
+  },
+  "devDependencies": {
+    "@finchtoys/minitool-api": "^0.3.16"
+  }
+}

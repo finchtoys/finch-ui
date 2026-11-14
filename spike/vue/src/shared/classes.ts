@@ -164,7 +164,7 @@ export const INPUT_ROUND_CLASS: Record<InputRound, string> = {
 };
 
 export const INPUT_BASE_CLASS =
-  "min-w-0 flex-1 font-medium text-txt outline-none placeholder:text-txt-tertiary transition-all duration-120";
+  "min-w-0 flex-1 text-txt outline-none placeholder:text-txt-tertiary transition-all duration-120";
 export const INPUT_DEFAULT_CLASS =
   "border border-border bg-sf-elevated focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]";
 export const INPUT_GHOST_CLASS =
@@ -304,11 +304,20 @@ export type MenuPlacement =
   | "right-start"
   | "right-end";
 
-export function menuPanelStyle(position: MenuPosition | null): Record<string, string | number> {
+/**
+ * MenuPopover's inline positioning style.
+ *
+ * Units are spelled out on purpose. React appends `px` to numeric style values;
+ * Vue does not (`el.style.left = 12` is silently dropped, leaving 0px). A port
+ * that keeps `left: number` renders every menu at the top-left corner — the
+ * spike hit exactly that. Emitting CSS strings keeps one shared implementation
+ * valid for both frameworks.
+ */
+export function menuPanelStyle(position: MenuPosition | null): Record<string, string> {
   return {
     position: "fixed",
-    left: position?.left ?? 0,
-    top: position?.top ?? 0,
+    left: `${position?.left ?? 0}px`,
+    top: `${position?.top ?? 0}px`,
     visibility: position ? "visible" : "hidden",
     pointerEvents: position ? "auto" : "none",
   };

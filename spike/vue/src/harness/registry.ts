@@ -265,7 +265,9 @@ export const scenarios: ScenarioDef[] = [
     script: async ({ pointerDownOn, wait, count, q }) => {
       const target = q("#stage") ?? document.body;
       pointerDownOn(target);
-      await wait(80);
+      // 120ms close animation: sample only after the panel is gone, otherwise
+      // the two sides differ by whichever frame the animation happened to be on.
+      await wait(240);
       return { panelsBefore: 1, panelsAfterOutsidePointerDown: count(PANEL) };
     },
   },

@@ -41,6 +41,12 @@ const attrs = useAttrs();
 const inputEl = ref<HTMLInputElement | null>(null);
 
 const hasError = computed(() => Boolean(props.error));
+const ariaInvalid = computed<boolean | "true" | "false" | undefined>(() => {
+  if (hasError.value) return true;
+  const raw = attrs["aria-invalid"];
+  if (raw === undefined || raw === null) return undefined;
+  return raw === "true" || raw === "false" ? raw : raw === true;
+});
 
 const inputClass = computed(() =>
   inputClassName({
@@ -79,7 +85,7 @@ defineExpose({ inputEl });
         :value="props.modelValue"
         :class="inputClass"
         v-bind="passThrough"
-        :aria-invalid="hasError || (attrs['aria-invalid'] as string | boolean | undefined)"
+        :aria-invalid="ariaInvalid"
         @input="onInput"
       />
       <slot name="endAdornment" />

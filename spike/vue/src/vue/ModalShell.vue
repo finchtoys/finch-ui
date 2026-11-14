@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
     <div
       v-if="props.open"
       ref="backdropEl"
-      data-finch-modal-shell
+      :data-finch-modal-shell="'true'"
       :class="modalBackdropClassName(props.backdropClassName)"
       :style="{ zIndex: props.zIndex }"
       @click="props.closeOnBackdrop ? emit('close') : undefined"

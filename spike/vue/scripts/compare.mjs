@@ -14,6 +14,7 @@ import { createServer } from "node:http";
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 
@@ -49,6 +50,10 @@ async function serve() {
       const url = new URL(req.url ?? "/", "http://localhost");
       let path = decodeURIComponent(url.pathname);
       if (path === "/") path = "/index.html";
+      if (path === "/favicon.ico") {
+        res.writeHead(204).end();
+        return;
+      }
       const file = join(dist, path);
       const body = await readFile(file);
       res.writeHead(200, { "content-type": MIME[extname(file)] ?? "application/octet-stream" });
@@ -193,31 +198,46 @@ function compareProbes(react, vue) {
   return diffs;
 }
 
-async function screenshotPairs(page, scenarios) {
+/**
+ * Screenshots both sides of a scenario and byte-compares the PNGs. A pair that
+ * matches is only meaningful if both frames actually drew something, so the
+ * element count and PNG size are recorded next to the hash.
+ */
+async function screenshotPairs(page, scenarios, theme) {
   const diffs = [];
+  const themeShots = join(shotsDir, theme);
+  await mkdir(themeShots, { recursive: true });
   for (const scenario of scenarios) {
     // Interaction-only scenarios reuse another tree; screenshot it once.
     if (scenario.treeId) continue;
     const buffers = {};
+    const nodes = {};
     for (const side of ["react", "vue"]) {
       await page.evaluate(([s, id]) => window.__finchVueSpike.mountForProbe(s, id), [side, scenario.id]);
       await page.waitForTimeout(scenario.settle ?? 320);
+      nodes[side] = await page.evaluate(() => document.querySelectorAll("#stage *").length);
       buffers[side] = await page.screenshot({ animations: "disabled" });
       await page.evaluate(() => window.__finchVueSpike.unmountProbe());
     }
     const same = buffers.react.equals(buffers.vue);
-    if (!same) {
-      await writeFile(join(shotsDir, `${scenario.id}--react.png`), buffers.react);
-      await writeFile(join(shotsDir, `${scenario.id}--vue.png`), buffers.vue);
-    }
-    diffs.push({ id: scenario.id, pixelIdentical: same });
+    await writeFile(join(themeShots, `${scenario.id}--react.png`), buffers.react);
+    await writeFile(join(themeShots, `${scenario.id}--vue.png`), buffers.vue);
+    diffs.push({
+      id: scenario.id,
+      pixelIdentical: same,
+      nodes,
+      bytes: { react: buffers.react.length, vue: buffers.vue.length },
+      sha256: {
+        react: createHash("sha256").update(buffers.react).digest("hex").slice(0, 16),
+        vue: createHash("sha256").update(buffers.vue).digest("hex").slice(0, 16),
+      },
+    });
   }
   return diffs;
 }
 
 async function main() {
   const theme = process.argv.includes("--dark") ? "dark" : "light";
-  await rm(reportDir, { recursive: true, force: true });
   await mkdir(shotsDir, { recursive: true });
 
   const { server, url } = await serve();
@@ -240,7 +260,7 @@ async function main() {
 
   const probes = await runInputProbes(page);
   const probeDiffs = compareProbes(probes.react, probes.vue);
-  const pixel = await screenshotPairs(page, meta);
+  const pixel = await screenshotPairs(page, meta, theme);
 
   const summary = {
     scenarios: report.scenarios.length,
@@ -249,11 +269,13 @@ async function main() {
     controlDetected: report.control.expectedStyleDiff,
     probeDiffs: probeDiffs.length,
     pixelDiffScenarios: pixel.filter((item) => !item.pixelIdentical).map((item) => item.id),
-    consoleErrors,
+    blankScreens: pixel.filter((item) => item.nodes.react === 0 || item.nodes.vue === 0).map((item) => item.id),
+    minScreenshotBytes: Math.min(...pixel.flatMap((item) => [item.bytes.react, item.bytes.vue])),
+    consoleErrors: consoleErrors.filter((text) => !text.includes("favicon")),
   };
 
   await writeFile(
-    join(reportDir, "comparison.json"),
+    join(reportDir, `comparison-${theme}.json`),
     JSON.stringify({ summary, report, probes, probeDiffs, pixel }, null, 2),
   );
 

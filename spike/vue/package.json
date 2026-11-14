@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "compare": "node scripts/compare.mjs",
+    "report": "node scripts/compare.mjs && node scripts/compare.mjs --dark",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

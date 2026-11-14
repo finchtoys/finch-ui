@@ -15,6 +15,14 @@
         min-height: 100vh;
         background: var(--ui-bg-main);
       }
+      /* Harness-only sizing. Arbitrary Tailwind values used by the harness are
+         not in the prebuilt library CSS (it only scans library/components). */
+      .spike-modal {
+        width: 420px;
+      }
+      .spike-modal--narrow {
+        width: 300px;
+      }
     </style>
   </head>
   <body>

@@ -4,3 +4,6 @@ dist/
 .DS_Store
 *.log
 release/
+
+# Vue spike: regenerable measurement artifacts (npm run report)
+spike/vue/report/

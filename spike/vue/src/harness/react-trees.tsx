@@ -54,7 +54,7 @@ function MenuScenario({
 
   return (
     <div className="flex flex-col gap-3 p-6" style={{ minHeight: "100%" }}>
-      <div className="text-[13px] text-txt-secondary">React 侧 · Menu</div>
+      <div className="text-[13px] text-txt-secondary">Menu</div>
       {nested ? (
         <div
           id="scroller"
@@ -103,7 +103,7 @@ function ModalScenario({
   const [open, setOpen] = useState(true);
   return (
     <div className="p-6 text-[13px] text-txt-secondary">
-      <div>React 侧 · ModalShell</div>
+      <div>ModalShell</div>
       <button type="button" onClick={() => setOpen(true)} className="mt-2 underline">
         重新打开
       </button>
@@ -115,7 +115,7 @@ function ModalScenario({
         noHeader={mode === "noHeader"}
         closeOnBackdrop={closeOnBackdrop}
         headerRight={mode === "headerRight" ? <span className="text-[12px] text-txt-tertiary">自定义</span> : undefined}
-        shellClassName={mode === "noHeader" ? "w-[320px]" : "w-[420px]"}
+        shellClassName={mode === "noHeader" ? "spike-modal spike-modal--narrow" : "spike-modal"}
       >
         {PANEL_BODY}
       </ModalShell>
@@ -128,11 +128,11 @@ function NestedModalScenario() {
   const [inner, setInner] = useState(true);
   return (
     <div className="p-6 text-[13px] text-txt-secondary">
-      <div>React 侧 · 嵌套 Modal</div>
-      <ModalShell open={outer} onClose={() => setOuter(false)} title="外层" closeLabel="关闭" zIndex={200} shellClassName="w-[380px]">
+      <div>嵌套 Modal</div>
+      <ModalShell open={outer} onClose={() => setOuter(false)} title="外层" closeLabel="关闭" zIndex={200} shellClassName="spike-modal">
         {PANEL_BODY}
       </ModalShell>
-      <ModalShell open={inner} onClose={() => setInner(false)} title="内层" closeLabel="关闭" zIndex={201} shellClassName="w-[300px]">
+      <ModalShell open={inner} onClose={() => setInner(false)} title="内层" closeLabel="关闭" zIndex={201} shellClassName="spike-modal spike-modal--narrow">
         {PANEL_BODY}
       </ModalShell>
     </div>

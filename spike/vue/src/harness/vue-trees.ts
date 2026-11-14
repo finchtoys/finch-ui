@@ -56,7 +56,7 @@ function MenuScenario(props: {
 
       return () =>
         h("div", { class: "flex flex-col gap-3 p-6", style: { minHeight: "100%" } }, [
-          h("div", { class: "text-[13px] text-txt-secondary" }, "Vue 侧 · Menu"),
+          h("div", { class: "text-[13px] text-txt-secondary" }, "Menu"),
           props.nested
             ? h(
                 "div",
@@ -106,7 +106,7 @@ function ModalScenario(props: { mode: "default" | "noHeader" | "headerRight"; cl
       const open = ref(true);
       return () =>
         h("div", { class: "p-6 text-[13px] text-txt-secondary" }, [
-          h("div", null, "Vue 侧 · ModalShell"),
+          h("div", null, "ModalShell"),
           h("button", { type: "button", onClick: () => (open.value = true), class: "mt-2 underline" }, "重新打开"),
           h(
             ModalShell,
@@ -118,10 +118,15 @@ function ModalScenario(props: { mode: "default" | "noHeader" | "headerRight"; cl
               noHeader: props.mode === "noHeader",
               closeOnBackdrop: props.closeOnBackdrop,
               headerRight: props.mode === "headerRight",
-              shellClassName: props.mode === "noHeader" ? "w-[320px]" : "w-[420px]",
+              shellClassName: props.mode === "noHeader" ? "spike-modal spike-modal--narrow" : "spike-modal",
             },
             {
-              headerRight: () => h("span", { class: "text-[12px] text-txt-tertiary" }, "自定义"),
+              // React takes `headerRight` as a node prop; Vue takes a slot. A
+              // slot that is always declared is therefore always rendered —
+              // pass it only when the scenario asks for it.
+              ...(props.mode === "headerRight"
+                ? { headerRight: () => h("span", { class: "text-[12px] text-txt-tertiary" }, "自定义") }
+                : {}),
               default: () => PANEL_BODY,
             },
           ),
@@ -137,7 +142,7 @@ function NestedModalScenario() {
       const inner = ref(true);
       return () =>
         h("div", { class: "p-6 text-[13px] text-txt-secondary" }, [
-          h("div", null, "Vue 侧 · 嵌套 Modal"),
+          h("div", null, "嵌套 Modal"),
           h(
             ModalShell,
             {
@@ -146,7 +151,7 @@ function NestedModalScenario() {
               title: "外层",
               closeLabel: "关闭",
               zIndex: 200,
-              shellClassName: "w-[380px]",
+              shellClassName: "spike-modal",
             },
             { default: () => PANEL_BODY },
           ),
@@ -158,7 +163,7 @@ function NestedModalScenario() {
               title: "内层",
               closeLabel: "关闭",
               zIndex: 201,
-              shellClassName: "w-[300px]",
+              shellClassName: "spike-modal spike-modal--narrow",
             },
             { default: () => PANEL_BODY },
           ),

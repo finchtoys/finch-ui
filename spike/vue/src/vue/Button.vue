@@ -30,10 +30,25 @@ const props = withDefaults(
     as: "button",
     type: "button",
     className: "",
+    // Vue casts an ABSENT boolean prop to `false`, while React keeps it
+    // `undefined`. That difference shows up in the DOM (`aria-pressed="false"`
+    // vs no attribute at all). An explicit `default: undefined` restores
+    // React's tri-state — found by the harness, see findings §2.2.
+    pressed: undefined,
+    disabled: undefined,
   },
 );
 
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
+
+/** Vue keeps ARIA attrs as strings; React accepts booleans. Normalise, and keep
+ *  "absent" distinct from "false" (see the `pressed: undefined` default). */
+const ariaPressed = computed<boolean | undefined>(() => {
+  if (props.pressed !== undefined) return props.pressed;
+  const raw = attrs["aria-pressed"];
+  if (raw === undefined || raw === null) return undefined;
+  return raw === "true" || raw === true;
+});
 const attrs = useAttrs();
 const el = ref<HTMLElement | null>(null);
 
@@ -91,7 +106,7 @@ defineExpose({ el });
     ref="el"
     :type="props.type"
     :disabled="props.disabled"
-    :aria-pressed="props.pressed !== undefined ? props.pressed : (attrs['aria-pressed'] as string | boolean | undefined)"
+    :aria-pressed="ariaPressed"
     :class="composedClassName"
     v-bind="passThrough"
     @click="onClick"
@@ -108,7 +123,7 @@ defineExpose({ el });
     ref="el"
     role="button"
     :tabindex="props.disabled ? -1 : 0"
-    :aria-pressed="props.pressed !== undefined ? props.pressed : (attrs['aria-pressed'] as string | boolean | undefined)"
+    :aria-pressed="ariaPressed"
     :aria-disabled="props.disabled || undefined"
     :class="composedClassName"
     v-bind="passThrough"

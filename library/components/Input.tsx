@@ -35,7 +35,7 @@ export const INPUT_ROUND_CLASS: Record<InputRound, string> = {
   full: "rounded-full",
 };
 
-export const INPUT_BASE_CLASS = "min-w-0 flex-1 font-medium text-txt outline-none placeholder:text-txt-tertiary transition-all duration-120";
+export const INPUT_BASE_CLASS = "min-w-0 flex-1 text-txt outline-none placeholder:text-txt-tertiary transition-all duration-120";
 export const INPUT_DEFAULT_CLASS = "border border-border bg-sf-elevated focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]";
 export const INPUT_GHOST_CLASS = "border-1 border-transparent bg-transparent hover:bg-[var(--ui-accent-dim)] focus:border-[color-mix(in_srgb,var(--ui-accent)_30%,transparent)] focus:bg-sf-elevated focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]";
 /** 完全融入页面：没有背景、边框与聚焦框，只留下文字本身。 */

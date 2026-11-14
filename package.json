@@ -14,9 +14,9 @@
     "lab"
   ],
   "scripts": {
-    "build": "npm run build --workspace @finchtoys/ui && npm run build --workspace finch-ui-lab",
+    "build": "npm run build --workspace @finchtoys/ui && npm run build --workspace @finchtoys/finch-ui-lab",
     "verify": "npm run verify --workspace @finchtoys/ui",
-    "typecheck": "npm run typecheck --workspace finch-ui-lab",
+    "typecheck": "npm run typecheck --workspace @finchtoys/finch-ui-lab",
     "sync": "npm run sync --workspace @finchtoys/ui"
   },
   "devDependencies": {

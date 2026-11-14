@@ -1,6 +1,6 @@
 {
   "name": "@finchtoys/ui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Finch's built-in React component library, extracted so mini-tool authors can build panels that look and behave like Finch itself.",
   "author": {
     "name": "Finch Team",

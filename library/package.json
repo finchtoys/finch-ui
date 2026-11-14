@@ -20,7 +20,10 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "dist",
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/style.css",
+    "dist/types",
     "README.md"
   ],
   "scripts": {

@@ -1,2 +1,0 @@
-# 构建证据文件，只给 verify 用，不进发布包
-dist/modules.json

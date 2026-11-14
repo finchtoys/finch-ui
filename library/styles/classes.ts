@@ -1659,3 +1659,18 @@ export const DIALOG_INLINE_SUFFIX_CLASS: Record<string, string> = {
   b: "font-medium text-txt",
   i: "italic",
 };
+
+// ─── ScrollArea ──────────────────────────────────────────────────────────────
+
+export function scrollAreaClassName({
+  orientation = "vertical",
+  className = "",
+}: { orientation?: "vertical" | "horizontal"; className?: string } = {}): string {
+  return [
+    "appScrollbar",
+    orientation === "horizontal" ? "overflow-x-auto overflow-y-hidden" : "overflow-y-auto",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}

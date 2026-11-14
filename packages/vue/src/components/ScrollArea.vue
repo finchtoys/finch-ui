@@ -8,6 +8,7 @@
  * scroll position only, which is all the current call sites (menus, dialogs) use.
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { scrollAreaClassName } from "@shared/classes";
 
 const props = withDefaults(
   defineProps<{
@@ -55,7 +56,7 @@ onBeforeUnmount(() => scroller.value?.removeEventListener("scroll", measure));
 <template>
   <div
     ref="scroller"
-    class="appScrollbar overflow-y-auto"
+    :class="scrollAreaClassName({ orientation: props.orientation })"
     :style="[{ maxHeight: props.maxHeight ? `${props.maxHeight}px` : undefined }, maskStyle]"
   >
     <slot />

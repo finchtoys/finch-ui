@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { scrollAreaClassName } from "../styles/classes";
 
 interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Scroll direction. Default: "vertical". */
@@ -130,7 +131,7 @@ const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     return (
       <div
         ref={setRef}
-        className={`appScrollbar ${isHorizontal ? "overflow-x-auto overflow-y-hidden" : "overflow-y-auto"} ${className}`}
+        className={scrollAreaClassName({ orientation, className })}
         style={maskImage ? { WebkitMaskImage: maskImage, maskImage, ...style } : style}
         onScroll={handleScroll}
         {...rest}

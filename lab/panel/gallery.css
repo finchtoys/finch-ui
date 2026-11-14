@@ -6,6 +6,8 @@ body { margin:0; background:var(--ui-bg-main); color:var(--ui-text-primary); fon
 h1 { font-size:22px; font-weight:650; margin:0 0 6px; }
 .lab-header>p { margin:8px 0; }
 .lab-header nav { display:flex; gap:18px; margin-top:14px; }
+.lab-jump { appearance:none; background:none; border:0; padding:0; font:inherit; color:var(--accent,#5b5bd6); cursor:pointer; }
+.lab-jump:hover { text-decoration:underline; }
 a { color:var(--ui-accent); }
 main { padding:18px; }
 .lab-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr)); gap:16px; margin-bottom:20px; }

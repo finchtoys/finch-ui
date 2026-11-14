@@ -6,7 +6,7 @@
   "panelChunks": [
     {
       "file": "panel/index.js",
-      "bytes": 1554016,
+      "bytes": 1554138,
       "isEntry": true,
       "modules": 57,
       "vueRuntime": 0
@@ -42,12 +42,12 @@
       "gzip": 13100
     },
     "consumerJs": {
-      "bytes": 1554123,
-      "gzip": 415406
+      "bytes": 1554245,
+      "gzip": 415434
     },
     "consumerCss": {
-      "bytes": 79577,
-      "gzip": 13680
+      "bytes": 79736,
+      "gzip": 13744
     }
   },
   "coverage": [

@@ -70,7 +70,7 @@ function App() {
       <p className="lab-warning">缺失白名单 token 使用本地推导/回退，不等于完整宿主契约。Tooltip/HoverCard 的倒置固定色、Toast 的液态玻璃、Emoji 的 Vite 资产构建均有边界；详见验证文档。</p></details>
       <Button variant="secondary" disabled={running} onClick={()=>void run()}>{running?'正在测量…':'运行 guest DOM / portal 自测'}</Button>
       {suite&&<details open><summary>自测 {suite.checks.filter(c=>c.pass).length}/{suite.checks.length}；合成事件，非真人输入验收</summary>{suite.checks.map(c=><p key={c.name} className={c.pass?'lab-pass':'lab-fail'}>{c.pass?'通过':'不通过'} · {c.name}</p>)}</details>}
-      <nav>{['原语','表单','浮层'].map((n,i)=><a key={n} href={`#group-${i}`}>{n}</a>)}</nav>
+      <nav>{['原语','表单','浮层'].map((n,i)=><button key={n} type="button" className="lab-jump" onClick={()=>document.getElementById(`group-${i}`)?.scrollIntoView({behavior:'smooth',block:'start'})}>{n}</button>)}</nav>
     </header>
     <main style={framework==='react'?undefined:{display:'none'}}><section id="group-0" className="lab-grid"><Primitives/></section><section id="group-1" className="lab-grid"><Forms/></section><section id="group-2" className="lab-grid"><Overlays/></section></main>
     <main id="lab-vue" ref={vueHost} style={framework==='vue'?undefined:{display:'none'}}/>

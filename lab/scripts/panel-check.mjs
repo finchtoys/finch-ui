@@ -104,6 +104,16 @@ async function main() {
   check("Vue app unmounted on switch back", (await page.locator("#lab-vue .demo__card").count()) === 0);
   await page.screenshot({ path: join(shots, "react.png") });
 
+  // Category jumps must scroll, not navigate: a fragment <a href="#x"> is a
+  // main-frame navigation, and the Finch guest webview blanks the panel on those.
+  const navigations = [];
+  page.on("framenavigated", (frame) => { if (frame === page.mainFrame()) navigations.push(frame.url()); });
+  await page.getByRole("button", { name: "浮层" }).click();
+  await page.waitForTimeout(500);
+  check("category jump scrolls to its section", (await page.evaluate(() => window.scrollY)) > 500);
+  check("category jump causes no navigation", navigations.length === 0, navigations[0] ?? "");
+  check("no href-based jump links remain", (await page.locator(".lab-header nav a").count()) === 0);
+
   check("no runtime errors", errors.length === 0, errors[0] ?? "");
 
   await browser.close();

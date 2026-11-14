@@ -182,6 +182,64 @@ async function runInputProbes(page) {
       () => document.querySelectorAll("body > [data-menu-panel]").length,
     );
 
+
+    // ── Real pointer / keyboard for the overlay family (stage 2) ────────────
+    await page.evaluate(([s]) => window.__finchVueSpike.mountForProbe(s, "tooltip-hover"), [side]);
+    await settle(page);
+    await page.locator("#tip-anchor").hover();
+    await page.waitForTimeout(520);
+    const tipOpened = await page.evaluate(() => document.querySelectorAll("body > .tooltip").length);
+    const tipBox = await page.evaluate(() => {
+      const tip = document.querySelector("body > .tooltip");
+      const anchor = document.querySelector("#tip-anchor");
+      if (!tip || !anchor) return null;
+      const t = tip.getBoundingClientRect();
+      const a = anchor.getBoundingClientRect();
+      return { above: t.bottom <= a.top + 1, x: Math.round(t.x), y: Math.round(t.y) };
+    });
+    await page.mouse.wheel(0, 30);
+    await page.waitForTimeout(320);
+    const tipAfterScroll = await page.evaluate(() => document.querySelectorAll("body > .tooltip").length);
+    probe["tooltip.realHover"] = { opened: tipOpened, placement: tipBox, remainingAfterWheel: tipAfterScroll };
+
+    await page.evaluate(([s]) => window.__finchVueSpike.mountForProbe(s, "hovercard-controlled"), [side]);
+    await settle(page);
+    probe["hovercard.controlled"] = await page.evaluate(() => {
+      const card = document.querySelector("body > .hoverCard");
+      const trigger = document.querySelector("#hc-trigger");
+      if (!card || !trigger) return { cardPresent: false };
+      const c = card.getBoundingClientRect();
+      const t = trigger.getBoundingClientRect();
+      return { cardPresent: true, below: Math.round(c.top), centeredDelta: Math.round(c.left + c.width / 2 - (t.left + t.width / 2)) };
+    });
+
+    await page.evaluate(([s]) => window.__finchVueSpike.mountForProbe(s, "menusubmenu-right"), [side]);
+    await settle(page);
+    probe["menusubmenu.geometry"] = await page.evaluate(() => {
+      const panel = document.querySelector("body > [data-menu-submenu='true']");
+      const trigger = document.querySelector("#submenu-trigger");
+      if (!panel || !trigger) return { panelPresent: false };
+      const p = panel.getBoundingClientRect();
+      const t = trigger.getBoundingClientRect();
+      return { panelPresent: true, opensRight: p.left >= t.right - 1, x: Math.round(p.x), y: Math.round(p.y) };
+    });
+
+    await page.evaluate(([s]) => window.__finchVueSpike.mountForProbe(s, "confirm-open"), [side]);
+    await settle(page);
+    const confirmBefore = await page.evaluate(() => document.querySelectorAll("[data-finch-modal-shell]").length);
+    // Real click on the backdrop: ConfirmDialog must NOT close on it.
+    const backdrop = await page.locator("[data-finch-modal-shell]").first().boundingBox();
+    await page.mouse.click(backdrop.x + 12, backdrop.y + 12);
+    await page.waitForTimeout(200);
+    const confirmAfterBackdrop = await page.evaluate(() => document.querySelectorAll("[data-finch-modal-shell]").length);
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(220);
+    probe["confirm.realInput"] = {
+      before: confirmBefore,
+      afterBackdropClick: confirmAfterBackdrop,
+      afterEscape: await page.evaluate(() => document.querySelectorAll("[data-finch-modal-shell]").length),
+    };
+
     await page.evaluate(() => window.__finchVueSpike.unmountProbe());
     results[side] = probe;
   }
@@ -268,6 +326,14 @@ async function main() {
 
   const summary = {
     scenarios: report.scenarios.length,
+    // Drift controls: every one of these MUST be detected, otherwise the
+    // harness is blind and the zero-drift verdict below means nothing.
+    sensitivityPassed: report.sensitivity.every((item) => item.detected),
+    sensitivity: report.sensitivity.map((item) => ({
+      id: item.id,
+      detected: item.detected,
+      diffKinds: [...new Set(item.diffs.map((diff) => diff.kind))],
+    })),
     scenariosWithDiffs: report.scenarios.filter((item) => item.diffs.length > 0).length,
     totalDiffs: report.scenarios.reduce((sum, item) => sum + item.diffs.length, 0),
     refactorIdentical: report.refactorIdentical,

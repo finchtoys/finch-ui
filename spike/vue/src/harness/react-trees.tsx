@@ -12,6 +12,10 @@ import { Star } from "lucide-react";
  */
 export interface ReactComponents {
   Button: ComponentType<any>;
+  Tooltip: ComponentType<any>;
+  HoverCard: ComponentType<any>;
+  MenuSubmenu: ComponentType<any>;
+  ConfirmDialog: ComponentType<any>;
   Input: ComponentType<any>;
   ToggleSwitch: ComponentType<any>;
   ModalShell: ComponentType<any>;
@@ -23,7 +27,7 @@ export interface ReactComponents {
 const PANEL_BODY = <p className="m-0 px-5 pt-4 pb-5 text-[14px] text-txt">Modal body copy.</p>;
 
 export function createReactTrees(c: ReactComponents): Record<string, () => ReactNode> {
-  const { Button, Input, ToggleSwitch, ModalShell, MenuItem, MenuPopover, MenuSeparator } = c;
+  const { Button, Input, ToggleSwitch, ModalShell, MenuItem, MenuPopover, MenuSeparator, Tooltip, HoverCard, MenuSubmenu, ConfirmDialog } = c;
 
 function MenuContents() {
   return (
@@ -150,6 +154,57 @@ function NestedModalScenario() {
   );
 }
 
+
+function HoverDrivenTooltip() {
+  const [nonce, setNonce] = useState(0);
+  return (
+    <div className="p-6" data-nonce={nonce}>
+      <button type="button" id="tip-trigger" onClick={() => setNonce(nonce + 1)} className="h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]">
+        悬停出提示
+      </button>
+      <Tooltip content="悬停提示" placement="top">
+        <span id="tip-anchor" className="ml-2 text-[13px] text-txt-secondary">hover target</span>
+      </Tooltip>
+    </div>
+  );
+}
+
+function SubmenuScenario({ side }: { side: "left" | "right" }) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return (
+    <div className="p-6">
+      <button id="submenu-trigger" ref={triggerRef} type="button" className="h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]">
+        二级菜单触发
+      </button>
+      <MenuSubmenu open triggerRef={triggerRef} side={side}>
+        <MenuItem>二级项一</MenuItem>
+        <MenuItem>二级项二</MenuItem>
+      </MenuSubmenu>
+    </div>
+  );
+}
+
+function ConfirmScenario() {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="p-6">
+      <button type="button" onClick={() => setOpen(true)} className="underline text-[13px]">重新打开</button>
+      <ConfirmDialog
+        open={open}
+        title="确认删除？"
+        description="删除后不可恢复。"
+        confirmLabel="确认删除"
+        cancelLabel="取消"
+        closeLabel="关闭"
+        variant="danger"
+        showCloseButton
+        onConfirm={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+      />
+    </div>
+  );
+}
+
 const trees: Record<string, () => ReactNode> = {
   "btn-primary": () => <Button variant="primary">主要</Button>,
   "btn-brand": () => <Button variant="brand">品牌</Button>,
@@ -207,6 +262,36 @@ const trees: Record<string, () => ReactNode> = {
   "menu-top-flip": () => <MenuScenario atBottom />,
   "menu-right-start": () => <MenuScenario placement="right-start" />,
   "menu-anchor-point": () => <MenuScenario nested point={{ x: 260, y: 260 }} />,
+
+  // ── Overlays (stage 2) ───────────────────────────────────────────────────
+  "tooltip-controlled": () => (
+    <div className="p-6">
+      <Tooltip content="提示内容" open anchorRect={new DOMRect(200, 160, 96, 28)} placement="bottom">
+        <span>anchor</span>
+      </Tooltip>
+    </div>
+  ),
+  "tooltip-hover": () => <HoverDrivenTooltip />,
+  "hovercard-controlled": () => (
+    <div className="p-6">
+      <HoverCard content={<span>浮卡内容浮卡内容</span>} open placement="bottom">
+        <button type="button" id="hc-trigger" className="h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]">
+          hover 我
+        </button>
+      </HoverCard>
+    </div>
+  ),
+  "menusubmenu-right": () => <SubmenuScenario side="right" />,
+  "confirm-open": () => <ConfirmScenario />,
+
+  // ── Sensitivity controls (must be DETECTED as drifted) ───────────────────
+  "control-tooltip-offset": () => (
+    <div className="p-6">
+      <Tooltip content="提示内容" open anchorRect={new DOMRect(200, 160, 96, 28)} placement="bottom">
+        <span>anchor</span>
+      </Tooltip>
+    </div>
+  ),
 };
 
   return trees;

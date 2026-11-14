@@ -3,7 +3,7 @@
  * Vue port of HoverCard.tsx — same wrapper strategy as Tooltip.vue
  * (display:contents trigger box, first element child is the anchor).
  */
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
   HOVER_CARD_CONTENT_CLASS,
   HOVER_CARD_OUT_DURATION,
@@ -139,6 +139,12 @@ watch(
     else position.value = null;
   },
 );
+
+// Controlled cards are visible from the first render: measure on mount, since
+// no watcher source changes afterwards.
+onMounted(() => {
+  if (visible.value && !closing.value) attachMeasurement();
+});
 
 onBeforeUnmount(() => {
   if (openTimer) clearTimeout(openTimer);

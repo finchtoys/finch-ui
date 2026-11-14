@@ -1,12 +1,19 @@
 import { defineComponent, h, ref } from "vue";
 import type { VNode } from "vue";
-import Button from "../vue/Button.vue";
-import Input from "../vue/Input.vue";
-import ToggleSwitch from "../vue/ToggleSwitch.vue";
-import ModalShell from "../vue/ModalShell.vue";
-import MenuPopover from "../vue/MenuPopover.vue";
-import MenuItem from "../vue/MenuItem.vue";
+import {
+  Button,
+  ConfirmDialog,
+  HoverCard,
+  Input,
+  MenuItem,
+  MenuPopover,
+  MenuSubmenu,
+  ModalShell,
+  ToggleSwitch,
+  Tooltip,
+} from "@pkg";
 import StarIcon from "../vue/StarIcon.vue";
+import TooltipDriftControl from "../vue/TooltipDriftControl.vue";
 
 /**
  * Vue trees for every scenario — structurally identical to react-trees.tsx.
@@ -172,6 +179,58 @@ function NestedModalScenario() {
   });
 }
 
+
+function HoverDrivenTooltip() {
+  return defineComponent({
+    setup() {
+      return () =>
+        h("div", { class: "p-6" }, [
+          h("button", { id: "tip-trigger", type: "button", class: "h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]" }, "悬停出提示"),
+          h(Tooltip, { content: "悬停提示", placement: "top" }, { default: () => h("span", { id: "tip-anchor", class: "ml-2 text-[13px] text-txt-secondary" }, "hover target") }),
+        ]);
+    },
+  });
+}
+
+function SubmenuScenario(props: { side: "left" | "right" }) {
+  return defineComponent({
+    setup() {
+      const trigger = ref<HTMLElement | null>(null);
+      return () =>
+        h("div", { class: "p-6" }, [
+          h("button", { id: "submenu-trigger", ref: trigger, type: "button", class: "h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]" }, "二级菜单触发"),
+          h(MenuSubmenu, { open: true, getTrigger: () => trigger.value, side: props.side }, {
+            default: () => [h(MenuItem, null, { default: () => "二级项一" }), h(MenuItem, null, { default: () => "二级项二" })],
+          }),
+        ]);
+    },
+  });
+}
+
+function ConfirmScenario() {
+  return defineComponent({
+    setup() {
+      const open = ref(true);
+      return () =>
+        h("div", { class: "p-6" }, [
+          h("button", { type: "button", onClick: () => (open.value = true), class: "underline text-[13px]" }, "重新打开"),
+          h(ConfirmDialog, {
+            open: open.value,
+            title: "确认删除？",
+            description: "删除后不可恢复。",
+            confirmLabel: "确认删除",
+            cancelLabel: "取消",
+            closeLabel: "关闭",
+            variant: "danger",
+            showCloseButton: true,
+            onConfirm: () => (open.value = false),
+            onCancel: () => (open.value = false),
+          }),
+        ]);
+    },
+  });
+}
+
 const star = (size: number) => () => h(StarIcon, { size });
 
 export const vueTrees: Record<string, () => VNode> = {
@@ -232,4 +291,19 @@ export const vueTrees: Record<string, () => VNode> = {
   "menu-top-flip": () => h(MenuScenario({ atBottom: true })),
   "menu-right-start": () => h(MenuScenario({ placement: "right-start" })),
   "menu-anchor-point": () => h(MenuScenario({ nested: true, point: { x: 260, y: 260 } })),
+
+  "tooltip-controlled": () => h(Tooltip, { content: "提示内容", open: true, anchorRect: new DOMRect(200, 160, 96, 28), placement: "bottom" }, { default: () => h("span", null, "anchor") }),
+  "tooltip-hover": () => h(HoverDrivenTooltip()),
+  "hovercard-controlled": () =>
+    h(HoverCard, { open: true, placement: "bottom" }, {
+      default: () =>
+        h("button", { type: "button", id: "hc-trigger", class: "h-[28px] rounded-[var(--ui-radius-sm)] border border-border-subtle px-3 text-[13px]" }, "hover 我"),
+      content: () => h("span", null, "浮卡内容浮卡内容"),
+    }),
+  "menusubmenu-right": () => h(SubmenuScenario({ side: "right" })),
+  "confirm-open": () => h(ConfirmScenario()),
+
+  // Sensitivity control: shipped Tooltip moved down 8px. Must be detected.
+  "control-tooltip-offset": () =>
+    h(TooltipDriftControl, { content: "提示内容", anchorRect: new DOMRect(200, 160, 96, 28), placement: "bottom" }, { default: () => h("span", null, "anchor") }),
 };

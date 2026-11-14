@@ -12,10 +12,16 @@ export interface Ctx {
 
 export interface ScenarioDef {
   id: string;
-  group: "button" | "input" | "toggle" | "modal" | "menu";
+  group: "button" | "input" | "toggle" | "modal" | "menu" | "overlay";
   title: string;
   /** Reuse the tree of another scenario when only the interaction differs. */
   treeId?: string;
+  /**
+   * Deliberately drifted control: the run MUST report diffs here. It is how the
+   * harness proves it can still see drift instead of silently comparing equal
+   * things.
+   */
+  sensitivity?: boolean;
   /** How long to let entry animations finish before sampling. */
   settle?: number;
   samples: SampleSpec[];
@@ -270,6 +276,108 @@ export const scenarios: ScenarioDef[] = [
       await wait(240);
       return { panelsBefore: 1, panelsAfterOutsidePointerDown: count(PANEL) };
     },
+  },
+
+  // ── Overlays (stage 2) ────────────────────────────────────────────────────
+  {
+    id: "tooltip-controlled",
+    group: "overlay",
+    title: "Tooltip 受控定位",
+    settle: 420,
+    samples: [
+      { key: "tip", selector: "body > .tooltip" },
+      { key: "content", selector: "body > .tooltip > .tooltip__content" },
+    ],
+  },
+  {
+    id: "tooltip-hover",
+    group: "overlay",
+    title: "Tooltip 悬停出现 / 滚动关闭",
+    settle: 320,
+    samples: [{ key: "tip", selector: "body > .tooltip" }],
+    script: async ({ q, wait, count }) => {
+      const anchor = q("#tip-anchor");
+      if (!anchor) return { anchorPresent: false };
+      anchor.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, relatedTarget: document.body }));
+      await wait(450);
+      const opened = count("body > .tooltip");
+      const openRect = opened ? rect(q("body > .tooltip")) : null;
+      window.dispatchEvent(new Event("scroll"));
+      await wait(300);
+      return { anchorPresent: true, openedAfterHover: opened, rectOnOpen: openRect, remainingAfterScroll: count("body > .tooltip") };
+    },
+  },
+  {
+    id: "hovercard-controlled",
+    group: "overlay",
+    title: "HoverCard 受控定位",
+    settle: 420,
+    samples: [
+      { key: "card", selector: "body > .hoverCard" },
+      { key: "content", selector: "body > .hoverCard > .hoverCard__content" },
+    ],
+    script: async ({ q }) => {
+      const card = q("body > .hoverCard");
+      const trigger = q("#hc-trigger");
+      if (!card || !trigger) return { cardPresent: false };
+      const c = card.getBoundingClientRect();
+      const t = trigger.getBoundingClientRect();
+      return {
+        cardPresent: true,
+        cardRect: rect(card),
+        triggerRect: rect(trigger),
+        belowTrigger: c.top >= t.bottom - 1,
+        horizontallyCentered: Math.abs(c.left + c.width / 2 - (t.left + t.width / 2)) < 2,
+      };
+    },
+  },
+  {
+    id: "menusubmenu-right",
+    group: "overlay",
+    title: "MenuSubmenu 右侧展开",
+    settle: 420,
+    samples: [
+      { key: "panel", selector: "body > [data-menu-submenu='true']" },
+      { key: "items", selector: "body > [data-menu-submenu='true'] > button" },
+    ],
+    script: async ({ q }) => {
+      const panel = q("body > [data-menu-submenu='true']");
+      const trigger = q("#submenu-trigger");
+      if (!panel || !trigger) return { panelPresent: false };
+      const p = panel.getBoundingClientRect();
+      const t = trigger.getBoundingClientRect();
+      return { panelPresent: true, panelRect: rect(panel), triggerRect: rect(trigger), opensToTheRight: p.left >= t.right - 1 };
+    },
+  },
+  {
+    id: "confirm-open",
+    group: "overlay",
+    title: "ConfirmDialog 结构与 Esc",
+    settle: 520,
+    samples: [
+      { key: "backdrop", selector: "[data-finch-modal-shell]" },
+      { key: "shell", selector: "[data-finch-modal-shell] > div[role='alertdialog']" },
+      { key: "close", selector: "[data-finch-modal-shell] > div > button" },
+      { key: "title", selector: "[data-finch-modal-shell] p" },
+      { key: "buttons", selector: "[data-finch-modal-shell] > div > div > button" },
+    ],
+    script: async ({ escape, wait, count }) => {
+      const before = count("[data-finch-modal-shell]");
+      escape();
+      await wait(120);
+      return { shellsBefore: before, shellsAfterEscape: count("[data-finch-modal-shell]") };
+    },
+  },
+  {
+    id: "control-tooltip-offset",
+    group: "overlay",
+    title: "负向对照：气泡下移 8px（必须被抓到）",
+    settle: 420,
+    sensitivity: true,
+    samples: [
+      { key: "tip", selector: "body > .tooltip" },
+      { key: "content", selector: "body > .tooltip > .tooltip__content" },
+    ],
   },
   {
     id: "menu-escape",

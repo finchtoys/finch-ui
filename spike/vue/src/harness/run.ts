@@ -284,6 +284,8 @@ export interface SpikeReport {
   reactVersion: string;
   vueVersion: string;
   scenarios: ScenarioReport[];
+  /** Deliberately drifted controls: each one MUST report diffs. */
+  sensitivity: { id: string; diffs: DiffEntry[]; detected: boolean }[];
   control: { diffs: DiffEntry[]; expectedStyleDiff: boolean };
   /** True when every scenario renders identically before and after the extraction. */
   refactorIdentical: boolean;
@@ -298,7 +300,15 @@ export async function runAll(options: { theme?: "light" | "dark" } = {}): Promis
   await raf();
 
   const reports: ScenarioReport[] = [];
+  const sensitivity: { id: string; diffs: DiffEntry[]; detected: boolean }[] = [];
   for (const scenario of scenarios) {
+    if (scenario.sensitivity) {
+      const report = await runScenario(scenario);
+      // A drift control is "detected" when React and Vue disagree — either on
+      // geometry, class or styles. Comparing equal things would be the failure.
+      sensitivity.push({ id: scenario.id, diffs: report.diffs, detected: report.diffs.length > 0 });
+      continue;
+    }
     reports.push(await runScenario(scenario));
   }
   const control = await runControl();
@@ -319,6 +329,7 @@ export async function runAll(options: { theme?: "light" | "dark" } = {}): Promis
     reactVersion: "react",
     vueVersion: "vue",
     scenarios: reports,
+    sensitivity,
     control,
     refactorIdentical: reports.every((item) => item.refactorDiffs.length === 0),
     refactorSemanticallyIdentical: reports.every(

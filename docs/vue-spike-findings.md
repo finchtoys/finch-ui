@@ -341,3 +341,46 @@ DropdownSelect/MultiSelect 的 label 与菜单宽度、DialogMessage 行内 code
 
 **未做**：C 类三件（Emoji / LiquidGlassFilter / Toast）；`lab/` 与 finch 主仓 `src/renderer/ui/`
 一行未动；没有发包。
+
+
+---
+
+## 10. 浮层真实浏览器验证（阶段 2）
+
+spike 的逐属性/逐像素 harness 原来只覆盖 5 个组件。这里把它扩到浮层 7 个，并把 **Vue 侧从
+spike 里的旧副本改成直接引用 `packages/vue`（交付物）** —— 否则验的还是没人用的代码。
+
+**覆盖**：Tooltip（受控定位 / 真实悬停 / 滚动关闭）、HoverCard（受控定位 + 与触发器的相对位置）、
+MenuPopover + MenuItem（此前已有：portal、逃出 overflow、跟随嵌套滚动、外部点击、Esc）、
+MenuSubmenu（右侧展开，含视口夹取）、ModalShell（此前已有：Esc 层级、遮罩、`closeOnBackdrop`）、
+ConfirmDialog（alertdialog 结构 + Esc + 真实点遮罩不关闭）。
+
+**负向对照先行**：新增 `TooltipDriftControl.vue` —— 与交付版 Tooltip 同一套 DOM 与 class，只是把气泡
+下移 8px。harness 必须把它判成 `geometry` 漂移：
+
+```
+sensitivity: [{ id: "control-tooltip-offset", detected: true, diffKinds: ["geometry"] }]
+```
+
+`compare.mjs` 把这条当硬条件（`sensitivityPassed`），对照项一旦「没被抓到」整轮就是失败。
+
+**结果（46 场景 × 浅/深两套主题）**：`scenariosWithDiffs: 0`、`totalDiffs: 0`、真实指针/键盘
+`probeDiffs: 0`、截图逐字节相同。真实输入探针覆盖：悬停出 Tooltip（`opened: 1`）、滚轮后关闭
+（`remainingAfterWheel` 两侧一致）、HoverCard 相对位置、MenuSubmenu 向右展开、ConfirmDialog
+真实点遮罩不关闭 + 真实 Esc 关闭。
+
+**这一轮抓到的真 bug（正是阶段 2 的意义）**：交付包的 `Tooltip` / `HoverCard` 在**受控模式**
+（`open` 从首次渲染为 true）下永远不定位——Vue 的 watcher 不在创建时执行，而受控模式没有任何
+源变化去触发它。表现是气泡 `visibility:hidden` 停在 `0,0` / `-10000`。SSR 冒烟与 demo 的悬停路径
+都发现不了（demo 是悬停驱动，会触发 watcher）。修法是 `onMounted` 补一次测量（与 MenuPopover
+当初同一类问题）。修复后复测：0 差异。
+
+**没有覆盖 / 保持诚实**：
+
+- 仍是 **Chromium**，不是真实 Finch webview guest。
+- 浮层的 hover **全矩阵**没做：每个浮层只验了默认 `placement` 与一个受限场景；tooltip 的
+  `left/right` 箭头态、HoverCard 四向翻转、MenuSubmenu 的 `side="left"` 与 `verticalAlign="top"`
+  只有代码路径，没有逐项实测。
+- 探针里 HoverCard 的水平居中在 900px 视口下会被 gutter 夹取（`centeredDelta: 44`），两侧一致，
+  但这不是「居中正确」的证明。
+- 浮层与 `Toast`（未提供）之间的遮挡关系、`menuState` 单例在多实例下的交叉关闭没有专门验。

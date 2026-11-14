@@ -6,7 +6,7 @@
  * `display:contents` box and measures its first element child instead, so the
  * trigger's layout and classes are untouched.
  */
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { isAnyMenuOpen, subscribeMenuState } from "@lib/components/menuState";
 import {
   TOOLTIP_CONTENT_CLASS,
@@ -143,15 +143,23 @@ function onScrollOrResize() {
   close();
 }
 
+function attachWindow() {
+  window.addEventListener("resize", schedule);
+  window.addEventListener("scroll", onScrollOrResize, true);
+}
+
+function detachWindow() {
+  window.removeEventListener("resize", schedule);
+  window.removeEventListener("scroll", onScrollOrResize, true);
+}
+
 watch(visible, (value) => {
   if (value) {
-    window.addEventListener("resize", schedule);
-    window.addEventListener("scroll", onScrollOrResize, true);
-  } else {
-    window.removeEventListener("resize", schedule);
-    window.removeEventListener("scroll", onScrollOrResize, true);
-    position.value = null;
+    attachWindow();
+    return;
   }
+  detachWindow();
+  position.value = null;
 });
 
 watch(
@@ -188,10 +196,19 @@ watch(
   { flush: "post" },
 );
 
+// A controlled tooltip (`open` from the start) never sees a `visible` change,
+// and a Vue watcher does not run on creation — measure once on mount.
+onMounted(() => {
+  if (!visible.value) return;
+  attachWindow();
+  schedule();
+});
+
 const unsubscribeMenu = subscribeMenuState(onMenuStateChange);
 
 onBeforeUnmount(() => {
   clearTimers();
+  detachWindow();
   unsubscribeMenu();
 });
 </script>

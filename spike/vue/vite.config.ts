@@ -34,6 +34,9 @@ export default defineConfig({
       // Read the React originals straight from the library source. Nothing in
       // library/ or lab/ is modified.
       { find: /^@lib\//, replacement: `${resolve(here, "../../library")}/` },
+      // The Vue implementation that actually ships. The harness measures the
+      // package, not the spike-era local copies.
+      { find: /^@pkg$/, replacement: resolve(here, "../../packages/vue/entry.ts") },
       { find: /^@baseline\//, replacement: `${baselineLibrary}/` },
       // The PREBUILT stylesheet both frameworks share.
       { find: /^@css$/, replacement: resolve(here, "../../library/dist/style.css") },

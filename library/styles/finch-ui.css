@@ -7,3 +7,6 @@
 @import "./host-gaps.css";
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @source "../components";
+/* 组件库的 class 字符串已集中到 styles/classes.ts。这个 @source 是必须的：
+   少一行，Tailwind 只扫组件目录，classes.ts 里的 utility 会静默不生成。 */
+@source "./classes.ts";

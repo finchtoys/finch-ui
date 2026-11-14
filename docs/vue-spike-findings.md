@@ -12,7 +12,7 @@
 | 1 · 视觉零漂移 | **通过** | 41 个场景、99 个元素实例 × 57 条 CSS 属性（每主题 5,643 次比较，浅/深两套共 11,286 次）**全部相同**；class 字符串逐字节相同；32 组截图在浅/深两色下**逐像素相同** |
 | 2 · portal 行为一致 | **通过** | teleport 到 `document.body`、`position:fixed`、逃出 `overflow` 裁切、跟随嵌套滚动（与锚点相对位移恒 28px）——与验证文档里 React 在真实 guest 的实测值**完全一致** |
 | 3 · 模态行为 | **通过** | Esc 只关最上层（2→1→0，剩的确实是「外层」）、遮罩点击默认不关、`closeOnBackdrop` 可关、打开时 blur 掉当前焦点 |
-| 4 · 双框架共存成本 | **建议抽单一来源，但必须同时改两处构建指纹**，否则 Tailwind 产物和 `verify` 都会漏 | 详见 §5。这不是风格偏好，是有一条硬门槛：class 字符串现在同时是 **Tailwind 的扫描输入**和 **verify-build 的覆盖断言输入** |
+| 4 · 双框架共存成本 | **抽单一来源（方案 A），已落地 5 个组件**；动手时必须同时改两处构建指纹，否则 Tailwind 产物和 `verify` 都会漏 | 详见 §5。这不是风格偏好，是有一条硬门槛：class 字符串现在同时是 **Tailwind 的扫描输入**和 **verify-build 的覆盖断言输入**。落地后 `dist/style.css` 指纹不变、156/156 覆盖仍过、Vue 侧复测仍 0 差异 |
 
 一句话判断：**技术上没有拦路虎，Vue 版能和 React 版做到像素级一致**。真正的成本不在重写组件，在「同一套 class 字符串要不要分两份」这个决定，以及随之而来的构建/校验链路改造。
 
@@ -22,7 +22,7 @@
 
 ```
 spike/vue/                     独立 npm 包（vue 3.5 + vite 6 + playwright-core），自己的 node_modules
-  src/shared/classes.ts        框架中立的 class 组装函数（命题 4 的原型）
+  src/shared/classes.ts        re-export shim → library/styles/classes.ts（命题 4 已落地）
   src/vue/*.vue                5 个 Vue SFC + 2 个 lucide 图标的 DOM 替身
   src/harness/react-trees.tsx  直接用 library/components/*.tsx 原件搭场景
   src/harness/vue-trees.ts     同一批场景的 Vue 版本
@@ -158,7 +158,7 @@ input-default  class  onlyVue:["font-medium"]
 | 风险 | 一次性重构面积大；动到 CSS 构建指纹，`dist/style.css` 可能变化（需重新生成并 diff 产物） | 长期双维护 + 漂移；且**测试只能拦住「渲染出来的 class」不一致，拦不住内联样式/属性语义**（本轮 4 个坑里有 2 个就是这样漏出来的） |
 | 我的判断 | **推荐**。它把「一致性」从测试问题降级成编译问题 | 只适合作为过渡态的兜底 |
 
-### 5.3 建议的落地形状（不是现在做，是将来做的顺序）
+### 5.3 落地形状（2026-11-14 已按此执行，见 §5.4）
 
 1. 新建 `library/styles/classes.ts`（框架中立，直接从现有组件里搬字符串，**先只搬、不改任何字符串**）。
 2. 同步两处构建指纹：`finch-ui.css` 的 `@source`、`verify-build.mjs` 的扫描列表。**这两条不做，Tailwind 产物会静默少掉 utility、verify 会静默少扫一批候选**——这是整个方案唯一会「静默出问题」的地方，必须一起改。
@@ -167,6 +167,33 @@ input-default  class  onlyVue:["font-medium"]
 5. 静态样式之外，**内联样式和 DOM 属性语义必须另立一致性测试**（本轮 4 个坑里 3 个出在这两类）。共享模块只负责 class 与纯计算，不要试图用它掩盖这两块。
 
 > 一个反直觉但重要的点：抽单一来源之后，**不能**指望「class 单源」等于「视觉零漂移」。它只覆盖了约 6 成风险面。剩下 4 成在：内联样式（24 处 `style={{}}`）、prop→DOM 属性映射（`aria-*`、`data-*`）、节点结构（node prop vs slot）、生命周期时序（`useLayoutEffect` vs `watch`）。
+
+### 5.4 落地记录（2026-11-14，已合并）
+
+**做了什么**（范围：spike 验证过的 5 个组件）
+
+| 动作 | 文件 |
+|---|---|
+| 新建框架中立的共享模块：class 组装、尺寸/圆角表、内联样式值、定位代数 | `library/styles/classes.ts` |
+| 5 个组件改为 import，自身不再持有任何 class 字面量（含默认值、`as="span"`、thumb 类、表头类） | `library/components/{Button,Input,ToggleSwitch,ModalShell,Menu}.tsx` |
+| Tailwind 扫描加入共享模块 | `library/styles/finch-ui.css` → `@source "./classes.ts"` |
+| verify 扫描加入共享模块，并新增「已迁移组件不得再出现 class 字面量」的硬断言 | `library/verify-build.mjs` |
+| Vue 侧改为直接消费库内模块（`@shared/classes` 变成 re-export shim） | `spike/vue/src/shared/classes.ts` + `ToggleSwitch.vue` |
+
+**为什么内联样式和定位代数也一起搬了**：`ToggleSwitch` 有 8 个内联样式值、`Menu` 有 2 个定位值 + 一套翻转/夹取代数。留着它们在各框架各写一遍，等于把本轮踩到的第 1、2 号坑（`watch` 不执行、数字不补 `px`）永久留在代码里。现在 `toggleSwitchTrackStyle()` / `menuPanelStyle()` 直接返回 `"42px"` 这类 CSS 字符串，两边都正确。
+
+**验收证据**
+
+| 检查 | 结果 |
+|---|---|
+| `dist/style.css` 指纹 | `236073b1…` **与重构前逐字节相同**（77,589 字节）——说明一条 utility 都没丢、没多 |
+| `npm run verify` | PASS；任意值覆盖仍 **156/156**，单 React 根断言仍通过 |
+| 新闸门是否真的会拦 | 手工把 `ToggleSwitch` 的 thumb 类改回字面量 → `AssertionError: Class string outside styles/classes.ts: components/ToggleSwitch.tsx:42`；改回后 PASS |
+| 全仓构建 + lab typecheck | 通过 |
+| Vue 与 React 并排复测 | 41 场景 × 浅/深两套主题 **仍全 0 差异**，38 组截图仍逐字节相同 |
+| 公开 API | `Button` 的类型、`INPUT_*` 常量继续从原位置导出（改为 re-export），`lab` 与新消费者无需改动 |
+
+**还没迁移**：其余 33 个组件文件。新闸门目前只覆盖名单里的 5 个（`SHARED_CLASS_COMPONENTS`），迁移一个就往名单里加一行，闸门自动接手。`Chip` / `Badge` / `Kbd` 这类纯展示件是机械活；`Tooltip` / `HoverCard` / `DropdownSelect` 建议连同它们的定位代数一起搬，否则会重演「两份定位代码」。`Emoji` / `LiquidGlassFilter` / `Toast` 属于 C 类，先解耦再谈迁移。
 
 ---
 
@@ -213,13 +240,16 @@ input-default  class  onlyVue:["font-medium"]
 **需舜子肉眼确认：**
 
 1. `docs/assets/vue-spike/menu-vue.png`、`modal-vue-dark.png` 是 Vue 版实拍，看一眼是否符合你对「Finch 观感」的预期（尤其菜单的毛玻璃与圆角）。
-2. 命题 4 的取舍：**你更在意「一次性重构 + 改构建指纹」，还是「每次改动两遍 + 靠测试兜底」？** 我的建议是前者，但这是长期维护成本的定性判断，得你拍。
 
 ---
 
-## 8. 如果决定继续，建议的下一步
+## 8. 下一步
+
+**已做（2026-11-14，命题 4 方案 A 落地，见 §5.4）**：`library/styles/classes.ts` 建立、5 个组件迁移、`@source` 与 `verify-build.mjs` 两处指纹同步、新增「已迁移组件不得出现 class 字面量」硬闸门、Vue 侧改吃库内模块并复测 0 差异。
+
+**接下来按顺序**：
 
 1. 先定 §6.3 的「谁消费 Vue 版」——没有真实消费方之前，不要再扩组件。
-2. 若确定要双框架：做 `styles/classes.ts` 抽取（只搬字符串不改值），同时改 `@source` 与 `verify-build.mjs` 两处，用 `dist/style.css` 逐字节不变作为验收。
-3. 把 `spike/vue/scripts/compare.mjs` 提成 CI 任务，扩到所有已移植组件；单测里再加一层 Node 端的一致性断言（SSR 渲染后比 `class` 属性，秒级，不必开浏览器）。
+2. 把剩下 33 个组件分批迁进 `styles/classes.ts`（每批迁移后跑 `npm run verify` 并确认 `dist/style.css` 指纹不变）。迁移顺序建议：纯展示件（Chip/Badge/Kbd/Empty/Alert/SkeletonBlock…）→ 表单件（CheckBox/SecretInput/SegmentedControl/OptionCard…）→ 浮层件（Tooltip/HoverCard/DropdownSelect/InlineSelect/MultiSelect/TimePicker，连同定位代数一起搬）。
+3. 把 `spike/vue/scripts/compare.mjs` 提成 CI 任务，扩到所有已移植组件；再补一层 Node 端一致性断言（SSR 渲染后比 `class` 属性，秒级，不必开浏览器），让「没开浏览器」的 PR 也能拦住漂移。
 4. C 类（Emoji / LiquidGlassFilter / Toast）单独出解耦方案，别混在移植里做。

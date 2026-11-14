@@ -1,20 +1,22 @@
 # Vue 3 spike — 5 组件 + 并排实测
 
 用 Vue 3（Composition API + SFC）重写了 `Button` / `Input` / `ToggleSwitch` / `ModalShell` / `Menu`，
-并与**未修改的** `library/components/*.tsx` 原件在同一张页面里逐项对比。
+并与 `library/components/*.tsx` 原件在同一张页面里逐项对比。
+
+两个框架现在吃**同一份** `library/styles/classes.ts`（命题 4 方案 A 已落地），所以这里的对比同时也是那条共享路径的回归测试。
 
 结论与数据：[`docs/vue-spike-findings.md`](../../docs/vue-spike-findings.md)。
 
 ## 边界
 
-- 只写 `spike/vue/`，`library/` 与 `lab/` 一行未改，不发包。
+- spike 代码只在 `spike/vue/`；`library/` 的改动只有命题 4 的共享模块迁移（见 findings §5.4），`lab/` 未改动，不发包。
 - 样式表**直接复用** `library/dist/style.css`（预编译产物）。构建后仍然是 77,589 字节、逐字节相同 —— Vue 侧没有跑 Tailwind。
 - React 与 Vue 各自带自己的运行时（这是对比台，不是产品包），Vite 里用 alias 把两边的 `react` 钉到同一份，否则 hooks 会因双 React 实例直接崩。
 
 ## 目录
 
 ```
-src/shared/classes.ts      框架中立的 class 组装 / 定位代数 / 几何常量（命题 4 的原型）
+src/shared/classes.ts      re-export shim → library/styles/classes.ts
 src/vue/*.vue              Vue 组件本体；XIcon / StarIcon 是 lucide-react 图标的 DOM 替身
 src/vue/ButtonDriftControl.vue  负向对照：删掉一个 font-medium! 的 Vue 按钮
 src/harness/react-trees.tsx     用 React 原件搭场景

@@ -2,14 +2,17 @@ import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from "react"
 import type { ButtonHTMLAttributes, CSSProperties, HTMLAttributes, ReactNode, RefObject } from "react";
 import { createPortal } from "react-dom";
 import { menuStateClose, menuStateOpen, subscribeMenuCloseAll } from "./menuState";
-
-type MenuPlacement =
-  | "top-start"
-  | "top-end"
-  | "bottom-start"
-  | "bottom-end"
-  | "right-start"
-  | "right-end";
+import {
+  MENU_OUT_DURATION,
+  MENU_ITEM_TRAILING_CLASS,
+  clampPosition,
+  menuItemClassName,
+  menuPanelClassName,
+  menuPanelStyle,
+  menuPosition,
+  menuSeparatorClassName,
+} from "../styles/classes";
+import type { MenuPlacement, MenuPosition } from "../styles/classes";
 
 interface MenuPanelProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -54,80 +57,6 @@ interface MenuItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 interface MenuSeparatorProps extends HTMLAttributes<HTMLDivElement> {}
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-
-function flipPlacement(
-  placement: MenuPlacement,
-  anchor: DOMRect | { left: number; right: number; top: number; bottom: number },
-  menuRect: Pick<DOMRect, "width" | "height">,
-  gap: number,
-  gutter: number
-): MenuPlacement {
-  if (placement.startsWith("bottom")) {
-    const bottomSpace = window.innerHeight - anchor.bottom - gap - gutter;
-    const topSpace = anchor.top - gap - gutter;
-    if (menuRect.height > bottomSpace && topSpace > bottomSpace) {
-      return placement === "bottom-start" ? "top-start" : "top-end";
-    }
-  }
-
-  if (placement.startsWith("top")) {
-    const topSpace = anchor.top - gap - gutter;
-    const bottomSpace = window.innerHeight - anchor.bottom - gap - gutter;
-    if (menuRect.height > topSpace && bottomSpace > topSpace) {
-      return placement === "top-start" ? "bottom-start" : "bottom-end";
-    }
-  }
-
-  return placement;
-}
-
-function getPosition(
-  placement: MenuPlacement,
-  anchor: DOMRect | { left: number; right: number; top: number; bottom: number },
-  menuRect: Pick<DOMRect, "width" | "height">,
-  gap: number,
-  gutter: number
-) {
-  let left = 0;
-  let top = 0;
-  const resolvedPlacement = flipPlacement(placement, anchor, menuRect, gap, gutter);
-
-  switch (resolvedPlacement) {
-    case "top-start":
-      left = anchor.left;
-      top = anchor.top - menuRect.height - gap;
-      break;
-    case "top-end":
-      left = anchor.right - menuRect.width;
-      top = anchor.top - menuRect.height - gap;
-      break;
-    case "bottom-start":
-      left = anchor.left;
-      top = anchor.bottom + gap;
-      break;
-    case "bottom-end":
-      left = anchor.right - menuRect.width;
-      top = anchor.bottom + gap;
-      break;
-    case "right-start":
-      left = anchor.right + gap;
-      top = anchor.top;
-      break;
-    case "right-end":
-      left = anchor.right + gap;
-      top = anchor.bottom - menuRect.height;
-      break;
-  }
-
-  return {
-    left: clamp(left, gutter, window.innerWidth - menuRect.width - gutter),
-    top: clamp(top, gutter, window.innerHeight - menuRect.height - gutter),
-  };
-}
-
 export const MenuPanel = forwardRef<HTMLDivElement, MenuPanelProps>(function MenuPanel(
   { children, className = "", closing = false, ...props },
   ref
@@ -136,7 +65,7 @@ export const MenuPanel = forwardRef<HTMLDivElement, MenuPanelProps>(function Men
     <div
       ref={ref}
       data-menu-panel="true"
-      className={`menuPanel z-1000 font-normal p-1.5 border border-border-subtle rounded-(--ui-radius-md) bg-sf-elevated shadow-(--ui-shadow-sm) ${closing ? "animate-menuOut" : "animate-menuIn"} ${className}`.trim()}
+      className={menuPanelClassName(closing, className)}
       {...props}
     >
       {children}
@@ -161,21 +90,19 @@ export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(function Me
     <button
       ref={ref}
       type={type}
-      className={`menuActionRow ${active ? "menuActionRow--active" : ""} ${danger ? "menuActionRow--ui-danger" : ""} ${className}`.trim()}
+      className={menuItemClassName({ active, danger, className })}
       {...props}
     >
       {icon}
       {children}
-      {trailing != null ? <span className="ml-auto flex shrink-0 items-center">{trailing}</span> : null}
+      {trailing != null ? <span className={MENU_ITEM_TRAILING_CLASS}>{trailing}</span> : null}
     </button>
   );
 });
 
 export function MenuSeparator({ className = "", ...props }: MenuSeparatorProps) {
-  return <div className={`my-1 border-t border-border-subtle ${className}`.trim()} {...props} />;
+  return <div className={menuSeparatorClassName(className)} {...props} />;
 }
-
-const MENU_OUT_DURATION = 120;
 
 export function MenuPopover({
   open,
@@ -190,7 +117,7 @@ export function MenuPopover({
   style,
 }: MenuPopoverProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+  const [position, setPosition] = useState<MenuPosition | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [visible, setVisible] = useState(false);
   // Tracks whether this instance has called menuStateOpen() without a matching
@@ -250,10 +177,10 @@ export function MenuPopover({
       // into the anchor calculation and make the panel drift.
       const menuRect = { width: panel.offsetWidth, height: panel.offsetHeight };
       const anchorRect = anchorRef?.current?.getBoundingClientRect();
-      let nextPosition: { left: number; top: number } | null = null;
+      let nextPosition: MenuPosition | null = null;
 
       if (anchorRect) {
-        nextPosition = getPosition(placement, anchorRect, menuRect, gap, gutter);
+        nextPosition = menuPosition(placement, anchorRect, menuRect, gap, gutter);
       } else if (anchorPoint) {
         const pointRect = {
           left: anchorPoint.x,
@@ -261,7 +188,7 @@ export function MenuPopover({
           top: anchorPoint.y,
           bottom: anchorPoint.y,
         };
-        nextPosition = getPosition(placement, pointRect, menuRect, gap, gutter);
+        nextPosition = menuPosition(placement, pointRect, menuRect, gap, gutter);
       }
 
       if (!nextPosition) return;
@@ -338,14 +265,7 @@ export function MenuPopover({
       ref={panelRef}
       closing={isClosing}
       className={className}
-      style={{
-        ...style,
-        position: "fixed",
-        left: position?.left ?? 0,
-        top: position?.top ?? 0,
-        visibility: position ? "visible" : "hidden",
-        pointerEvents: position ? "auto" : "none",
-      }}
+      style={{ ...style, ...menuPanelStyle(position) }}
     >
       {children}
     </MenuPanel>,
@@ -367,7 +287,7 @@ export function MenuSubmenu({
   onMouseLeave,
 }: MenuSubmenuProps) {
   const panelRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ left: number; top: number } | null>(null);
+  const [position, setPosition] = useState<MenuPosition | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [visible, setVisible] = useState(false);
   const menuRegisteredRef = useRef(false);
@@ -434,8 +354,8 @@ export function MenuSubmenu({
       const preferredTop = verticalAlign === "top" ? triggerRect.top : centeredTop;
 
       setPosition({
-        left: clamp(preferredLeft, gutter, window.innerWidth - menuRect.width - gutter),
-        top: clamp(preferredTop, gutter, window.innerHeight - positioningHeight - gutter),
+        left: clampPosition(preferredLeft, gutter, window.innerWidth - menuRect.width - gutter),
+        top: clampPosition(preferredTop, gutter, window.innerHeight - positioningHeight - gutter),
       });
     };
 
@@ -464,13 +384,7 @@ export function MenuSubmenu({
       data-menu-submenu="true"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      style={{
-        position: "fixed",
-        left: position?.left ?? 0,
-        top: position?.top ?? 0,
-        visibility: position ? "visible" : "hidden",
-        pointerEvents: position ? "auto" : "none",
-      }}
+      style={menuPanelStyle(position)}
     >
       {children}
     </MenuPanel>,

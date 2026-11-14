@@ -2,17 +2,17 @@
 /**
  * Vue 3 port of library/components/ToggleSwitch.tsx.
  *
- * Note the shape difference that survives the port: ToggleSwitch is built on
- * *inline styles computed in JS* (track width/height, thumb offsets, transition
- * strings), not on utility classes. That is the part a class-constant sharing
- * proposal does NOT cover — see docs/vue-spike-findings.md.
+ * ToggleSwitch is built on *inline styles computed in JS*, not only utility
+ * classes, so the shared module also owns those values (as `"42px"` strings —
+ * Vue does not append `px` to numbers, React does). Both frameworks now call
+ * the same `toggleSwitchTrackStyle` / `toggleSwitchThumbStyle`.
  */
 import { computed } from "vue";
 import {
-  TOGGLE_SWITCH_TRACK_BORDER,
+  TOGGLE_SWITCH_THUMB_CLASS,
   toggleSwitchClassName,
-  toggleSwitchGeometry,
-  toggleSwitchTrackColor,
+  toggleSwitchThumbStyle,
+  toggleSwitchTrackStyle,
 } from "@shared/classes";
 
 const props = withDefaults(
@@ -27,35 +27,15 @@ const props = withDefaults(
 
 const emit = defineEmits<{ change: []; click: [event: MouseEvent] }>();
 
-const geo = computed(() => toggleSwitchGeometry(props.size));
-
 const rootClass = computed(() =>
   toggleSwitchClassName({ disabled: props.disabled, className: props.className }),
 );
 
-const rootStyle = computed(() => {
-  const { trackW, trackH } = geo.value;
-  return {
-    width: `${trackW}px`,
-    height: `${trackH}px`,
-    backgroundColor: toggleSwitchTrackColor(props.checked, props.disabled),
-    border: TOGGLE_SWITCH_TRACK_BORDER,
-    transition: "background-color 200ms ease",
-    opacity: props.disabled ? 0.5 : 1,
-  };
-});
+const rootStyle = computed(() =>
+  toggleSwitchTrackStyle({ size: props.size, checked: props.checked, disabled: props.disabled }),
+);
 
-const thumbStyle = computed(() => {
-  const { trackW, thumb, pad } = geo.value;
-  return {
-    width: `${thumb}px`,
-    height: `${thumb}px`,
-    backgroundColor: "var(--ui-fg-primary)",
-    left: `${props.checked ? trackW - pad - thumb : pad}px`,
-    transform: "translateY(-50%)",
-    transition: "left 200ms cubic-bezier(0.22, 1, 0.36, 1)",
-  };
-});
+const thumbStyle = computed(() => toggleSwitchThumbStyle({ size: props.size, checked: props.checked }));
 
 function onClick(event: MouseEvent) {
   event.stopPropagation();
@@ -74,6 +54,6 @@ function onClick(event: MouseEvent) {
     :style="rootStyle"
     @click="onClick"
   >
-    <span class="absolute top-1/2 rounded-full shadow-sm" :style="thumbStyle" />
+    <span :class="TOGGLE_SWITCH_THUMB_CLASS" :style="thumbStyle" />
   </button>
 </template>

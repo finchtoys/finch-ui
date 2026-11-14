@@ -8,6 +8,16 @@ const read=p=>readFileSync(p,'utf8');
 const files=(dir)=>readdirSync(dir).flatMap(n=>statSync(`${dir}/${n}`).isDirectory()?files(`${dir}/${n}`):[`${dir}/${n}`]);
 const css=postcss.parse(read('dist/style.css'));
 const candidates=new Set();
+
+// Class strings for the migrated components live in styles/classes.ts, so it
+// MUST be scanned together with the components — otherwise the arbitrary-value
+// coverage assertion below silently stops checking the real source of truth.
+const CLASS_SOURCE = 'styles/classes.ts';
+const SCANNED_FILES = [
+  ...files('components').filter(f=>/\.tsx?$/.test(f)&&!f.includes('/assets/')),
+  CLASS_SOURCE,
+];
+
 function visit(node){
   if(!node||typeof node!=='object')return;
   if(node.type==='StringLiteral'||node.type==='TemplateElement'){
@@ -16,11 +26,45 @@ function visit(node){
   }
   for(const [k,v] of Object.entries(node))if(k!=='loc')Array.isArray(v)?v.forEach(visit):visit(v);
 }
-for(const file of files('components').filter(f=>/\.tsx?$/.test(f)&&!f.includes('/assets/'))){
+for(const file of SCANNED_FILES){
   const src=read(file);
   assert(!/\]\$\{/.test(src),`Arbitrary utility glued to template interpolation: ${file}`);
   visit(parse(src,{sourceType:'module',plugins:['typescript','jsx']}));
 }
+
+// Migrated components must not grow class literals again: that is exactly how
+// the second copy of a class string reappears. Keep this list in sync when
+// migrating more components.
+const SHARED_CLASS_COMPONENTS=[
+  'components/Button.tsx',
+  'components/Input.tsx',
+  'components/ToggleSwitch.tsx',
+  'components/ModalShell.tsx',
+  'components/Menu.tsx',
+];
+const UTILITY_TOKEN=/^(?:[a-z-]+:)*(?:flex|grid|block|inline-flex|inline-block|hidden|relative|absolute|fixed|sticky|items-[\w-]+|justify-[\w-]+|gap-[\w.-]+|p[xytblr]?-[\w.[\]%-]+|m[xytblr]?-[\w.[\]%-]+|w-[\w.[\]%/%-]+|h-[\w.[\]%/%-]+|min-[\w-]+|max-[\w-]+|text-[\w.[\]%/%-]+|bg-[\w.[\]%/%-]+|border(?:-[\w.[\]%/%-]+)?|rounded(?:-[\w.[\]%/%-]+)?|font-[\w-]+|shadow(?:-[\w.[\]%()-]+)?|transition(?:-[\w.[\]%,()-]+)?|animate-[\w-]+|overflow-[\w-]+|z-[\w-]+|cursor-[\w-]+|select-[\w-]+|whitespace-[\w-]+|truncate|leading-[\w-]+|tracking-[\w-]+|opacity-[\w.-]+|ring(?:-[\w.[\]%/%-]+)?|scale-[\w.-]+|underline|no-underline|space-[xy]-[\w.-]+)$/;
+function classishLiterals(src){
+  const found=[];
+  const walk=node=>{
+    if(!node||typeof node!=='object')return;
+    if(node.type==='StringLiteral'||node.type==='TemplateElement'){
+      const text=node.type==='StringLiteral'?node.value:node.value.raw;
+      const tokens=text.split(/\s+/).filter(Boolean);
+      if(tokens.some(token=>UTILITY_TOKEN.test(token)))found.push({text,loc:node.loc?.start.line});
+    }
+    for(const [k,v] of Object.entries(node))if(k!=='loc')Array.isArray(v)?v.forEach(walk):walk(v);
+  };
+  walk(parse(src,{sourceType:'module',plugins:['typescript','jsx']}));
+  return found;
+}
+for(const file of SHARED_CLASS_COMPONENTS){
+  const leaked=classishLiterals(read(file));
+  assert.equal(
+    leaked.length,0,
+    `Class string outside ${CLASS_SOURCE}: ${file}:${leaked[0]?.loc} → ${JSON.stringify(leaked[0]?.text)}`,
+  );
+}
+
 const escape=s=>s.replace(/[^a-zA-Z0-9_-]/g,c=>`\\${c}`);
 const coverage=[...candidates].sort().map(name=>{
   const selector='.'+escape(name);let found=false;const declarations=[];

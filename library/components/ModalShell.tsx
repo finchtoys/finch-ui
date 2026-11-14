@@ -3,6 +3,15 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { Button } from "./Button";
 import { topmostModalIndex } from "./modalStack";
+import {
+  MODAL_BACKDROP_ONLY_CLASS,
+  MODAL_DEFAULT_BACKDROP_CLASS,
+  MODAL_HEADER_CLASS,
+  MODAL_HEADER_RIGHT_CLASS,
+  MODAL_TITLE_CLASS,
+  modalBackdropClassName,
+  modalShellClassName,
+} from "../styles/classes";
 
 export interface ModalShellProps {
   open: boolean;
@@ -38,7 +47,7 @@ export function ModalShell({
   onClose,
   title,
   zIndex = 200,
-  backdropClassName = "bg-black/40",
+  backdropClassName = MODAL_DEFAULT_BACKDROP_CLASS,
   shellClassName = "",
   children,
   role,
@@ -83,13 +92,13 @@ export function ModalShell({
     <div
       ref={backdropRef}
       data-finch-modal-shell
-      className={`fixed inset-0 grid place-items-center ${backdropClassName} animate-overlayIn`}
+      className={modalBackdropClassName(backdropClassName)}
       style={{ zIndex }}
       onClick={closeOnBackdrop ? onClose : undefined}
     >
       {backdropOnly ? (
         <div
-          className="h-full w-full"
+          className={MODAL_BACKDROP_ONLY_CLASS}
           role={role ?? "dialog"}
           aria-modal="true"
           aria-label={ariaLabel ?? title}
@@ -98,20 +107,16 @@ export function ModalShell({
         </div>
       ) : (
         <div
-          className={`settingsModalShell rounded-xl overflow-hidden animate-modalIn ${shellClassName}`}
+          className={modalShellClassName(shellClassName)}
           onClick={(e) => e.stopPropagation()}
           role={role ?? "dialog"}
           aria-modal="true"
           aria-label={ariaLabel ?? title}
         >
           {!noHeader && (title || headerRight) && (
-            <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle">
-              {title ? (
-                <h2 className="m-0 font-body text-[16px] font-semibold text-txt">{title}</h2>
-              ) : (
-                <span />
-              )}
-              <div className="flex items-center gap-2">
+            <div className={MODAL_HEADER_CLASS}>
+              {title ? <h2 className={MODAL_TITLE_CLASS}>{title}</h2> : <span />}
+              <div className={MODAL_HEADER_RIGHT_CLASS}>
                 {headerRight}
                 <Button icon={<X size={17} />} onClick={onClose} title={closeLabel} aria-label={closeLabel} />
               </div>

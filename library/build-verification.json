@@ -16,16 +16,16 @@
   ],
   "sizes": {
     "libraryJs": {
-      "bytes": 1326782,
-      "gzip": 339246
+      "bytes": 1328050,
+      "gzip": 339642
     },
     "libraryCss": {
       "bytes": 77589,
       "gzip": 13100
     },
     "consumerJs": {
-      "bytes": 1547125,
-      "gzip": 414120
+      "bytes": 1548248,
+      "gzip": 414497
     },
     "consumerCss": {
       "bytes": 79577,

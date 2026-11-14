@@ -4,6 +4,16 @@ import { LoaderCircle, X } from "lucide-react";
 import { ModalShell, type ModalShellProps } from "./ModalShell";
 import { Button } from "./Button";
 import { ScrollArea } from "./ScrollArea";
+import {
+  CONFIRM_ACTION_CLASS,
+  CONFIRM_CLOSE_BUTTON_CLASS,
+  CONFIRM_DESCRIPTION_CLASS,
+  CONFIRM_FOOTER_CLASS,
+  CONFIRM_TITLE_CLASS,
+  confirmBodyClassName,
+  confirmContentClassName,
+  confirmShellClassName,
+} from "../styles/classes";
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -61,40 +71,40 @@ export function ConfirmDialog({
       ariaLabel={title}
       closeLabel={closeLabel}
       backdropEffect={backdropEffect}
-      shellClassName={`relative ${shellClassName ?? "w-[min(360px,calc(100vw-32px))]"}`}
+      shellClassName={confirmShellClassName(shellClassName)}
       zIndex={zIndex}
     >
       {showCloseButton ? (
         <Button
           icon={<X size={16} />}
           variant="ghost"
-          className="absolute right-3 top-3 z-10"
+          className={CONFIRM_CLOSE_BUTTON_CLASS}
           onClick={onCancel}
           title={closeLabel}
           aria-label={closeLabel}
         />
       ) : null}
-      <div className={`px-5 pt-5 pb-[18px] ${showCloseButton && !hideTitle ? "pr-12" : ""} ${bodyClassName ?? ""}`}>
-        {!hideTitle ? <p className={titleClassName ?? "m-0 text-[15px] font-semibold leading-5 text-txt"}>{title}</p> : null}
+      <div className={confirmBodyClassName({ showCloseButton, hideTitle, bodyClassName })}>
+        {!hideTitle ? <p className={titleClassName ?? CONFIRM_TITLE_CLASS}>{title}</p> : null}
         {children ? (
           // Long extension/AppCall confirm content (e.g. a full feedback title+body
           // preview) must not be able to push the footer buttons off-screen — cap
           // the height and let it scroll internally instead.
-          <ScrollArea className={`${contentClassName ?? "max-h-[50vh]"} ${hideTitle ? "" : "mt-3"}`}>{children}</ScrollArea>
+          <ScrollArea className={confirmContentClassName({ contentClassName, hideTitle })}>{children}</ScrollArea>
         ) : description ? (
-          <p className="mt-2 mb-0 text-[13px] leading-5 text-txt-secondary">{description}</p>
+          <p className={CONFIRM_DESCRIPTION_CLASS}>{description}</p>
         ) : null}
       </div>
-      <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border-subtle px-4 py-3">
+      <div className={CONFIRM_FOOTER_CLASS}>
         {showCancelButton ? (
-          <Button variant="secondary" size="md" className="min-w-[76px]" onClick={onCancel}>
+          <Button variant="secondary" size="md" className={CONFIRM_ACTION_CLASS} onClick={onCancel}>
             {cancelLabel}
           </Button>
         ) : null}
         <Button
           variant={variant}
           size="md"
-          className="min-w-[76px]"
+          className={CONFIRM_ACTION_CLASS}
           leadingIcon={pending ? <LoaderCircle size={14} className="animate-spin" /> : undefined}
           disabled={pending}
           aria-busy={pending}

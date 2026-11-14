@@ -55,6 +55,21 @@ const SHARED_CLASS_COMPONENTS=[
   'components/CheckBox.tsx',
   'components/TextArea.tsx',
   'components/ListRow.tsx',
+  'components/Tooltip.tsx',
+  'components/HoverCard.tsx',
+  'components/Breadcrumb.tsx',
+  'components/ButtonGroup.tsx',
+  'components/IconTabBar.tsx',
+  'components/StepSlider.tsx',
+  'components/SecretInput.tsx',
+  'components/InlineSelect.tsx',
+  'components/InputSelect.tsx',
+  'components/DropdownSelect.tsx',
+  'components/MultiSelect.tsx',
+  'components/SearchField.tsx',
+  'components/TimePicker.tsx',
+  'components/ConfirmDialog.tsx',
+  'components/DialogMessage.tsx',
 ];
 const UTILITY_TOKEN=/^(?:[a-z-]+:)*(?:flex|grid|block|inline-flex|inline-block|hidden|relative|absolute|fixed|sticky|items-[\w-]+|justify-[\w-]+|gap-[\w.-]+|p[xytblr]?-[\w.[\]%-]+|m[xytblr]?-[\w.[\]%-]+|w-[\w.[\]%/%-]+|h-[\w.[\]%/%-]+|min-[\w-]+|max-[\w-]+|text-[\w.[\]%/%-]+|bg-[\w.[\]%/%-]+|border(?:-[\w.[\]%/%-]+)?|rounded(?:-[\w.[\]%/%-]+)?|font-[\w-]+|shadow(?:-[\w.[\]%()-]+)?|transition(?:-[\w.[\]%,()-]+)?|animate-[\w-]+|overflow-[\w-]+|z-[\w-]+|cursor-[\w-]+|select-[\w-]+|whitespace-[\w-]+|truncate|leading-[\w-]+|tracking-[\w-]+|opacity-[\w.-]+|ring(?:-[\w.[\]%/%-]+)?|scale-[\w.-]+|underline|no-underline|space-[xy]-[\w.-]+)$/;
 function classishLiterals(src){
@@ -64,7 +79,12 @@ function classishLiterals(src){
     if(node.type==='StringLiteral'||node.type==='TemplateElement'){
       const text=node.type==='StringLiteral'?node.value:node.value.raw;
       const tokens=text.split(/\s+/).filter(Boolean);
-      if(tokens.some(token=>UTILITY_TOKEN.test(token)))found.push({text,loc:node.loc?.start.line});
+      const matched=tokens.filter(token=>UTILITY_TOKEN.test(token));
+      // A single bare keyword ("fixed", "block") is usually a CSS value in a
+      // style object, not a class list; require a second token, or something
+      // unmistakably Tailwind-ish (arbitrary value, variant, numeric scale).
+      const classish=matched.length>1||(matched.length===1&&/[-:[]/.test(matched[0])&&/\d|\[/.test(matched[0]));
+      if(classish)found.push({text,loc:node.loc?.start.line});
     }
     for(const [k,v] of Object.entries(node))if(k!=='loc')Array.isArray(v)?v.forEach(walk):walk(v);
   };

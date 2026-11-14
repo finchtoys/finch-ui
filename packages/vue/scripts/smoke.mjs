@@ -135,6 +135,46 @@ const CASES = [
     createElement(ReactLib.MenuItem, { active: true }, "菜单项"),
     h(VueLib.MenuItem, { active: true }, { default: () => "菜单项" }),
   ],
+  [
+    "ButtonGroup",
+    createElement(ReactLib.ButtonGroup, null, createElement(ReactLib.Button, null, "A"), createElement(ReactLib.Button, null, "B")),
+    h(VueLib.ButtonGroup, null, { default: () => [h(VueLib.Button, { key: 0 }, { default: () => "A" }), h(VueLib.Button, { key: 1 }, { default: () => "B" })] }),
+  ],
+  [
+    "SecretInput",
+    createElement(ReactLib.SecretInput, { showPasswordLabel: "显示", hidePasswordLabel: "隐藏", defaultValue: "x" }),
+    h(VueLib.SecretInput, { showPasswordLabel: "显示", hidePasswordLabel: "隐藏", modelValue: "x" }),
+  ],
+  [
+    "InputSelect",
+    createElement(ReactLib.InputSelect, { label: "选择", defaultValue: "值" }),
+    h(VueLib.InputSelect, { label: "选择", modelValue: "值" }),
+  ],
+  [
+    "InlineSelect",
+    createElement(ReactLib.InlineSelect, { value: "a", options: [{ value: "a", label: "A" }], onChange: () => {} }),
+    h(VueLib.InlineSelect, { value: "a", options: [{ value: "a", label: "A" }] }),
+  ],
+  [
+    "SearchField",
+    createElement(ReactLib.SearchField, { value: "q", onValueChange: () => {}, shortcut: "⌘K" }),
+    h(VueLib.SearchField, { modelValue: "q", shortcut: "⌘K" }),
+  ],
+  [
+    "StepSlider",
+    createElement(ReactLib.StepSlider, { steps: ["a", "b", "c"], labels: { a: "A", b: "B", c: "C" }, value: "b", onChange: () => {} }),
+    h(VueLib.StepSlider, { steps: ["a", "b", "c"], labels: { a: "A", b: "B", c: "C" }, value: "b" }),
+  ],
+  [
+    "DialogMessage",
+    createElement(ReactLib.DialogMessage, { message: "第一行 {红色}\\r\n> 灰字 `code`" }),
+    h(VueLib.DialogMessage, { message: "第一行 {红色}\\r\n> 灰字 `code`" }),
+  ],
+  [
+    "ScrollArea",
+    createElement(ReactLib.ScrollArea, null, "内容"),
+    h(VueLib.ScrollArea, null, { default: () => "内容" }),
+  ],
 ];
 
 let failures = 0;

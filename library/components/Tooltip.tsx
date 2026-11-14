@@ -2,12 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState, cloneElement, isValidElem
 import type { ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { isAnyMenuOpen, subscribeMenuState } from "./menuState";
-
-type TooltipPlacement = "top" | "bottom" | "left" | "right";
-/** Horizontal alignment against the trigger for top/bottom placements.
- *  "center" (default) centers the bubble; "start" pins its left edge to the
- *  trigger's left edge; "end" pins its right edge to the trigger's right edge. */
-type TooltipAlign = "center" | "start" | "end";
+import {
+  TOOLTIP_CONTENT_CLASS,
+  TOOLTIP_OUT_DURATION,
+  tooltipClassName,
+  tooltipPosition,
+} from "../styles/classes";
+import type { TooltipAlign, TooltipPlacement } from "../styles/classes";
 
 interface TooltipProps {
   /** Trigger element. Optional in controlled mode (drive with `open`+`anchorRect`). */
@@ -29,58 +30,6 @@ interface TooltipProps {
   anchorRect?: DOMRect | null;
   /** Extra class names applied to the tooltip bubble, for one-off style overrides. */
   className?: string;
-}
-
-const TOOLTIP_OUT_DURATION = 150;
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-
-function alignedLeft(align: TooltipAlign, anchor: DOMRect, tooltipRect: DOMRect) {
-  if (align === "start") return anchor.left;
-  if (align === "end") return anchor.right - tooltipRect.width;
-  return anchor.left + anchor.width / 2 - tooltipRect.width / 2;
-}
-
-function getPosition(
-  placement: TooltipPlacement,
-  anchor: DOMRect,
-  tooltipRect: DOMRect,
-  gap: number,
-  align: TooltipAlign
-) {
-  let left = 0;
-  let top = 0;
-
-  switch (placement) {
-    case "bottom": {
-      left = alignedLeft(align, anchor, tooltipRect);
-      top = anchor.bottom + gap;
-      break;
-    }
-    case "top": {
-      left = alignedLeft(align, anchor, tooltipRect);
-      top = anchor.top - tooltipRect.height - gap;
-      break;
-    }
-    case "left": {
-      left = anchor.left - tooltipRect.width - gap;
-      top = anchor.top + anchor.height / 2 - tooltipRect.height / 2;
-      break;
-    }
-    case "right": {
-      left = anchor.right + gap;
-      top = anchor.top + anchor.height / 2 - tooltipRect.height / 2;
-      break;
-    }
-  }
-
-  const gutter = 8;
-  return {
-    left: clamp(left, gutter, window.innerWidth - tooltipRect.width - gutter),
-    top: clamp(top, gutter, window.innerHeight - tooltipRect.height - gutter),
-  };
 }
 
 export function Tooltip({
@@ -197,8 +146,7 @@ export function Tooltip({
       // (controlled mode for imperative anchors with no child trigger).
       const anchor = triggerRef.current?.getBoundingClientRect() ?? anchorRect;
       if (!anchor) return;
-      const tooltipRect = tooltip.getBoundingClientRect();
-      setPosition(getPosition(placement, anchor, tooltipRect, gap, align));
+      setPosition(tooltipPosition(placement, anchor, tooltip.getBoundingClientRect(), gap, align));
     };
 
     updatePosition();
@@ -278,8 +226,6 @@ export function Tooltip({
       )
     : children;
 
-  const hasArrow = placement === "left" || placement === "right";
-
   return (
     <>
       {trigger}
@@ -287,7 +233,7 @@ export function Tooltip({
         createPortal(
           <div
             ref={tooltipRef}
-            className={`tooltip ${hasArrow ? `tooltip--arrow tooltip--${placement}` : ""} ${isClosing ? "tooltip--out" : "tooltip--in"} ${className ?? ""}`}
+            className={tooltipClassName({ placement, closing: isClosing, className: className ?? "" })}
             style={{
               position: "fixed",
               left: position?.left ?? 0,
@@ -297,7 +243,7 @@ export function Tooltip({
               zIndex: 9999,
             }}
           >
-            <div className="tooltip__content">{content}</div>
+            <div className={TOOLTIP_CONTENT_CLASS}>{content}</div>
           </div>,
           document.body
         )}

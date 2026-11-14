@@ -919,3 +919,743 @@ export function listRowFloatOverlayClassName({ floatVisible = false }: { floatVi
     floatVisible ? "opacity-100" : "opacity-0 group-hover:opacity-100",
   ].join(" ");
 }
+
+// ─── Tooltip ─────────────────────────────────────────────────────────────────
+
+export type TooltipPlacement = "top" | "bottom" | "left" | "right";
+export type TooltipAlign = "center" | "start" | "end";
+
+export function tooltipClassName({
+  placement = "bottom",
+  closing = false,
+  className = "",
+}: { placement?: TooltipPlacement; closing?: boolean; className?: string } = {}): string {
+  const hasArrow = placement === "left" || placement === "right";
+  return [
+    "tooltip",
+    hasArrow ? `tooltip--arrow tooltip--${placement}` : "",
+    closing ? "tooltip--out" : "tooltip--in",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const TOOLTIP_CONTENT_CLASS = "tooltip__content";
+
+export const TOOLTIP_OUT_DURATION = 150;
+
+export const TOOLTIP_ANCHOR_STYLE = "display:contents";
+
+function alignedLeft(align: TooltipAlign, anchor: { left: number; right: number; width: number }, width: number): number {
+  if (align === "start") return anchor.left;
+  if (align === "end") return anchor.right - width;
+  return anchor.left + anchor.width / 2 - width / 2;
+}
+
+/** Pure placement math for a tooltip bubble (viewport-clamped, gutter 8). */
+export function tooltipPosition(
+  placement: TooltipPlacement,
+  anchor: { left: number; right: number; top: number; bottom: number; width: number; height: number },
+  tooltip: { width: number; height: number },
+  gap: number,
+  align: TooltipAlign = "center",
+): MenuPosition {
+  let left = 0;
+  let top = 0;
+
+  switch (placement) {
+    case "bottom":
+      left = alignedLeft(align, anchor, tooltip.width);
+      top = anchor.bottom + gap;
+      break;
+    case "top":
+      left = alignedLeft(align, anchor, tooltip.width);
+      top = anchor.top - tooltip.height - gap;
+      break;
+    case "left":
+      left = anchor.left - tooltip.width - gap;
+      top = anchor.top + anchor.height / 2 - tooltip.height / 2;
+      break;
+    case "right":
+      left = anchor.right + gap;
+      top = anchor.top + anchor.height / 2 - tooltip.height / 2;
+      break;
+  }
+
+  const gutter = 8;
+  return {
+    left: clampPosition(left, gutter, window.innerWidth - tooltip.width - gutter),
+    top: clampPosition(top, gutter, window.innerHeight - tooltip.height - gutter),
+  };
+}
+
+// ─── HoverCard ───────────────────────────────────────────────────────────────
+
+export type HoverCardPlacement = "top" | "bottom" | "left" | "right";
+
+export function hoverCardClassName({
+  placement = "bottom",
+  closing = false,
+  className = "",
+}: { placement?: HoverCardPlacement; closing?: boolean; className?: string } = {}): string {
+  return [`hoverCard hoverCard--${placement}`, closing ? "hoverCard--out" : "hoverCard--in", className]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const HOVER_CARD_CONTENT_CLASS = "hoverCard__content";
+export const HOVER_CARD_OUT_DURATION = 120;
+
+function chooseHoverPlacement(
+  preferred: HoverCardPlacement,
+  anchor: { left: number; right: number; top: number; bottom: number },
+  card: { width: number; height: number },
+  gap: number,
+): HoverCardPlacement {
+  const gutter = 8;
+  if (preferred === "right" && anchor.right + gap + card.width > window.innerWidth - gutter) return "left";
+  if (preferred === "left" && anchor.left - gap - card.width < gutter) return "right";
+  if (preferred === "bottom" && anchor.bottom + gap + card.height > window.innerHeight - gutter) return "top";
+  if (preferred === "top" && anchor.top - gap - card.height < gutter) return "bottom";
+  return preferred;
+}
+
+/** Pure placement math for a hover card; also reports the placement it chose. */
+export function hoverCardPosition(
+  placement: HoverCardPlacement,
+  anchor: { left: number; right: number; top: number; bottom: number; width: number; height: number },
+  card: { width: number; height: number },
+  gap: number,
+): { left: number; top: number; placement: HoverCardPlacement } {
+  const actual = chooseHoverPlacement(placement, anchor, card, gap);
+  let left = 0;
+  let top = 0;
+
+  switch (actual) {
+    case "bottom":
+      left = anchor.left + anchor.width / 2 - card.width / 2;
+      top = anchor.bottom + gap;
+      break;
+    case "top":
+      left = anchor.left + anchor.width / 2 - card.width / 2;
+      top = anchor.top - card.height - gap;
+      break;
+    case "left":
+      left = anchor.left - card.width - gap;
+      top = anchor.top + anchor.height / 2 - card.height / 2;
+      break;
+    case "right":
+      left = anchor.right + gap;
+      top = anchor.top + anchor.height / 2 - card.height / 2;
+      break;
+  }
+
+  const gutter = 8;
+  return {
+    placement: actual,
+    left: clampPosition(left, gutter, window.innerWidth - card.width - gutter),
+    top: clampPosition(top, gutter, window.innerHeight - card.height - gutter),
+  };
+}
+
+// ─── Breadcrumb ──────────────────────────────────────────────────────────────
+
+export function breadcrumbNavClassName(className = ""): string {
+  return [
+    "grid min-w-0 max-w-full grid-flow-col auto-cols-[minmax(0,max-content)] items-center",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const BREADCRUMB_ITEM_CLASS = "flex min-w-0 items-center";
+export const BREADCRUMB_BUTTON_CLASS = "min-w-0 flex-1 text-txt-tertiary hover:text-txt py-3.5";
+export const BREADCRUMB_ICON_CLASS = "inline-flex shrink-0 items-center";
+export const BREADCRUMB_BUTTON_LABEL_CLASS = "min-w-0 truncate font-medium";
+export const BREADCRUMB_LEAF_LABEL_CLASS = "min-w-0 truncate";
+
+export function breadcrumbLeafClassName(active = false): string {
+  return [
+    "inline-flex h-7 min-w-0 flex-1 items-center gap-1.5 px-2 text-[14px] font-medium",
+    active ? "text-txt" : "text-txt-tertiary",
+  ].join(" ");
+}
+
+export const BREADCRUMB_SEPARATOR_CLASS = "mx-0.5 shrink-0 text-txt-tertiary/60";
+
+// ─── ButtonGroup ─────────────────────────────────────────────────────────────
+
+const BUTTON_GROUP_VARIANT: Record<ButtonVariant, string> = {
+  primary: "bg-accent text-white",
+  brand: "bg-accent text-white",
+  secondary: "bg-[var(--ui-bg-inset)] text-[var(--ui-text-secondary)]",
+  ghost: "bg-transparent text-[var(--ui-text-secondary)]",
+  outline: "border border-[var(--ui-border-subtle)] bg-transparent text-[var(--ui-text-secondary)]",
+  danger: "bg-[var(--ui-danger-dim)] text-[var(--ui-danger-text)]",
+  link: "bg-transparent text-[var(--ui-text-secondary)]",
+};
+
+const BUTTON_GROUP_DIVIDER: Record<ButtonVariant, string> = {
+  primary: "border-white/25",
+  brand: "border-white/25",
+  secondary: "border-[var(--ui-border-subtle)]",
+  ghost: "border-[var(--ui-border-subtle)]",
+  outline: "border-[var(--ui-border-subtle)]",
+  danger: "border-[color-mix(in_srgb,var(--ui-danger)_24%,transparent)]",
+  link: "border-[var(--ui-border-subtle)]",
+};
+
+const BUTTON_GROUP_ITEM_VARIANT: Record<ButtonVariant, string> = {
+  primary:
+    "!text-white hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,transparent)] active:!brightness-95",
+  brand:
+    "!text-white hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,#666)] active:!brightness-95",
+  secondary:
+    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] active:!bg-[var(--ui-bg-active)]",
+  ghost:
+    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] active:!bg-[var(--ui-bg-active)]",
+  outline:
+    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] hover:!border-[var(--ui-border-subtle)] active:!bg-[var(--ui-bg-active)]",
+  danger:
+    "hover:!bg-[color-mix(in_srgb,var(--ui-danger)_16%,transparent)] active:!bg-[color-mix(in_srgb,var(--ui-danger)_22%,transparent)]",
+  link:
+    "hover:!text-[var(--ui-text-secondary)] hover:underline hover:underline-offset-3 active:!text-[var(--ui-text-secondary)]",
+};
+
+const BUTTON_GROUP_ICON_SIZE: Record<ButtonSize, string> = {
+  sm: "!h-[21px] !w-[21px]",
+  md: "!h-[28px] !w-[28px]",
+  lg: "!h-[36px] !w-[36px]",
+};
+
+export function buttonGroupClassName({
+  variant = "secondary",
+  round = "sm",
+  disabled = false,
+  className = "",
+}: {
+  variant?: ButtonVariant;
+  round?: ButtonRound;
+  disabled?: boolean;
+  className?: string;
+} = {}): string {
+  return [
+    "inline-flex items-stretch overflow-hidden select-none",
+    BUTTON_GROUP_VARIANT[variant],
+    BUTTON_ROUND[round],
+    disabled ? "opacity-40 pointer-events-none" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const BUTTON_GROUP_ITEM_WRAP_CLASS = "flex items-stretch";
+
+/** Classes a group appends to each child Button (React clones, Vue clones vnodes). */
+export function buttonGroupItemClassName({
+  variant = "secondary",
+  index = 0,
+  iconMode = false,
+  size = "md",
+  className = "",
+}: {
+  variant?: ButtonVariant;
+  index?: number;
+  iconMode?: boolean;
+  size?: ButtonSize;
+  className?: string;
+} = {}): string {
+  return [
+    "rounded-none !border-0 shadow-none active:scale-100",
+    index > 0 ? `!border-l ${BUTTON_GROUP_DIVIDER[variant]}` : "",
+    iconMode ? BUTTON_GROUP_ICON_SIZE[size] : " pl-2.5",
+    BUTTON_GROUP_ITEM_VARIANT[variant],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── IconTabBar ──────────────────────────────────────────────────────────────
+
+export function iconTabBarClassName(className = ""): string {
+  return ["flex items-center gap-1", className].filter(Boolean).join(" ");
+}
+
+export function iconTabClassName({
+  active,
+  pushEnd = false,
+}: {
+  active: boolean;
+  pushEnd?: boolean;
+}): string {
+  return [
+    "iconTab",
+    pushEnd ? "ml-auto" : "",
+    "flex items-center overflow-hidden rounded-[var(--ui-radius-md)] transition-all duration-200 ease-out",
+    active ? "iconTab--active text-txt" : "text-txt-tertiary hover:text-txt-secondary",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const ICON_TAB_ICON_WRAP_CLASS = "relative inline-flex flex-none items-center justify-center";
+
+export function iconTabIconInnerClassName(iconClassName?: string): string {
+  return ["inline-flex items-center justify-center", iconClassName ?? ""].filter(Boolean).join(" ");
+}
+
+export const ICON_TAB_BADGE_CLASS =
+  "pointer-events-none absolute top-[-4px] right-[-4px] flex h-[11px] min-w-[11px] items-center justify-center rounded-full bg-badge px-[3px] text-[8px] font-bold leading-none text-white";
+
+export function iconTabLabelClassName(active: boolean): string {
+  return [
+    "iconTabLabel whitespace-nowrap text-[14px] font-bold transition-all duration-150",
+    active ? "ml-1 opacity-100" : "ml-0 max-w-0 opacity-0",
+  ].join(" ");
+}
+
+// ─── StepSlider ──────────────────────────────────────────────────────────────
+
+export const STEP_SLIDER_ROOT_CLASS = "flex w-[160px] flex-col gap-2 px-1";
+export const STEP_SLIDER_LABELS_ROW_CLASS = "relative h-[18px]";
+export const STEP_SLIDER_TRACK_CLASS = "relative my-1.5 h-0.5 rounded-[1px] bg-[var(--ui-border-subtle)]";
+export const STEP_SLIDER_FILL_CLASS =
+  "absolute left-0 top-0 h-full rounded-[1px] bg-[var(--ui-accent)] transition-[width] duration-200 ease-in-out";
+export const STEP_SLIDER_THUMB_CLASS =
+  "pointer-events-none absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-[var(--ui-bg-elevated)] bg-[var(--ui-accent)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_20%,transparent)] transition-[left] duration-200 ease-in-out";
+
+export function stepSliderLabelClassName(active: boolean): string {
+  return [
+    "absolute top-0 -translate-x-1/2 cursor-pointer whitespace-nowrap border-0 bg-transparent p-0 text-[13px] font-medium leading-[13px] text-[var(--ui-text-secondary)] transition-colors duration-150",
+    active ? "font-semibold text-[var(--ui-accent)]" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function stepSliderDotClassName(active: boolean): string {
+  return [
+    "group absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 bg-transparent",
+    "after:absolute after:left-1/2 after:top-1/2 after:h-1.5 after:w-1.5 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full after:bg-[color-mix(in_srgb,var(--ui-accent)_80%,transparent)] after:transition-[background,transform] after:duration-150 hover:after:bg-[var(--ui-accent)] hover:after:scale-[1.3]",
+    active ? "after:bg-transparent hover:after:bg-transparent hover:after:scale-100" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── SecretInput ─────────────────────────────────────────────────────────────
+
+export const SECRET_INPUT_ROOT_CLASS = "relative";
+export const SECRET_INPUT_REVEAL_CLASS =
+  "absolute right-1.5 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-sm text-txt-tertiary transition-colors duration-120 hover:text-txt-secondary hover:bg-sf-hover disabled:opacity-40 disabled:cursor-default";
+
+export function secretInputInputClassName(className?: string): string {
+  return ["pr-9", className ?? ""].filter(Boolean).join(" ");
+}
+
+// ─── InlineSelect ────────────────────────────────────────────────────────────
+
+export function inlineSelectButtonClassName(buttonClassName?: string): string {
+  return [
+    "!h-auto min-w-0 gap-1.5 !px-2 !py-1 !text-[14px] !text-[var(--ui-text-secondary)] tabular-nums hover:!text-[var(--ui-primary)]",
+    buttonClassName ?? "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function inlineSelectChevronClassName(open: boolean): string {
+  return [
+    "shrink-0 text-[var(--ui-text-tertiary)] transition-transform duration-120",
+    open ? "rotate-180" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const INLINE_SELECT_LABEL_CLASS = "min-w-0 overflow-hidden text-ellipsis whitespace-nowrap";
+
+export function inlineSelectMenuClassName(menuClassName?: string): string {
+  return ["min-w-[160px]", menuClassName ?? ""].filter(Boolean).join(" ");
+}
+
+// ─── Select triggers (DropdownSelect / MultiSelect / InputSelect) ───────────
+
+export interface SelectTriggerMetrics {
+  /** Horizontal padding of the value area. */
+  px: string;
+  /** Vertical padding of the value area — this is what sets the control height. */
+  py: string;
+  text: string;
+  /** Chevron glyph size in px. */
+  chevron: number;
+  /** Square hit box behind the chevron. */
+  chevronBox: string;
+}
+
+/**
+ * Trigger metrics shared by `DropdownSelect`, `MultiSelect` and `InputSelect`.
+ * Keeping one table is what makes the three controls line up pixel-for-pixel
+ * when they sit next to each other in the same form.
+ */
+export const SELECT_TRIGGER_SIZE: Record<InputSize, SelectTriggerMetrics> = {
+  sm: { px: "px-2.5", py: "py-0.5", text: "text-[12px]", chevron: 12, chevronBox: "h-[18px] w-[18px]" },
+  md: { px: "px-3",   py: "py-1.5", text: "text-[14px]", chevron: 15, chevronBox: "h-[24px] w-[24px]" },
+  lg: { px: "px-3",   py: "py-2",   text: "text-[15px]", chevron: 16, chevronBox: "h-[26px] w-[26px]" },
+};
+
+/**
+ * Radius of the chevron hit box. It is intentionally one step tighter than the
+ * outer shell so the box never pokes out of a rounded corner.
+ */
+export const SELECT_CHEVRON_ROUND: Record<InputRound, string> = {
+  sm:   "rounded-[var(--ui-radius-sm)]",
+  md:   "rounded-[var(--ui-radius-sm)]",
+  lg:   "rounded-[var(--ui-radius-md)]",
+  full: "rounded-full",
+};
+
+/** Classes for the value area of a trigger (everything left of the chevron). */
+export function selectValueClass(size: InputSize): string {
+  return `min-w-0 flex-1 truncate ${SELECT_TRIGGER_SIZE[size].px} ${SELECT_TRIGGER_SIZE[size].py}`;
+}
+
+/**
+ * An empty value area collapses its line box, which would make the trigger
+ * shorter than a filled one (the chevron box would end up setting the height).
+ * Falling back to a non-breaking space keeps every trigger the same height,
+ * with or without a value or a placeholder.
+ */
+export function selectValueText(text: string | undefined): string {
+  return text === undefined || text === "" ? "\u00A0" : text;
+}
+
+/** Chevron box classes for a given size / radius / open state. */
+export function selectChevronClass(size: InputSize, round: InputRound, open: boolean): string {
+  return [
+    "grid flex-none place-items-center text-txt-tertiary transition-colors duration-120",
+    SELECT_TRIGGER_SIZE[size].chevronBox,
+    SELECT_CHEVRON_ROUND[round],
+    open ? "bg-sf-hover text-txt" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── InputSelect ─────────────────────────────────────────────────────────────
+
+export const INPUT_SELECT_ROOT_CLASS = "relative block";
+
+export function inputSelectShellClassName({
+  size = "md",
+  round = "md",
+  variant = "default",
+  error = false,
+  active = false,
+  open = false,
+}: {
+  size?: InputSize;
+  round?: InputRound;
+  variant?: InputVariant;
+  error?: boolean;
+  active?: boolean;
+  open?: boolean;
+} = {}): string {
+  return [
+    "flex min-w-0 items-center overflow-hidden pr-1 text-txt transition-all duration-120",
+    SELECT_TRIGGER_SIZE[size].text,
+    INPUT_ROUND_CLASS[round],
+    inputStateClass({ error, variant: active ? "default" : variant }),
+    // focus-within covers both input focus and button focus at CSS level
+    !error
+      ? "focus-within:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
+      : "",
+    // open state: apply accent ring directly via JS since CSS can't detect prop changes
+    open && !error
+      ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function inputSelectInputClassName({
+  size = "md",
+  mono = false,
+  className = "",
+}: { size?: InputSize; mono?: boolean; className?: string } = {}): string {
+  return [
+    INPUT_BASE_CLASS,
+    SELECT_TRIGGER_SIZE[size].px,
+    SELECT_TRIGGER_SIZE[size].py,
+    // The shell draws the border, ring and background for the whole control.
+    "border-0 bg-transparent text-inherit shadow-none focus:shadow-none",
+    mono ? "font-mono" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function selectChevronIconClassName(open: boolean): string {
+  return ["transition-transform duration-150", open ? "rotate-180" : ""].filter(Boolean).join(" ");
+}
+
+export function inputSelectChevronClassName({
+  size = "md",
+  round = "md",
+  open = false,
+}: { size?: InputSize; round?: InputRound; open?: boolean } = {}): string {
+  return [
+    selectChevronClass(size, round, open),
+    "cursor-pointer border-0 p-0 outline-none hover:bg-sf-hover hover:text-txt",
+    open ? "" : "bg-transparent",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── DropdownSelect / MultiSelect trigger + menu ────────────────────────────
+
+export function dropdownRootClassName(className = ""): string {
+  return ["relative block", className].filter(Boolean).join(" ");
+}
+
+export function dropdownTriggerClassName({
+  round = "md",
+  size = "md",
+  block = false,
+  open = false,
+}: {
+  round?: InputRound;
+  size?: InputSize;
+  block?: boolean;
+  open?: boolean;
+} = {}): string {
+  return [
+    "flex min-w-0 items-center border bg-sf-elevated pr-1 text-left text-txt outline-none transition-all duration-120 hover:border-border focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]",
+    INPUT_ROUND_CLASS[round],
+    SELECT_TRIGGER_SIZE[size].text,
+    block ? "w-full" : "",
+    open
+      ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
+      : "border-border",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function dropdownMenuPanelClassName({
+  block = false,
+  placement = "bottom",
+}: { block?: boolean; placement?: "top" | "bottom" } = {}): string {
+  return [
+    "absolute max-w-[min(420px,calc(100vw-24px))] p-2",
+    block ? "left-0 w-full" : "right-0 min-w-full",
+    placement === "top" ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+2px)]",
+  ].join(" ");
+}
+
+export function dropdownMenuPopoverClassName(block = false): string {
+  return block ? "p-2" : "max-w-[min(420px,calc(100vw-24px))] p-2";
+}
+
+export const DROPDOWN_OPTION_ROW_CLASS = "min-h-[42px] justify-between gap-4 px-3.5";
+export const DROPDOWN_OPTION_LABEL_CLASS = "min-w-0 truncate";
+export const DROPDOWN_OPTION_DETAIL_CLASS = "font-mono text-[12px] text-txt-tertiary";
+
+// ─── SearchField ─────────────────────────────────────────────────────────────
+
+export function searchFieldRootClassName({
+  focused = false,
+  active = false,
+  rootClassName = "",
+}: { focused?: boolean; active?: boolean; rootClassName?: string } = {}): string {
+  return [
+    "group/searchField sidebarSearchControl flex min-h-[28px] w-full items-center gap-2 rounded-sm px-2 transition-colors duration-120",
+    focused ? "sidebarSearchControl--focused" : "",
+    active ? "sidebarSearchControl--active" : "",
+    rootClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function searchFieldInputClassName({
+  focused = false,
+  inputClassName = "",
+}: { focused?: boolean; inputClassName?: string } = {}): string {
+  return [
+    "sidebarSearchControl__input",
+    focused ? "cursor-text!" : "",
+    "min-w-0 flex-1 bg-transparent border-0 outline-none",
+    inputClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const SEARCH_FIELD_ICON_CLASS = "sidebarSearchControl__icon flex-none";
+
+export function searchFieldActionClassName(actionClassName = ""): string {
+  return ["sidebarSearchControl__action", actionClassName].filter(Boolean).join(" ");
+}
+
+export function searchFieldKbdClassName(kbdClassName = ""): string {
+  return [
+    "sidebarSearchControl__kbd opacity-0 transition-opacity duration-120 group-hover/searchField:opacity-100",
+    kbdClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function searchFieldClearClassName(clearClassName = ""): string {
+  return [
+    "sidebarSearchControl__clear grid place-items-center w-6 h-6 rounded-sm text-txt-tertiary hover:bg-sf-hover hover:text-txt-secondary transition-colors duration-120",
+    clearClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── MultiSelect ─────────────────────────────────────────────────────────────
+
+export function multiSelectRootClassName(className = ""): string {
+  return ["relative block", className].filter(Boolean).join(" ");
+}
+
+export function multiSelectTriggerClassName({
+  round = "md",
+  size = "md",
+  empty = false,
+  open = false,
+}: {
+  round?: InputRound;
+  size?: InputSize;
+  empty?: boolean;
+  open?: boolean;
+} = {}): string {
+  return [
+    "flex w-full min-w-0 items-center border bg-sf-elevated pr-1 text-left outline-none transition-all duration-120 disabled:opacity-50 hover:border-border focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]",
+    INPUT_ROUND_CLASS[round],
+    SELECT_TRIGGER_SIZE[size].text,
+    empty ? "text-txt-tertiary" : "text-txt",
+    open
+      ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
+      : "border-border",
+  ].join(" ");
+}
+
+export const MULTISELECT_TRAILING_CLASS = "flex items-center gap-2";
+
+export function multiSelectCheckClassName(active: boolean): string {
+  return active ? "text-accent" : "opacity-0";
+}
+
+// ─── TimePicker ──────────────────────────────────────────────────────────────
+
+export function timePickerRootClassName(className = ""): string {
+  return ["relative inline-block", className].filter(Boolean).join(" ");
+}
+
+export function timePickerChevronClassName(open: boolean): string {
+  return [
+    "shrink-0 text-[var(--ui-text-tertiary)] transition-transform duration-120",
+    open ? "rotate-180" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const TIME_PICKER_CLOCK_CLASS = "shrink-0 text-[var(--ui-text-tertiary)]";
+export const TIME_PICKER_PLAIN_TRIGGER_CLASS =
+  "!h-auto min-w-0 gap-1.5 !px-2 !py-1 !text-[14px] !text-[var(--ui-text-secondary)] tabular-nums hover:!text-[var(--ui-text-primary)]";
+
+export function timePickerTriggerClassName(open: boolean): string {
+  return [
+    "tabular-nums !text-[13.5px] !px-2.5",
+    open
+      ? "!border-[color-mix(in_srgb,var(--ui-accent)_60%,transparent)] ring-2 ring-[color-mix(in_srgb,var(--ui-accent)_15%,transparent)]"
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export const TIME_PICKER_PANEL_CLASS = "absolute left-0 top-[calc(100%+6px)] z-50 flex gap-1 p-2 min-w-0";
+export const TIME_PICKER_COLUMN_CLASS = "flex flex-col";
+export const TIME_PICKER_COLUMN_LABEL_CLASS =
+  "mb-1.5 text-center text-[12px] font-semibold uppercase tracking-widest text-[var(--ui-text-tertiary)] select-none";
+export const TIME_PICKER_COLUMN_SCROLL_CLASS = "h-[168px] w-[52px] flex flex-col gap-0.5";
+
+export function timePickerItemClassName(active: boolean): string {
+  return [
+    "menuActionRow h-auto max-h-[16px] justify-center !py-[7px] !px-0 w-[52px] shrink-0 font-mono !text-[13px] !font-normal",
+    active ? "menuActionRow--active" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
+// ─── ConfirmDialog ───────────────────────────────────────────────────────────
+
+export const CONFIRM_CLOSE_BUTTON_CLASS = "absolute right-3 top-3 z-10";
+export const CONFIRM_TITLE_CLASS = "m-0 text-[15px] font-semibold leading-5 text-txt";
+export const CONFIRM_DESCRIPTION_CLASS = "mt-2 mb-0 text-[13px] leading-5 text-txt-secondary";
+export const CONFIRM_FOOTER_CLASS = "flex shrink-0 items-center justify-end gap-2 border-t border-border-subtle px-4 py-3";
+export const CONFIRM_ACTION_CLASS = "min-w-[76px]";
+
+export function confirmShellClassName(shellClassName?: string): string {
+  return `relative ${shellClassName ?? "w-[min(360px,calc(100vw-32px))]"}`;
+}
+
+export function confirmBodyClassName({
+  showCloseButton = false,
+  hideTitle = false,
+  bodyClassName = "",
+}: { showCloseButton?: boolean; hideTitle?: boolean; bodyClassName?: string } = {}): string {
+  return ["px-5 pt-5 pb-[18px]", showCloseButton && !hideTitle ? "pr-12" : "", bodyClassName]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export function confirmContentClassName({
+  contentClassName,
+  hideTitle = false,
+}: { contentClassName?: string; hideTitle?: boolean } = {}): string {
+  return [contentClassName ?? "max-h-[50vh]", hideTitle ? "" : "mt-3"].filter(Boolean).join(" ");
+}
+
+// ─── DialogMessage ───────────────────────────────────────────────────────────
+
+export function dialogMessageClassName(className = ""): string {
+  return ["space-y-1.5 text-[13px] leading-[20px]", className].filter(Boolean).join(" ");
+}
+
+export const DIALOG_MESSAGE_BLANK_LINE_CLASS = "h-2";
+export const DIALOG_MESSAGE_IMAGE_ROW_CLASS = "flex justify-center py-1.5";
+export const DIALOG_MESSAGE_IMAGE_CLASS =
+  "max-h-[min(60vh,420px)] max-w-full rounded-[var(--ui-radius-md)] object-contain";
+
+export function dialogMessageLineClassName(tone: "default" | "muted" | "warning" = "default"): string {
+  const toneClass =
+    tone === "muted" ? "text-txt-tertiary" : tone === "warning" ? "text-amber-500" : "text-txt-secondary";
+  return ["m-0 whitespace-pre-wrap", toneClass].join(" ");
+}
+
+export const DIALOG_INLINE_CODE_CLASS = "font-mono text-[0.95em] text-txt";
+
+export const DIALOG_INLINE_SUFFIX_CLASS: Record<string, string> = {
+  g: "text-ok-text",
+  r: "text-err-text",
+  y: "text-amber-400",
+  m: "text-txt-tertiary",
+  a: "text-accent",
+  b: "font-medium text-txt",
+  i: "italic",
+};

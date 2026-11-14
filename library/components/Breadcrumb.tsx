@@ -2,6 +2,16 @@ import type { ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "./Button";
 import { Tooltip } from "./Tooltip";
+import {
+  BREADCRUMB_BUTTON_CLASS,
+  BREADCRUMB_BUTTON_LABEL_CLASS,
+  BREADCRUMB_ICON_CLASS,
+  BREADCRUMB_ITEM_CLASS,
+  BREADCRUMB_LEAF_LABEL_CLASS,
+  BREADCRUMB_SEPARATOR_CLASS,
+  breadcrumbLeafClassName,
+  breadcrumbNavClassName,
+} from "../styles/classes";
 
 export interface BreadcrumbItem {
   label: string;
@@ -31,40 +41,38 @@ export function Breadcrumb({ items, ariaLabel, className = "" }: BreadcrumbProps
   if (items.length === 0) return null;
 
   return (
-    <nav className={`grid min-w-0 max-w-full grid-flow-col auto-cols-[minmax(0,max-content)] items-center ${className}`.trim()} aria-label={ariaLabel}>
+    <nav className={breadcrumbNavClassName(className)} aria-label={ariaLabel}>
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
         return (
-          <div key={index} className="flex min-w-0 items-center">
+          <div key={index} className={BREADCRUMB_ITEM_CLASS}>
             <Tooltip content={item.label}>
               {item.onClick && !isLast ? (
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="min-w-0 flex-1 text-txt-tertiary hover:text-txt py-3.5"
+                  className={BREADCRUMB_BUTTON_CLASS}
                   onClick={item.onClick}
                   leadingIcon={item.icon ? (
-                    <span className="inline-flex shrink-0 items-center" aria-hidden="true">{item.icon}</span>
+                    <span className={BREADCRUMB_ICON_CLASS} aria-hidden="true">{item.icon}</span>
                   ) : undefined}
                 >
-                  <span className="min-w-0 truncate font-medium">{item.label}</span>
+                  <span className={BREADCRUMB_BUTTON_LABEL_CLASS}>{item.label}</span>
                 </Button>
               ) : (
                 <span
                   aria-current={isLast ? "page" : undefined}
-                  className={`inline-flex h-7 min-w-0 flex-1 items-center gap-1.5 px-2 text-[14px] font-medium ${
-                    item.active ? "text-txt" : "text-txt-tertiary"
-                  }`}
+                  className={breadcrumbLeafClassName(item.active)}
                 >
                   {item.icon ? (
-                    <span className="inline-flex shrink-0 items-center" aria-hidden="true">{item.icon}</span>
+                    <span className={BREADCRUMB_ICON_CLASS} aria-hidden="true">{item.icon}</span>
                   ) : null}
-                  <span className="min-w-0 truncate">{item.label}</span>
+                  <span className={BREADCRUMB_LEAF_LABEL_CLASS}>{item.label}</span>
                 </span>
               )}
             </Tooltip>
             {!isLast && (
-              <ChevronRight size={14} strokeWidth={1.8} aria-hidden="true" className="mx-0.5 shrink-0 text-txt-tertiary/60" />
+              <ChevronRight size={14} strokeWidth={1.8} aria-hidden="true" className={BREADCRUMB_SEPARATOR_CLASS} />
             )}
           </div>
         );

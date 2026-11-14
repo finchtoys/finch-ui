@@ -1,5 +1,13 @@
 import type { ReactNode, RefObject } from "react";
 import { Tooltip } from "./Tooltip";
+import {
+  ICON_TAB_BADGE_CLASS,
+  ICON_TAB_ICON_WRAP_CLASS,
+  iconTabBarClassName,
+  iconTabClassName,
+  iconTabIconInnerClassName,
+  iconTabLabelClassName,
+} from "../styles/classes";
 
 /**
  * One tab entry in an icon-centric tab bar.
@@ -65,18 +73,16 @@ function IconTab({ icon, label, active, pushEnd, iconOnly, iconClassName, animRe
         aria-pressed={active}
         onMouseEnter={() => animRef?.current?.startAnimation()}
         onMouseLeave={() => animRef?.current?.stopAnimation()}
-        className={`iconTab ${pushEnd ? "ml-auto " : ""}flex items-center overflow-hidden rounded-[var(--ui-radius-md)] transition-all duration-200 ease-out ${
-          active ? "iconTab--active text-txt" : "text-txt-tertiary hover:text-txt-secondary"
-        }`}
+        className={iconTabClassName({ active, pushEnd })}
       >
         {/* Icon wrapper — outer span anchors the badge, inner span carries the animation */}
-        <span className="relative inline-flex flex-none items-center justify-center">
-          <span className={`inline-flex items-center justify-center${iconClassName ? ` ${iconClassName}` : ""}`}>
+        <span className={ICON_TAB_ICON_WRAP_CLASS}>
+          <span className={iconTabIconInnerClassName(iconClassName)}>
             {icon}
           </span>
           {!!badge && badge > 0 && (
             <span
-              className={`pointer-events-none absolute top-[-4px] right-[-4px] flex h-[11px] min-w-[11px] items-center justify-center rounded-full bg-badge px-[3px] text-[8px] font-bold leading-none text-white`}
+              className={ICON_TAB_BADGE_CLASS}
               // style={{ boxShadow: "0 0 0 1.5px var(--ui-bg-sidebar)" }}
               aria-hidden="true"
             >
@@ -86,9 +92,7 @@ function IconTab({ icon, label, active, pushEnd, iconOnly, iconClassName, animRe
         </span>
         {!iconOnly && (
           <span
-            className={`iconTabLabel whitespace-nowrap text-[14px] font-bold transition-all duration-150 ${
-              active ? "ml-1 opacity-100" : "ml-0 max-w-0 opacity-0"
-            }`}
+            className={iconTabLabelClassName(active)}
           >
             {label}
           </span>
@@ -122,7 +126,7 @@ export function IconTabBar<K extends string>({
 }: IconTabBarProps<K>) {
   let endApplied = false;
   return (
-    <div className={`flex items-center gap-1 ${className}`.trim()}>
+    <div className={iconTabBarClassName(className)}>
       {tabs.map((tab) => {
         const pushEnd = tab.align === "end" && !endApplied;
         if (pushEnd) endApplied = true;

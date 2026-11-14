@@ -2,6 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Clock } from "lucide-react";
 import { MenuPanel } from "./Menu";
 import { Button } from "./Button";
+import {
+  TIME_PICKER_CLOCK_CLASS,
+  TIME_PICKER_COLUMN_CLASS,
+  TIME_PICKER_COLUMN_LABEL_CLASS,
+  TIME_PICKER_COLUMN_SCROLL_CLASS,
+  TIME_PICKER_PANEL_CLASS,
+  TIME_PICKER_PLAIN_TRIGGER_CLASS,
+  timePickerChevronClassName,
+  timePickerItemClassName,
+  timePickerRootClassName,
+  timePickerTriggerClassName,
+} from "../styles/classes";
 import { ScrollArea } from "./ScrollArea";
 
 interface TimePickerProps {
@@ -82,18 +94,18 @@ export function TimePicker({
   };
 
   return (
-    <div ref={rootRef} className={`relative inline-block ${className ?? ""}`}>
+    <div ref={rootRef} className={timePickerRootClassName(className)}>
       {plain ? (
         // Plain trigger — mirror ModelPicker's compact ghost button
         <Button
           variant="ghost"
           size="sm"
           pressed={open}
-          trailingIcon={<ChevronDown size={14} className={`shrink-0 text-[var(--ui-text-tertiary)] transition-transform duration-120 ${open ? "rotate-180" : ""}`} strokeWidth={2} />}
+          trailingIcon={<ChevronDown size={14} className={timePickerChevronClassName(open)} strokeWidth={2} />}
           disabled={disabled}
           onClick={toggleOpen}
           aria-expanded={open}
-          className="!h-auto min-w-0 gap-1.5 !px-2 !py-1 !text-[14px] !text-[var(--ui-text-secondary)] tabular-nums hover:!text-[var(--ui-text-primary)]"
+          className={TIME_PICKER_PLAIN_TRIGGER_CLASS}
         >
           {hh}:{mm}
         </Button>
@@ -102,40 +114,35 @@ export function TimePicker({
         <Button
           variant="secondary"
           size="sm"
-          leadingIcon={<Clock size={14} className="shrink-0 text-[var(--ui-text-tertiary)]" strokeWidth={1.9} />}
+          leadingIcon={<Clock size={14} className={TIME_PICKER_CLOCK_CLASS} strokeWidth={1.9} />}
           disabled={disabled}
           onClick={toggleOpen}
           aria-expanded={open}
-          className={[
-            "tabular-nums !text-[13.5px] !px-2.5",
-            open
-              ? "!border-[color-mix(in_srgb,var(--ui-accent)_60%,transparent)] ring-2 ring-[color-mix(in_srgb,var(--ui-accent)_15%,transparent)]"
-              : "",
-          ].join(" ")}
+          className={timePickerTriggerClassName(open)}
         >
           {hh}:{mm}
         </Button>
       )}
 
       {open && (
-        <MenuPanel className="absolute left-0 top-[calc(100%+6px)] z-50 flex gap-1 p-2 min-w-0">
+        <MenuPanel className={TIME_PICKER_PANEL_CLASS}>
           {/* Hours column */}
-          <div className="flex flex-col">
-            <span className="mb-1.5 text-center text-[12px] font-semibold uppercase tracking-widest text-[var(--ui-text-tertiary)] select-none">
+          <div className={TIME_PICKER_COLUMN_CLASS}>
+            <span className={TIME_PICKER_COLUMN_LABEL_CLASS}>
               时
             </span>
             <ScrollArea
               ref={hourScrollRef}
               topFadeSize={10}
               bottomFadeSize={10}
-              className="h-[168px] w-[52px] flex flex-col gap-0.5"
+              className={TIME_PICKER_COLUMN_SCROLL_CLASS}
             >
               {HOURS.map((h) => (
                 <button
                   key={h}
                   type="button"
                   onClick={() => setHour(h)}
-                  className={`menuActionRow h-auto max-h-[16px] justify-center !py-[7px] !px-0 w-[52px] shrink-0 font-mono !text-[13px] !font-normal ${h === hour ? "menuActionRow--active" : ""}`}
+                  className={timePickerItemClassName(h === hour)}
                 >
                   {String(h).padStart(2, "0")}
                 </button>
@@ -144,22 +151,22 @@ export function TimePicker({
           </div>
 
           {/* Minutes column */}
-          <div className="flex flex-col">
-            <span className="mb-1.5 text-center text-[12px] font-semibold uppercase tracking-widest text-[var(--ui-text-tertiary)] select-none">
+          <div className={TIME_PICKER_COLUMN_CLASS}>
+            <span className={TIME_PICKER_COLUMN_LABEL_CLASS}>
               分
             </span>
             <ScrollArea
               ref={minScrollRef}
               topFadeSize={10}
               bottomFadeSize={10}
-              className="h-[168px] w-[52px] flex flex-col gap-0.5"
+              className={TIME_PICKER_COLUMN_SCROLL_CLASS}
             >
               {MINUTES.map((m) => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => setMinute(m)}
-                  className={`menuActionRow h-auto max-h-[16px] justify-center !py-[7px] !px-0 w-[52px] shrink-0 font-mono !text-[13px] !font-normal ${m === minute ? "menuActionRow--active" : ""}`}
+                  className={timePickerItemClassName(m === minute)}
                 >
                   {String(m).padStart(2, "0")}
                 </button>

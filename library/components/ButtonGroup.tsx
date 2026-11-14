@@ -2,6 +2,11 @@ import { Children, cloneElement, isValidElement, type ReactElement, type ReactNo
 import type { ButtonRound, ButtonSize, ButtonVariant } from "./Button";
 import { Button, type ButtonProps } from "./Button";
 import { Tooltip } from "./Tooltip";
+import {
+  BUTTON_GROUP_ITEM_WRAP_CLASS,
+  buttonGroupClassName,
+  buttonGroupItemClassName,
+} from "../styles/classes";
 
 export interface ButtonGroupProps {
   children: ReactNode;
@@ -17,56 +22,6 @@ export type ButtonGroupItemProps = Omit<ButtonProps, "variant" | "size" | "round
   size?: ButtonSize;
   round?: ButtonRound;
   className?: string;
-};
-
-const GROUP_VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-white",
-  brand: "bg-accent text-white",
-  secondary: "bg-[var(--ui-bg-inset)] text-[var(--ui-text-secondary)]",
-  ghost: "bg-transparent text-[var(--ui-text-secondary)]",
-  outline: "border border-[var(--ui-border-subtle)] bg-transparent text-[var(--ui-text-secondary)]",
-  danger: "bg-[var(--ui-danger-dim)] text-[var(--ui-danger-text)]",
-  link: "bg-transparent text-[var(--ui-text-secondary)]",
-};
-
-const DIVIDER_VARIANT: Record<ButtonVariant, string> = {
-  primary: "border-white/25",
-  brand: "border-white/25",
-  secondary: "border-[var(--ui-border-subtle)]",
-  ghost: "border-[var(--ui-border-subtle)]",
-  outline: "border-[var(--ui-border-subtle)]",
-  danger: "border-[color-mix(in_srgb,var(--ui-danger)_24%,transparent)]",
-  link: "border-[var(--ui-border-subtle)]",
-};
-
-const ITEM_VARIANT: Record<ButtonVariant, string> = {
-  primary:
-    "!text-white hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,transparent)] active:!brightness-95",
-  brand:
-    "!text-white hover:!bg-[color-mix(in_srgb,var(--ui-accent)_90%,#666)] active:!brightness-95",
-  secondary:
-    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] active:!bg-[var(--ui-bg-active)]",
-  ghost:
-    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] active:!bg-[var(--ui-bg-active)]",
-  outline:
-    "hover:!bg-[var(--ui-bg-hover)] hover:!text-[var(--ui-text-primary)] hover:!border-[var(--ui-border-subtle)] active:!bg-[var(--ui-bg-active)]",
-  danger:
-    "hover:!bg-[color-mix(in_srgb,var(--ui-danger)_16%,transparent)] active:!bg-[color-mix(in_srgb,var(--ui-danger)_22%,transparent)]",
-  link:
-    "hover:!text-[var(--ui-text-secondary)] hover:underline hover:underline-offset-3 active:!text-[var(--ui-text-secondary)]",
-};
-
-const GROUP_ICON_SIZE: Record<ButtonSize, string> = {
-  sm: "!h-[21px] !w-[21px]",
-  md: "!h-[28px] !w-[28px]",
-  lg: "!h-[36px] !w-[36px]",
-};
-
-const ROUND: Record<ButtonRound, string> = {
-  sm: "rounded-[var(--ui-radius-sm)]",
-  md: "rounded-[var(--ui-radius-md)]",
-  lg: "rounded-[var(--ui-radius-lg)]",
-  full: "rounded-full",
 };
 
 function isButtonElement(child: ReactNode): child is ReactElement<ButtonProps> {
@@ -99,13 +54,7 @@ export function ButtonGroup({
 
   return (
     <div
-      className={[
-        "inline-flex items-stretch overflow-hidden select-none",
-        GROUP_VARIANT[variant],
-        ROUND[round],
-        disabled ? "opacity-40 pointer-events-none" : "",
-        className,
-      ].filter(Boolean).join(" ")}
+      className={buttonGroupClassName({ variant, round, disabled, className })}
     >
       {items.map((child, index) => {
         const { button, rewrap } = unwrapButton(child);
@@ -116,18 +65,18 @@ export function ButtonGroup({
               size: button.props.size ?? size,
               round: "sm",
               disabled: disabled || button.props.disabled,
-              className: [
-                "rounded-none !border-0 shadow-none active:scale-100",
-                index > 0 ? `!border-l ${DIVIDER_VARIANT[variant]}` : "",
-                button.props.icon != null ? GROUP_ICON_SIZE[button.props.size ?? size] : " pl-2.5",
-                ITEM_VARIANT[childVariant],
-                button.props.className ?? "",
-              ].filter(Boolean).join(" "),
+              className: buttonGroupItemClassName({
+                variant,
+                index,
+                iconMode: button.props.icon != null,
+                size: button.props.size ?? size,
+                className: button.props.className ?? "",
+              }),
             }))
           : child;
 
         return (
-          <div key={index} className="flex items-stretch">
+          <div key={index} className={BUTTON_GROUP_ITEM_WRAP_CLASS}>
             {content}
           </div>
         );

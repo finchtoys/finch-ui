@@ -2,6 +2,14 @@ import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { Search, X } from "lucide-react";
 import { Kbd } from "./Kbd";
+import {
+  SEARCH_FIELD_ICON_CLASS,
+  searchFieldActionClassName,
+  searchFieldClearClassName,
+  searchFieldInputClassName,
+  searchFieldKbdClassName,
+  searchFieldRootClassName,
+} from "../styles/classes";
 
 interface SearchFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange"> {
   value: string;
@@ -50,16 +58,16 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
 
   return (
     <div
-      className={`group/searchField sidebarSearchControl flex min-h-[28px] w-full items-center gap-2 rounded-sm px-2 transition-colors duration-120 ${focused ? "sidebarSearchControl--focused" : ""} ${active ? "sidebarSearchControl--active" : ""} ${rootClassName}`.trim()}
+      className={searchFieldRootClassName({ focused, active, rootClassName })}
       onClick={() => inputRef.current?.focus()}
     >
-      <span className="sidebarSearchControl__icon flex-none">
+      <span className={SEARCH_FIELD_ICON_CLASS}>
         {leadingIcon ?? <Search size={16} />}
       </span>
       <input
         ref={inputRef}
         type="text"
-        className={`sidebarSearchControl__input ${focused ? "cursor-text!" : ""} min-w-0 flex-1 bg-transparent border-0 outline-none ${inputClassName}`.trim()}
+        className={searchFieldInputClassName({ focused, inputClassName })}
         value={value}
         onChange={(event) => onValueChange(event.target.value)}
         onFocus={(event) => {
@@ -80,16 +88,16 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
         }}
         {...props}
       />
-      <div className={`sidebarSearchControl__action ${actionClassName}`.trim()}>
+      <div className={searchFieldActionClassName(actionClassName)}>
         {shortcut ? (
-          <Kbd className={`sidebarSearchControl__kbd opacity-0 transition-opacity duration-120 group-hover/searchField:opacity-100 ${kbdClassName}`.trim()}>
+          <Kbd className={searchFieldKbdClassName(kbdClassName)}>
             {shortcut}
           </Kbd>
         ) : null}
         {(value || focused) && (
           <button
             type="button"
-            className={`sidebarSearchControl__clear grid place-items-center w-6 h-6 rounded-sm text-txt-tertiary hover:bg-sf-hover hover:text-txt-secondary transition-colors duration-120 ${clearClassName}`.trim()}
+            className={searchFieldClearClassName(clearClassName)}
             title={clearLabel}
             onMouseDown={(event) => event.preventDefault()}
             onClick={(event) => {

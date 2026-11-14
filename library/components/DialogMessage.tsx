@@ -1,4 +1,13 @@
 import type { ReactNode } from "react";
+import {
+  DIALOG_INLINE_CODE_CLASS,
+  DIALOG_INLINE_SUFFIX_CLASS,
+  DIALOG_MESSAGE_BLANK_LINE_CLASS,
+  DIALOG_MESSAGE_IMAGE_CLASS,
+  DIALOG_MESSAGE_IMAGE_ROW_CLASS,
+  dialogMessageClassName,
+  dialogMessageLineClassName,
+} from "../styles/classes";
 
 interface DialogMessageProps {
   message?: string;
@@ -20,16 +29,6 @@ const ALLOWED_INLINE_IMAGE_MIME_TYPES = new Set([
   "image/gif",
 ]);
 
-const INLINE_SUFFIX_CLASS: Record<string, string> = {
-  g: "text-ok-text",
-  r: "text-err-text",
-  y: "text-amber-400",
-  m: "text-txt-tertiary",
-  a: "text-accent",
-  b: "font-medium text-txt",
-  i: "italic",
-};
-
 /**
  * Render the inline token subset (`` `code` `` and `{text}\g/\r/\y/\m/\a/\b/\i`
  * colour/weight/style spans) shared by `ConfirmDialogOptions.message` and the
@@ -48,14 +47,14 @@ export function renderInlineTokens(text: string): ReactNode[] {
     const token = match[0];
     if (token.startsWith("`") && token.endsWith("`")) {
       parts.push(
-        <code key={`${match.index}:code`} className="font-mono text-[0.95em] text-txt">
+        <code key={`${match.index}:code`} className={DIALOG_INLINE_CODE_CLASS}>
           {token.slice(1, -1)}
         </code>,
       );
     } else if (/^\{[^}\n]+\}\\[grymabi]$/.test(token)) {
       const suffix = token.at(-1) ?? "";
       parts.push(
-        <span key={`${match.index}:style`} className={INLINE_SUFFIX_CLASS[suffix] ?? ""}>
+        <span key={`${match.index}:style`} className={DIALOG_INLINE_SUFFIX_CLASS[suffix] ?? ""}>
           {token.slice(1, -3)}
         </span>,
       );
@@ -122,32 +121,27 @@ export function DialogMessage({ message, className = "" }: DialogMessageProps) {
   const lines = message.trim().split(/\r?\n/);
 
   return (
-    <div className={`space-y-1.5 text-[13px] leading-[20px] ${className}`}>
+    <div className={dialogMessageClassName(className)}>
       {lines.map((rawLine, index) => {
-        if (!rawLine.trim()) return <div key={index} className="h-2" aria-hidden="true" />;
+        if (!rawLine.trim()) return <div key={index} className={DIALOG_MESSAGE_BLANK_LINE_CLASS} aria-hidden="true" />;
         const image = parseDialogImageLine(rawLine);
         if (image) {
           return (
-            <div key={index} className="flex justify-center py-1.5">
+            <div key={index} className={DIALOG_MESSAGE_IMAGE_ROW_CLASS}>
               <img
                 src={image.src}
                 alt={image.alt}
                 decoding="async"
                 draggable={false}
                 referrerPolicy="no-referrer"
-                className="max-h-[min(60vh,420px)] max-w-full rounded-[var(--ui-radius-md)] object-contain"
+                className={DIALOG_MESSAGE_IMAGE_CLASS}
               />
             </div>
           );
         }
         const line = normalizeLine(rawLine);
-        const toneClass = line.tone === "muted"
-          ? "text-txt-tertiary"
-          : line.tone === "warning"
-            ? "text-amber-500"
-            : "text-txt-secondary";
         return (
-          <p key={index} className={`m-0 whitespace-pre-wrap ${toneClass}`}>
+          <p key={index} className={dialogMessageLineClassName(line.tone)}>
             {renderInlineTokens(line.text)}
           </p>
         );

@@ -10,6 +10,16 @@ import {
   type InputVariant,
 } from "./Input";
 import { SELECT_TRIGGER_SIZE, selectChevronClass } from "./selectTrigger";
+import {
+  INPUT_ERROR_TEXT_CLASS,
+  INPUT_HINT_CLASS,
+  INPUT_LABEL_CLASS,
+  INPUT_SELECT_ROOT_CLASS,
+  inputSelectChevronClassName,
+  inputSelectInputClassName,
+  inputSelectShellClassName,
+  selectChevronIconClassName,
+} from "../styles/classes";
 
 interface InputSelectProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
   label?: ReactNode;
@@ -53,33 +63,12 @@ export const InputSelect = forwardRef<HTMLInputElement, InputSelectProps>(functi
   const active = open || focused;
   // Same shell as the DropdownSelect / MultiSelect trigger: the value area owns
   // the padding, and `pr-1` leaves room for the chevron box.
-  const shellClass = [
-    "flex min-w-0 items-center overflow-hidden pr-1 text-txt transition-all duration-120",
-    SELECT_TRIGGER_SIZE[size].text,
-    INPUT_ROUND_CLASS[round],
-    inputStateClass({ error: hasError, variant: active ? "default" : variant }),
-    // focus-within covers both input focus and button focus at CSS level
-    !hasError
-      ? "focus-within:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
-      : "",
-    // open state: apply accent ring directly via JS since CSS can't detect prop changes
-    open && !hasError
-      ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]"
-      : "",
-  ].filter(Boolean).join(" ");
-  const inputClass = [
-    INPUT_BASE_CLASS,
-    SELECT_TRIGGER_SIZE[size].px,
-    SELECT_TRIGGER_SIZE[size].py,
-    // The shell draws the border, ring and background for the whole control.
-    "border-0 bg-transparent text-inherit shadow-none focus:shadow-none",
-    mono ? "font-mono" : "",
-    className,
-  ].filter(Boolean).join(" ");
+  const shellClass = inputSelectShellClassName({ size, round, variant, error: hasError, active, open });
+  const inputClass = inputSelectInputClassName({ size, mono, className });
 
   return (
-    <div className="relative block">
-      {label ? <span className="mb-1.5 block text-[12px] font-medium text-txt-secondary">{label}</span> : null}
+    <div className={INPUT_SELECT_ROOT_CLASS}>
+      {label ? <span className={INPUT_LABEL_CLASS}>{label}</span> : null}
       <span className={shellClass}>
         <input
           ref={ref}
@@ -99,11 +88,7 @@ export const InputSelect = forwardRef<HTMLInputElement, InputSelectProps>(functi
           ref={buttonRef}
           type="button"
           // `bg-transparent` is dropped while open so the shared open-state background survives.
-          className={[
-            selectChevronClass(size, round, open),
-            "cursor-pointer border-0 p-0 outline-none hover:bg-sf-hover hover:text-txt",
-            open ? "" : "bg-transparent",
-          ].filter(Boolean).join(" ")}
+          className={inputSelectChevronClassName({ size, round, open })}
           title={buttonTitle}
           aria-expanded={open}
           {...buttonProps}
@@ -111,13 +96,13 @@ export const InputSelect = forwardRef<HTMLInputElement, InputSelectProps>(functi
         >
           <ChevronDown
             size={SELECT_TRIGGER_SIZE[size].chevron}
-            className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+            className={selectChevronIconClassName(open)}
           />
         </button>
       </span>
       {children}
-      {error ? <span className="mt-1.5 block text-[12px] font text-err-text">{error}</span> : null}
-      {!error && hint ? <span className="mt-1.5 block text-[12px] font text-txt-tertiary">{hint}</span> : null}
+      {error ? <span className={INPUT_ERROR_TEXT_CLASS}>{error}</span> : null}
+      {!error && hint ? <span className={INPUT_HINT_CLASS}>{hint}</span> : null}
     </div>
   );
 });

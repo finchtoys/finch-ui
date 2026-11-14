@@ -1,8 +1,13 @@
 import { cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
 import { createPortal } from "react-dom";
-
-type HoverCardPlacement = "top" | "bottom" | "left" | "right";
+import {
+  HOVER_CARD_CONTENT_CLASS,
+  HOVER_CARD_OUT_DURATION,
+  hoverCardClassName,
+  hoverCardPosition,
+} from "../styles/classes";
+import type { HoverCardPlacement } from "../styles/classes";
 
 interface HoverCardProps {
   children: ReactElement;
@@ -14,53 +19,6 @@ interface HoverCardProps {
   disabled?: boolean;
   gap?: number;
   className?: string;
-}
-
-const OUT_DURATION = 120;
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-
-function choosePlacement(preferred: HoverCardPlacement, anchor: DOMRect, card: DOMRect, gap: number): HoverCardPlacement {
-  const gutter = 8;
-  if (preferred === "right" && anchor.right + gap + card.width > window.innerWidth - gutter) return "left";
-  if (preferred === "left" && anchor.left - gap - card.width < gutter) return "right";
-  if (preferred === "bottom" && anchor.bottom + gap + card.height > window.innerHeight - gutter) return "top";
-  if (preferred === "top" && anchor.top - gap - card.height < gutter) return "bottom";
-  return preferred;
-}
-
-function getPosition(placement: HoverCardPlacement, anchor: DOMRect, card: DOMRect, gap: number) {
-  const actualPlacement = choosePlacement(placement, anchor, card, gap);
-  let left = 0;
-  let top = 0;
-
-  switch (actualPlacement) {
-    case "bottom":
-      left = anchor.left + anchor.width / 2 - card.width / 2;
-      top = anchor.bottom + gap;
-      break;
-    case "top":
-      left = anchor.left + anchor.width / 2 - card.width / 2;
-      top = anchor.top - card.height - gap;
-      break;
-    case "left":
-      left = anchor.left - card.width - gap;
-      top = anchor.top + anchor.height / 2 - card.height / 2;
-      break;
-    case "right":
-      left = anchor.right + gap;
-      top = anchor.top + anchor.height / 2 - card.height / 2;
-      break;
-  }
-
-  const gutter = 8;
-  return {
-    placement: actualPlacement,
-    left: clamp(left, gutter, window.innerWidth - card.width - gutter),
-    top: clamp(top, gutter, window.innerHeight - card.height - gutter),
-  };
 }
 
 export function HoverCard({
@@ -115,7 +73,7 @@ export function HoverCard({
       setIsClosing(false);
       setHoverOpen(false);
       setPosition(null);
-    }, OUT_DURATION);
+    }, HOVER_CARD_OUT_DURATION);
   };
 
   useEffect(() => {
@@ -137,7 +95,7 @@ export function HoverCard({
       const trigger = triggerRef.current;
       const card = cardRef.current;
       if (!trigger || !card) return;
-      setPosition(getPosition(placement, trigger.getBoundingClientRect(), card.getBoundingClientRect(), gap));
+      setPosition(hoverCardPosition(placement, trigger.getBoundingClientRect(), card.getBoundingClientRect(), gap));
     };
 
     update();
@@ -203,7 +161,7 @@ export function HoverCard({
         ? createPortal(
             <div
               ref={cardRef}
-              className={`hoverCard hoverCard--${position?.placement ?? placement} ${isClosing ? "hoverCard--out" : "hoverCard--in"} ${className ?? ""}`}
+              className={hoverCardClassName({ placement: position?.placement ?? placement, closing: isClosing, className: className ?? "" })}
               style={{
                 position: "fixed",
                 left: position?.left ?? -10000,
@@ -213,7 +171,7 @@ export function HoverCard({
                 zIndex: 9999,
               }}
             >
-              <div className="hoverCard__content">{content}</div>
+              <div className={HOVER_CARD_CONTENT_CLASS}>{content}</div>
             </div>,
             document.body,
           )

@@ -2,6 +2,20 @@ import { useRef, useState } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { MenuItem, MenuPopover } from "./Menu";
 import { ScrollArea } from "./ScrollArea";
+import {
+  DROPDOWN_OPTION_DETAIL_CLASS,
+  dropdownMenuPopoverClassName,
+  DROPDOWN_OPTION_LABEL_CLASS,
+  DROPDOWN_OPTION_ROW_CLASS,
+  INPUT_ERROR_TEXT_CLASS,
+  INPUT_HINT_CLASS,
+  INPUT_LABEL_CLASS,
+  MULTISELECT_TRAILING_CLASS,
+  multiSelectCheckClassName,
+  multiSelectRootClassName,
+  multiSelectTriggerClassName,
+  selectChevronIconClassName,
+} from "../styles/classes";
 import { INPUT_ROUND_CLASS, type InputRound, type InputSize } from "./Input";
 import { SELECT_TRIGGER_SIZE, selectChevronClass, selectValueClass, selectValueText } from "./selectTrigger";
 
@@ -97,14 +111,14 @@ export function MultiSelect({
   };
 
   return (
-    <div className={`relative block ${className ?? ""}`.trim()}>
-      {label ? <span className="mb-1.5 block text-[12px] font-medium text-txt-secondary">{label}</span> : null}
+    <div className={multiSelectRootClassName(className)}>
+      {label ? <span className={INPUT_LABEL_CLASS}>{label}</span> : null}
       <button
         ref={buttonRef}
         type="button"
         disabled={disabled}
         title={title}
-        className={`flex w-full min-w-0 items-center border bg-sf-elevated pr-1 text-left outline-none transition-all duration-120 disabled:opacity-50 hover:border-border focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)] ${INPUT_ROUND_CLASS[round]} ${TRIGGER_SIZE[size].text} ${selectedLabels.length === 0 ? "text-txt-tertiary" : "text-txt"} ${open ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]" : "border-border"}`}
+        className={multiSelectTriggerClassName({ round, size, empty: selectedLabels.length === 0, open })}
         onClick={() => {
           measureMenuSpace();
           setOpen((next) => !next);
@@ -113,7 +127,7 @@ export function MultiSelect({
       >
         <span className={selectValueClass(size)}>{selectValueText(triggerText)}</span>
         <span className={selectChevronClass(size, round, open)}>
-          <ChevronDown size={TRIGGER_SIZE[size].chevron} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+          <ChevronDown size={TRIGGER_SIZE[size].chevron} className={selectChevronIconClassName(open)} />
         </span>
       </button>
       <MenuPopover
@@ -121,7 +135,7 @@ export function MultiSelect({
         onClose={() => setOpen(false)}
         anchorRef={buttonRef}
         placement={menuPlacement === "top" ? "top-start" : "bottom-start"}
-        className="max-w-[min(420px,calc(100vw-24px))] p-2"
+        className={dropdownMenuPopoverClassName(false)}
       >
         <div style={triggerWidth ? { width: triggerWidth } : undefined}>
           <ScrollArea style={{ maxHeight: menuMaxHeight }}>
@@ -131,16 +145,16 @@ export function MultiSelect({
                 <MenuItem
                   key={option.value}
                   active={active}
-                  className="min-h-[42px] justify-between gap-4 px-3.5"
+                  className={DROPDOWN_OPTION_ROW_CLASS}
                   onClick={() => toggle(option.value)}
                   trailing={
-                    <span className="flex items-center gap-2">
-                      {option.detail ? <span className="font-mono text-[12px] text-txt-tertiary">{option.detail}</span> : null}
-                      <Check size={14} strokeWidth={2} className={active ? "text-accent" : "opacity-0"} />
+                    <span className={MULTISELECT_TRAILING_CLASS}>
+                      {option.detail ? <span className={DROPDOWN_OPTION_DETAIL_CLASS}>{option.detail}</span> : null}
+                      <Check size={14} strokeWidth={2} className={multiSelectCheckClassName(active)} />
                     </span>
                   }
                 >
-                  <span className="min-w-0 truncate">{option.label}</span>
+                  <span className={DROPDOWN_OPTION_LABEL_CLASS}>{option.label}</span>
                 </MenuItem>
               );
             })}

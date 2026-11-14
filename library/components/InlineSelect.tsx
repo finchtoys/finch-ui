@@ -3,6 +3,12 @@ import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "./Button";
 import { MenuItem, MenuPopover, MenuSeparator } from "./Menu";
+import {
+  INLINE_SELECT_LABEL_CLASS,
+  inlineSelectButtonClassName,
+  inlineSelectChevronClassName,
+  inlineSelectMenuClassName,
+} from "../styles/classes";
 
 export interface InlineSelectOption<T extends string | number> {
   value: T;
@@ -51,18 +57,18 @@ export function InlineSelect<T extends string | number>({
         variant="ghost"
         size="sm"
         pressed={open}
-        className={`!h-auto min-w-0 gap-1.5 !px-2 !py-1 !text-[14px] !text-[var(--ui-text-secondary)] tabular-nums hover:!text-[var(--ui-primary)] ${buttonClassName ?? ""}`}
+        className={inlineSelectButtonClassName(buttonClassName)}
         trailingIcon={
           <ChevronDown
             size={14}
-            className={`shrink-0 text-[var(--ui-text-tertiary)] transition-transform duration-120 ${open ? "rotate-180" : ""}`}
+            className={inlineSelectChevronClassName(open)}
             strokeWidth={2}
           />
         }
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
       >
-        <span className="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">{displayLabel}</span>
+        <span className={INLINE_SELECT_LABEL_CLASS}>{displayLabel}</span>
       </Button>
       <MenuPopover
         open={open}
@@ -70,7 +76,7 @@ export function InlineSelect<T extends string | number>({
         anchorRef={buttonRef}
         placement={align === "right" ? "bottom-end" : "bottom-start"}
         gap={6}
-        className={`min-w-[160px] ${menuClassName ?? ""}`.trim()}
+        className={inlineSelectMenuClassName(menuClassName)}
       >
         {options.map((option) => (
           <div key={String(option.value)}>

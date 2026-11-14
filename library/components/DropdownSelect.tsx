@@ -10,6 +10,17 @@ import {
   selectValueClass,
   selectValueText,
 } from "./selectTrigger";
+import {
+  DROPDOWN_OPTION_DETAIL_CLASS,
+  INPUT_LABEL_CLASS,
+  DROPDOWN_OPTION_LABEL_CLASS,
+  DROPDOWN_OPTION_ROW_CLASS,
+  dropdownMenuPanelClassName,
+  dropdownMenuPopoverClassName,
+  dropdownRootClassName,
+  dropdownTriggerClassName,
+  selectChevronIconClassName,
+} from "../styles/classes";
 
 export interface DropdownSelectOption<T extends string | number> {
   value: T;
@@ -137,14 +148,14 @@ export function DropdownSelect<T extends string | number>({
           <MenuItem
             active={option.value === value}
             icon={option.icon}
-            className="min-h-[42px] justify-between gap-4 px-3.5"
+            className={DROPDOWN_OPTION_ROW_CLASS}
             onClick={() => {
               onChange(option.value);
               setOpen(false);
             }}
-            trailing={option.detail ? <span className="font-mono text-[12px] text-txt-tertiary">{option.detail}</span> : null}
+            trailing={option.detail ? <span className={DROPDOWN_OPTION_DETAIL_CLASS}>{option.detail}</span> : null}
           >
-            <span className="min-w-0 truncate">{option.label}</span>
+            <span className={DROPDOWN_OPTION_LABEL_CLASS}>{option.label}</span>
           </MenuItem>
         </Fragment>
       ))}
@@ -159,35 +170,30 @@ export function DropdownSelect<T extends string | number>({
       onClose={() => setOpen(false)}
       anchorRef={buttonRef}
       placement={menuPlacement === "top" ? "top-start" : "bottom-start"}
-      className={block ? "p-2" : "max-w-[min(420px,calc(100vw-24px))] p-2"}
+      className={dropdownMenuPopoverClassName(block)}
       style={block && triggerWidth ? { width: triggerWidth } : undefined}
     >
       {optionRows}
     </MenuPopover>
   ) : open ? (
     <MenuPanel
-      className={`absolute max-w-[min(420px,calc(100vw-24px))] p-2 ${
-        block ? "left-0 w-full" : "right-0 min-w-full"
-      } ${menuPlacement === "top" ? "bottom-[calc(100%+8px)]" : "top-[calc(100%+2px)]"}`}
+      className={dropdownMenuPanelClassName({ block, placement: menuPlacement })}
     >
       {optionRows}
     </MenuPanel>
   ) : null;
 
   return (
-    <div ref={rootRef} className={`relative block ${className ?? ""}`.trim()}>
-      {label ? <span className="mb-1.5 block text-[12px] font-medium text-txt-secondary">{label}</span> : null}
+    <div ref={rootRef} className={dropdownRootClassName(className)}>
+      {label ? <span className={INPUT_LABEL_CLASS}>{label}</span> : null}
       <button
         ref={buttonRef}
         type="button"
-        className={`flex min-w-0 items-center border bg-sf-elevated pr-1 text-left text-txt outline-none transition-all duration-120 hover:border-border focus:border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)] ${ROUND[round]} ${TRIGGER_SIZE[size].text} ${block ? "w-full" : ""} ${open ? "border-[color-mix(in_srgb,var(--ui-accent)_36%,var(--ui-border-subtle))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ui-accent)_5%,transparent)]" : "border-border"}`}
-        onClick={toggleOpen}
-        aria-expanded={open}
-        title={title}
+        className={dropdownTriggerClassName({ round, size, block, open })}
       >
         <span className={selectValueClass(size)}>{selectValueText(selected?.label)}</span>
         <span className={selectChevronClass(size, round, open)}>
-          <ChevronDown size={TRIGGER_SIZE[size].chevron} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+          <ChevronDown size={TRIGGER_SIZE[size].chevron} className={selectChevronIconClassName(open)} />
         </span>
       </button>
       {optionList}

@@ -324,7 +324,7 @@ cd spike/vue && npm run report   # 会自动建 worktree（npm run baseline）
 `vue >= 3.3` 为 peer（`@finchtoys/ui` 作为可选 peer，只为那份 `style.css`）。已用 `npm pack` +
 干净目录安装验证：独立可 `npm i`，45 个导出，`renderToString` 正常。
 
-**范围**：A 类 20 + B 类 15 全部迁完（41 个组件 / 4 个图标替身 / 5 个菜单与弹层原语），
+**范围**：A 类 20 + B 类 15 全部迁完（Vue 包对外 40 个组件 + 14 个图标数据 + 菜单/弹层原语），
 `MenuSubmenu` 也补了 —— 它的定位代数已在共享模块里，补一个组件只多几十行。C 类按约定不做，
 README 表格逐条写明「不提供 / 降级 / 限制」及原因（Emoji 资产管线、LiquidGlassFilter 宿主单例、
 Toast 全局单例 + 玻璃滤镜；ScrollArea 与两个选择器用原生滚动容器降级；ButtonGroup 不拆 Tooltip）。
@@ -332,7 +332,7 @@ Toast 全局单例 + 玻璃滤镜；ScrollArea 与两个选择器用原生滚动
 **纪律**：每个组件都先把它在 React 侧的字面量迁进 `library/styles/classes.ts`、登记进
 `SHARED_CLASS_COMPONENTS`，再写 Vue 版。闸门在整轮里拦下 7 处遗留（SkeletonCatalogCard 4 处、
 DropdownSelect/MultiSelect 的 label 与菜单宽度、DialogMessage 行内 code），全部修掉才转绿。
-最终：**156 条任意值 + 258 条全量 token 全命中**，`library/dist/style.css` 全程保持
+最终：**156 条任意值 + 258 条全量 token 全命中**（34 个组件在册，未登记的只有 C 类三件），`library/dist/style.css` 全程保持
 `236073b1…`（77,589 字节，逐字节不变），smoke 36 例全过。
 
 **和 spike 的差别**：spike 证明的是「Vue 能做到像素级一致」；这一版只保证「class 与 React 同源 +

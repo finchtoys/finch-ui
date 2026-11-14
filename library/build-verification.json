@@ -13,7 +13,7 @@
     },
     {
       "file": "panel/vue.js",
-      "bytes": 172852,
+      "bytes": 172975,
       "isEntry": false,
       "modules": 59,
       "vueRuntime": 4

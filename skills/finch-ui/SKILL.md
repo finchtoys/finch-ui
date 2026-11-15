@@ -1,10 +1,12 @@
 ---
 name: finch-ui
 description: >-
-  用 @finchtoys/ui 写 Finch 小程序（mini tool / mini program）的 Web 面板界面。
+  用 @finchtoys/ui（React）或 @finchtoys/ui-vue（Vue 3）写 Finch 小程序（mini tool /
+  mini program）的 Web 面板界面。
   当用户要给 Finch 小程序做 UI、做设置面板、做 App Panel 页面，或提到
   「让面板和 Finch 长得一样」「用 Finch 的组件」「用 Finch UI」「用 @finchtoys/ui」
-  「小程序面板样式」「跟随 Finch 主题」「Finch 风格的按钮/输入框/弹窗」时务必使用；
+  「小程序面板样式」「跟随 Finch 主题」「Finch 风格的按钮/输入框/弹窗」「用 Vue 写小程序面板」
+  时务必使用；
   即使用户没有点名这个包，只要是在给 Finch 小程序写界面、想让界面跟随 Finch 主题，
   也应使用本 skill。它会告诉你组件怎么选、有哪些坑、以及哪些组件不能直接拿来用。
 ---

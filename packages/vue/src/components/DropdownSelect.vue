@@ -21,6 +21,7 @@ import {
 import type { InputRound, InputSize } from "@shared/classes";
 import MenuItem from "./MenuItem.vue";
 import LucideIcon from "../icons/LucideIcon.vue";
+import { resolveAnchor, type AnchorLike } from "../anchor";
 import MenuPopover from "./MenuPopover.vue";
 
 export interface DropdownSelectOption {
@@ -53,8 +54,8 @@ const open = ref(false);
 const menuPlacement = ref<"top" | "bottom">("bottom");
 const menuMaxHeight = ref(props.maxMenuHeight);
 const triggerWidth = ref<number | undefined>(undefined);
-const triggerEl = ref<{ el?: HTMLElement | null } | null>(null);
-const anchorEl = () => (triggerEl.value?.el as HTMLElement | null) ?? null;
+const triggerEl = ref<AnchorLike>(null);
+const anchorEl = () => resolveAnchor(triggerEl.value);
 
 const selected = computed(() => props.options.find((option) => option.value === props.value) ?? props.options[0]);
 const chevronSize = computed(() => SELECT_TRIGGER_SIZE[props.size].chevron);

@@ -17,6 +17,7 @@ const pick = ref("b");
 const multi = ref<string[]>(["x"]);
 const inline = ref("compact");
 const inputSelect = ref("");
+const inputOpen = ref(false);
 const hour = ref(9);
 const minute = ref(30);
 const tab = ref("home");
@@ -69,11 +70,13 @@ const tabs = [
           :model-value="inputSelect"
           label="可输入的触发框"
           hint="点右侧箭头打开选项"
+          :open="inputOpen"
           @update:model-value="inputSelect = $event"
+          @toggle-open="inputOpen = !inputOpen"
         >
           <div style="position: relative">
             <div
-              v-if="true"
+              v-if="inputOpen"
               style="position: absolute; left: 0; right: 0; top: 6px; z-index: 40; padding: 6px; border: 1px solid var(--ui-border-subtle); border-radius: 8px; background: var(--ui-bg-elevated)"
             >
               <button
@@ -81,7 +84,7 @@ const tabs = [
                 :key="option.value"
                 type="button"
                 style="display: block; width: 100%; text-align: left; padding: 6px 8px; background: none; border: 0; cursor: pointer; color: var(--ui-text-secondary)"
-                @click="inputSelect = option.label"
+                @click="inputSelect = option.label; inputOpen = false"
               >
                 {{ option.label }}
               </button>

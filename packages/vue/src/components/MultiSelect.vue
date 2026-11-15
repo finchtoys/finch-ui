@@ -20,6 +20,7 @@ import type { InputRound, InputSize } from "@shared/classes";
 import MenuItem from "./MenuItem.vue";
 import MenuPopover from "./MenuPopover.vue";
 import LucideIcon from "../icons/LucideIcon.vue";
+import { resolveAnchor, type AnchorLike } from "../anchor";
 
 export interface MultiSelectOption {
   value: string;
@@ -50,8 +51,8 @@ const open = ref(false);
 const menuPlacement = ref<"top" | "bottom">("bottom");
 const menuMaxHeight = ref(props.maxMenuHeight);
 const triggerWidth = ref<number | undefined>(undefined);
-const triggerEl = ref<{ el?: HTMLElement | null } | null>(null);
-const anchorEl = () => (triggerEl.value?.el as HTMLElement | null) ?? null;
+const triggerEl = ref<AnchorLike>(null);
+const anchorEl = () => resolveAnchor(triggerEl.value);
 const chevronSize = computed(() => SELECT_TRIGGER_SIZE[props.size].chevron);
 
 const selected = computed(() => new Set(props.modelValue));

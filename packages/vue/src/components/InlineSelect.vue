@@ -10,6 +10,7 @@ import Button from "./Button.vue";
 import MenuItem from "./MenuItem.vue";
 import MenuPopover from "./MenuPopover.vue";
 import LucideIcon from "../icons/LucideIcon.vue";
+import { resolveAnchor, type AnchorLike } from "../anchor";
 
 export interface InlineSelectOption {
   value: string | number;
@@ -33,8 +34,8 @@ const props = withDefaults(
 const emit = defineEmits<{ change: [value: string | number] }>();
 
 const open = ref(false);
-const triggerEl = ref<{ el?: HTMLElement | null } | null>(null);
-const anchorEl = () => (triggerEl.value?.el as HTMLElement | null) ?? null;
+const triggerEl = ref<AnchorLike>(null);
+const anchorEl = () => resolveAnchor(triggerEl.value);
 
 const selected = computed(() => props.options.find((option) => option.value === props.value) ?? props.options[0]);
 const displayLabel = computed(() => (selected.value ? selected.value.label : String(props.value)));

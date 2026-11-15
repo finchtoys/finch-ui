@@ -1,6 +1,6 @@
 {
   "name": "@finchtoys/finch-ui-lab",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Gallery mini tool that renders every @finchtoys/ui component inside a real Finch webview panel, with live theme and custom-skin switching.",
   "author": {
     "name": "Finch Team",

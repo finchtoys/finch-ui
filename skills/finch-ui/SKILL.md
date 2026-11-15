@@ -81,6 +81,40 @@ Finch 内部名 —— 后者在 webview 里取不到值。
 - 空状态用 `Empty`，加载占位用 `SkeletonBlock`。
 - 确认类交互用 `ConfirmDialog`，别用 `window.confirm`。
 
+## Vue 3 版本：`@finchtoys/ui-vue`
+
+不用 React 也能用同一套视觉。**样式不重编**：Vue 包自己不产 CSS，仍然引 React 那份。
+
+```bash
+npm i @finchtoys/ui @finchtoys/ui-vue vue
+```
+
+```ts
+import { Button, Input, ModalShell } from "@finchtoys/ui-vue";
+import "@finchtoys/ui/style.css";   // 注意：样式在 @finchtoys/ui 里
+```
+
+视觉与 React 版是**逐属性实测对齐**的（同一份 class 源、同一份 CSS），不是「看着差不多」。
+
+**Vue 版不提供**：`Emoji` / `EmojiText`（Vite 资产管线）、`LiquidGlassFilter`（宿主单例）、
+`Toast`（全局单例 + 玻璃滤镜）。`ListRow.title` 因此按纯文本渲染，不替换 emoji。
+**降级**：`ScrollArea` 用原生滚动，没有边缘渐变；`DropdownSelect` / `MultiSelect` 的选项列表同理。
+**结构差异**：`ButtonGroup` / `Tooltip` 在 Vue 里靠 `cloneVNode` + `display:contents` 包一层，
+行为和 class 等价，但 **DOM 比 React 多一层 wrap** —— 别照 React 的 DOM 结构写选择器。
+
+### Vue 专属的坑（每一条都是真踩出来的）
+
+| 坑 | 现象 | 怎么做 |
+|---|---|---|
+| Vue 把「没传的可选布尔 prop」强转成 `false` | `open` 没传也当成受控且恒为假，Tooltip / HoverCard **永远不弹**，SSR 冒烟完全看不见 | 三态要用 `withDefaults({ open: undefined })`，别给布尔 prop 默认 `false` |
+| Vue 的 `watch` 创建时不执行（React 的 `useLayoutEffect` 每次挂载都跑） | 受控 `open` 首次渲染就是 `true` 时没有任何源变化触发 watcher，浮层停在 `visibility:hidden`、位置 0,0 | `onMounted` 里补测一次 |
+| Vue **不给数字 style 补 `px`** | `style.left = 12` 被静默丢弃，算对了位置 DOM 还是 0 | 一律写字符串 `` `${n}px` `` |
+| 模板 ref 落在**组件**上拿到的是实例，元素在 `$el` | 锚点恒为 `null`：菜单开了却定位不到（看不见），或外点判断反了 | 用 `resolveAnchor()`，元素和组件实例都吃；别写 React 味的 `ref.value?.el` |
+| `pointerdown` 早于 `click` | 外点关闭的判断写错时，菜单在 click 之前就被关掉，**点了选项没反应** | 外点判断要用真正的容器元素 `contains(target)`，别拿可能为 null 的锚点 |
+| 声明了的 slot 会一直渲染 | 模态里凭空多出 `headerRight` 之类的空节点 | 用 `v-if="$slots.xxx"` 包一层 |
+| `LucideIcon` 只认 `ICON_NODES` 表里的名字 | 传表外的 name **静默渲染空 svg**，不报错 | 加图标要跑 `npm run icons`；`icon` 收组件时记得把 `name` 绑进去 |
+| HTML 属性里的字符串**不做 JS 转义** | `message="a\nb"` 里是字面反斜杠 n，分行失败、行首标记外露 | 需要转义就绑 JS 表达式：`:message="text"` |
+
 ## 想看组件长什么样
 
 仓库里的 `lab/` 是 **Finch UI Lab** 小程序，把全部组件的所有状态变体都摆在真实 webview 里，
@@ -91,6 +125,22 @@ Finch 内部名 —— 后者在 webview 里取不到值。
 cd lab && npm install && npm run build
 npx @finchtoys/minitools install .
 ```
+
+## 脱离 Finch 单独用时
+
+组件读的是 `var(--finch-X, var(--ui-fallback-X))`：在 Finch 里宿主注入赢，在外面用内置默认值。
+**深色模式要自己挂**：在某个祖先元素上设 `data-theme="dark"`，否则永远是浅色。
+
+## 改这个仓库时要守的（维护者）
+
+- **class 字符串是单一来源**（`library/styles/classes.ts`），React / Vue 都读它。往里加东西时
+  必须**同时**改 `finch-ui.css` 的 `@source` 和 `verify-build.mjs` 的扫描路径 —— 只改一处会
+  静默丢 utility。已有闸门会红，但别指望它替你记着。
+- **`library/dist/style.css` 不该因为重构而变**。注意它**不是跨机器可复现的**（同尺寸不同哈希
+  是正常现象），所以「hash 不变」只在同一工作树内成立。
+- 改完必须跑：`npm run build && npm run verify`，Lab 侧再跑 `npm run check:panel` 和
+  `npm run select-check`（后者用真实浏览器驱动选择器交互，专治「点了没反应」）。
+- **同一版本不能重发**。发过就要提版本号。
 
 ## 不要做的事
 

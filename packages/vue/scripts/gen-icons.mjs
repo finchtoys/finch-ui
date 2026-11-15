@@ -14,8 +14,11 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-// Keep in sync with library/components/*.tsx imports.
+// library/components/*.tsx 用到的 + demo 演示用的（LucideIcon 只认这张表里的
+// 名字，传不在表里的 name 会渲染出空 svg）。
 const ICONS = {
+  house: "House",
+  bell: "Bell",
   "alert-circle": "AlertCircle",
   "alert-triangle": "AlertTriangle",
   "check-circle-2": "CheckCircle2",

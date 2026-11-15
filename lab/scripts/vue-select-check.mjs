@@ -99,6 +99,14 @@ for (const [label, idx, want] of [["非 portal", 0, "选项 C"], ["portal", 1, "
   ok("DialogMessage 换行与标记生效", lines >= 2 && !text.includes("\\n"), `${lines} 行`);
 }
 
+// IconTabBar 的 icon 收组件：裸 LucideIcon 没带 name 会渲染出空 svg
+{
+  const c = await card("IconTabBar");
+  const svgs = await c.locator("svg").count();
+  const withPath = await c.locator("svg:has(path)").count();
+  ok("IconTabBar 图标有实际图形", svgs > 0 && svgs === withPath, `${withPath}/${svgs} 含 path`);
+}
+
 console.log("运行时错误:", errors.length ? errors.slice(0, 3).join(" | ") : "无");
 const failed = results.filter((r) => !r).length;
 console.log(failed === 0 ? "\nVUE SELECT PASS" : `\nVUE SELECT FAIL: ${failed}/${results.length}`);

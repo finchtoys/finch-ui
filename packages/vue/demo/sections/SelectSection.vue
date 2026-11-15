@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /** Selectors and navigation: every control opens/picks something. */
-import { ref } from "vue";
+import { h, markRaw, ref, type FunctionalComponent } from "vue";
 import {
   Breadcrumb,
   DropdownSelect,
@@ -33,10 +33,13 @@ const multiOptions = [
   { value: "y", label: "多选 Y" },
   { value: "z", label: "多选 Z" },
 ];
+// `icon` 收的是组件，得把 name 提前绑好；直接传裸 LucideIcon 会渲染出空 svg。
+const tabIcon = (name: string): FunctionalComponent =>
+  markRaw((props) => h(LucideIcon, { name, size: 14, ...props }));
 const tabs = [
-  { key: "home", label: "首页", icon: LucideIcon, badge: 2 },
-  { key: "search", label: "搜索", icon: LucideIcon },
-  { key: "bell", label: "提醒", icon: LucideIcon, align: "end" as const },
+  { key: "home", label: "首页", icon: tabIcon("house"), badge: 2 },
+  { key: "search", label: "搜索", icon: tabIcon("search") },
+  { key: "bell", label: "提醒", icon: tabIcon("bell"), align: "end" as const },
 ];
 </script>
 

@@ -20,6 +20,7 @@ import {
 } from "@finch-ui-vue";
 import LucideIcon from "../../src/icons/LucideIcon.vue";
 
+const dialogMessageText = "第一行 {红色文字}\\r\n> 灰色说明 `code` 行内";
 const badgeVariant = ref<"neutral" | "accent" | "warning" | "danger" | "success">("accent");
 const chipList = ref(["标签 A", "标签 B"]);
 const emptyCompact = ref(false);
@@ -153,7 +154,7 @@ const skeletonLoading = ref(true);
 
       <div class="demo__card">
         <div class="demo__card-head"><span>DialogMessage</span></div>
-        <DialogMessage message="第一行 {红色文字}\r\n> 灰色说明 `code` 行内" />
+        <DialogMessage :message="dialogMessageText" />
       </div>
     </div>
   </section>

@@ -91,6 +91,14 @@ for (const [label, idx, want] of [["非 portal", 0, "选项 C"], ["portal", 1, "
   ok("InlineSelect 选择生效", before !== after, `${before} → ${after}${found ? "" : "（菜单没渲染）"}`);
 }
 
+// DialogMessage 的行内标记：换行必须真的换行，不能把 \n 当字面量打出来
+{
+  const c = await card("DialogMessage");
+  const lines = await c.locator("p").count();
+  const text = await c.innerText();
+  ok("DialogMessage 换行与标记生效", lines >= 2 && !text.includes("\\n"), `${lines} 行`);
+}
+
 console.log("运行时错误:", errors.length ? errors.slice(0, 3).join(" | ") : "无");
 const failed = results.filter((r) => !r).length;
 console.log(failed === 0 ? "\nVUE SELECT PASS" : `\nVUE SELECT FAIL: ${failed}/${results.length}`);

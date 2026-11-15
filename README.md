@@ -9,6 +9,10 @@ Finch 内置的那套组件，抽出来给小程序（mini tool / mini program�
 | `@finchtoys/ui` | React 18/19 | 44 | `@finchtoys/ui/style.css` |
 | `@finchtoys/ui-vue` | Vue 3 | 40 | **同样是 `@finchtoys/ui/style.css`** |
 
+> **这套组件库是给 Finch 小程序（mini tool / mini program）的面板用的**，不是通用 UI 库。
+> 它读的是 Finch 宿主注入的主题变量 —— 在 Finch 里自动跟随主题与自定义皮肤，脱离 Finch 只能拿到内置默认主题。
+> 小程序怎么开发、怎么发布到社区，见 **[finchtoys/finch-releases](https://github.com/finchtoys/finch-releases)**。
+
 > **CSS 只有一份。** Vue 包自己不产样式，用 Vue 也要装 `@finchtoys/ui` 并引它的 `style.css`。
 > 两个包都**不需要你装 Tailwind** —— 样式已预编译。
 
@@ -96,26 +100,24 @@ Vue 版**零运行时依赖**（只 peer `vue`），不依赖 React，也不重�
 
 ---
 
-## 先看看组件长什么样
+## 先看看组件长什么样（装预览小程序）
 
-装 **Finch UI Lab** 预览小程序，它把 React 版 44 个、Vue 版 40 个组件的全部状态摆在真实 webview 里，顶部能当场切主题核对跟随效果，还能在 **React / Vue 之间切换**对照同一组件。
+写代码之前先装 **Finch UI Lab** —— 它是本仓库自带的预览小程序，把 React 版 44 个、Vue 版 40 个组件的**全部状态与变体**摆在真实 webview 里，顶部能当场切浅色/深色/自定义皮肤核对跟随效果，还能在 **React / Vue 之间切换**对照同一个组件。判断某个组件合不合适、或怀疑自己用错了，先看它，比猜快得多。
 
-**方式一：npm（推荐）**
+**方式一：npm（有 Node 环境时推荐）**
 
 ```bash
 npx @finchtoys/minitools add @finchtoys/finch-ui-lab
 ```
 
-**方式二：离线安装包（`.fapp`）**
+**方式二：`.fapp` 离线包（不需要 Node，适合内网或发给同事）**
 
-从 [Releases](https://github.com/finchtoys/finch-ui/releases) 下载 `finch-ui-lab-<version>.fapp`，**拖进 Finch 主窗口**（或双击该文件），会弹安装确认。适合没装 Node 的同事，或内网环境。
+1. 到 [Releases](https://github.com/finchtoys/finch-ui/releases) 下载最新的 `finch-ui-lab-<version>.fapp`；
+2. 把文件**拖进 Finch 主窗口**（或直接双击），弹出安装确认，点安装；
+3. 打开**工具箱（Toolcase）**，找到 **Finch UI Lab**，打开启用开关 —— 装完默认是禁用的；
+4. 回到任意会话，点右侧小程序启动器（Panel 的 `+` 菜单）里的 **Finch UI Lab**。
 
-**两种方式装完都是默认禁用的**，还要两步才看得见：
-
-1. 打开**工具箱（Toolcase）**，找到 Finch UI Lab，打开启用开关；
-2. 在会话右侧的小程序启动器（Panel 的 `+` 菜单）里点 **Finch UI Lab**。
-
-这个小程序**不需要任何权限** —— 不读写文件、不联网、不开 shell。
+两种方式装完都要走第 3、4 步才看得见。这个小程序**不需要任何权限** —— 不读写文件、不联网、不开 shell。
 
 ## 主题
 
@@ -180,6 +182,12 @@ npm run typecheck
 React 组件源码目前是从 Finch 主仓 `src/renderer/ui/` **显式复制**过来的（`npm run sync` 生成，需要本地有一份 finch 检出，用 `FINCH_REPO` 指定路径），主程序暂时还没反过来依赖这个包 —— 也就是说**现在库和主程序是两份副本**，改动会漂移。收敛到主程序反向依赖是下一步，见 `docs/finch-ui-extraction-plan.md`。
 
 Vue 版由 React 版**手工移植**，靠三层校验保证不漂：class 字符串单一来源、SSR 冒烟逐组件比对、7 个浮层组件的真实 DOM 对齐断言。
+
+## 相关
+
+- **[finchtoys/finch-releases](https://github.com/finchtoys/finch-releases)** —— Finch 小程序（扩展）的发布与社区注册表仓库：开发规范、发布检查清单、社区提交流程都在那里。
+- **[Finch 官网](https://finchwork.app/)** · [文档](https://finchwork.app/zh/docs)
+- [Releases](https://github.com/finchtoys/finch-ui/releases) —— 预览小程序 `.fapp` 离线包
 
 ## 许可
 

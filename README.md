@@ -98,15 +98,24 @@ Vue 版**零运行时依赖**（只 peer `vue`），不依赖 React，也不重�
 
 ## 先看看组件长什么样
 
-装 **Finch UI Lab** 预览小程序，它把全部组件的全部状态摆在真实 webview 里，顶部能当场切主题核对跟随效果，还能在 **React / Vue 之间切换**对照同一组件。
+装 **Finch UI Lab** 预览小程序，它把 React 版 44 个、Vue 版 40 个组件的全部状态摆在真实 webview 里，顶部能当场切主题核对跟随效果，还能在 **React / Vue 之间切换**对照同一组件。
+
+**方式一：npm（推荐）**
 
 ```bash
 npx @finchtoys/minitools add @finchtoys/finch-ui-lab
 ```
 
-装完**默认禁用**，要去**工具箱（Toolcase）**里打开启用开关，然后在会话右侧的小程序启动器（Panel 的 `+` 菜单）里点 **Finch UI Lab**。这个小程序不需要任何权限。
+**方式二：离线安装包（`.fapp`）**
 
-离线分发也可以：把 `release/finch-ui-lab-<version>.fapp` **拖进 Finch 主窗口**（或双击），会弹安装确认，装完同样需要手动启用。
+从 [Releases](https://github.com/finchtoys/finch-ui/releases) 下载 `finch-ui-lab-<version>.fapp`，**拖进 Finch 主窗口**（或双击该文件），会弹安装确认。适合没装 Node 的同事，或内网环境。
+
+**两种方式装完都是默认禁用的**，还要两步才看得见：
+
+1. 打开**工具箱（Toolcase）**，找到 Finch UI Lab，打开启用开关；
+2. 在会话右侧的小程序启动器（Panel 的 `+` 菜单）里点 **Finch UI Lab**。
+
+这个小程序**不需要任何权限** —— 不读写文件、不联网、不开 shell。
 
 ## 主题
 

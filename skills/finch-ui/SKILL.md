@@ -124,9 +124,14 @@ import "@finchtoys/ui/style.css";   // 注意：样式在 @finchtoys/ui 里
 先让它跑起来看，比猜快得多。
 
 ```bash
-cd lab && npm install && npm run build
-npx @finchtoys/minitools install .
+npx @finchtoys/minitools add @finchtoys/finch-ui-lab
 ```
+
+没有 Node 环境时，从 [Releases](https://github.com/finchtoys/finch-ui/releases) 下载
+`finch-ui-lab-<version>.fapp`，拖进 Finch 主窗口即可安装。
+
+两种方式装完**都是默认禁用的**：要去工具箱（Toolcase）打开启用开关，再在会话右侧的
+小程序启动器（Panel 的 `+` 菜单）里点它。它不需要任何权限。
 
 ## 脱离 Finch 单独用时
 
@@ -143,6 +148,9 @@ npx @finchtoys/minitools install .
 - 改完必须跑：`npm run build && npm run verify`，Lab 侧再跑 `npm run check:panel` 和
   `npm run select-check`（后者用真实浏览器驱动选择器交互，专治「点了没反应」）。
 - **同一版本不能重发**。发过就要提版本号。
+- 发版三件事一起提：三个包的 `version` → `npm publish` → 打 `v<lab 版本>` tag 并把
+  `release/finch-ui-lab-<version>.fapp` 传成该 tag 的 Release 资产
+  （`release/` 在 `.gitignore` 里，`.fapp` 只活在 Releases，不进 git）。
 
 ## 不要做的事
 
